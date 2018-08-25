@@ -7,8 +7,6 @@
 - link:
     ~/.gitconfig:
       path: development/git/gitconfig
-    ~/.gitconfig_pers:
-      path: development/git/gitconfig_pers
     ~/.gitignore_global:
       path: development/git/gitignore_global
     ~/.hgignore_global:
