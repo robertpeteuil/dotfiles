@@ -3,20 +3,18 @@
 #   ALIASES FILE
 #
 #     This script is a component of dotfiles
-#       https://github.com/robertpeteuil/dotfile
+#       https://github.com/robertpeteuil/dotfiles
 #
 #     Robert Peteuil (c) 2018
-#
+
 
 aliasfilename=".aliases"
-aliasfilenum="2.0.25"
-aliasfiledate="2018-05-10"
+aliasfilenum="3.0.0"
+aliasfiledate="2018-08-25"
 
-
-#### VARS
+# OS SPECIFIC ALIASES
 OS=$(uname -s)
 
-#### FUNCTIONS
 check-git-installed () {
   if $(git --version 2&> /dev/null); then
     GIT_INST=1
@@ -29,9 +27,9 @@ check-git-installed () {
 update-repos () {
   GIT_INST=$(check-git-installed)
   prev_dir=$(pwd)
-  if [[ -e "$HOME/.configcloud/.git" ]] && [[ -n $GIT_INST ]]; then
-    echo -e "\n${GREEN}Updating .configcloud repo...${WHITE}"
-    cd "$HOME/.configcloud"; git pull; cd "$prev_dir"
+  if [[ -e "$HOME/.dotfiles/.git" ]] && [[ -n $GIT_INST ]]; then
+    echo -e "${GREEN}Updating .configfile repo...${WHITE}"
+    cd "$HOME/.dotfiles"; git pull; cd "$prev_dir"
     GIT_UPDATE=True
   fi
 }
@@ -40,47 +38,170 @@ update-repos () {
 GIT_UPDATE=False
 GIT_INST=$(check-git-installed)
 
-#### SET PACKAGE MANAGER
-if $(apt -h &> /dev/null); then
-  pkg_cmd="apt"
-elif $(apt-get &> /dev/null); then
-  pkg_cmd="apt-get"
-elif $(yum -h &> /dev/null); then
-  pkg_cmd="yum"
-fi
+case "$OS" in
+  Darwin)
+    defaultGroupOwner="staff"    # mkdirsys function default group owner
 
-update-all() {
-  if [[ "$pkg_cmd" == apt* ]]; then
-    echo -e "${GREEN}Updating via ${pkg_cmd}...${WHITE}"
-    sudo ${pkg_cmd} update -qq -y
-    echo -e "${GREEN}upgrading via ${pkg_cmd}...${WHITE}"
-    sudo ${pkg_cmd} upgrade -y
-    if [[ "$1" == "clean" ]]; then
-      echo -e "${GREEN}Autoclean & Autoremove...${WHITE}"
-      sudo apt-get autoclean -qq
-      sudo apt-get autoremove -qq
+    # use brew version of git if installed
+    if [ -e /usr/local/bin/git ]; then
+      alias git='/usr/local/bin/git'
     fi
-  elif [[ "$pkg_cmd" == "yum" ]]; then
-    echo -e "${GREEN}Updating via ${pkg_cmd}...${WHITE}"
-    sudo yum makecache fast
-    sudo yum update -y
-    if [[ "$1" == "clean" ]]; then
-      sudo yum clean packages expire-cache
-    fi
-  else
-    echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
-  fi
-  if [[ $GIT_UPDATE ]]; then
-    update-repos
-  fi
-}
 
-#### LS ALIASES
-  alias ls="ls --color -Fh"
-  alias lsa="ls -laFhv --color --group-directories-first"
+    if [ -e /usr/local/bin/gfind ]; then
+      alias find='/usr/local/bin/gfind'
+    fi
+
+    update-all () {
+      if $(brew --prefix &> /dev/null); then
+        echo -e "${GREEN}Updating via brew...${WHITE}"
+        brew update && brew upgrade
+        if [[ "$1" == "clean" ]]; then
+          brew cleanup && brew cask cleanup 2> /dev/null
+        fi
+      fi
+      # only run if connected locally as it can launch UI dialog boxes
+      if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
+        if $(mas &> /dev/null); then
+          echo -e "${GREEN}Updating Mac App Store apps...${WHITE}"
+          mas upgrade
+        fi
+      fi
+      if [[ $GIT_UPDATE ]]; then
+        update-repos
+      fi
+      }
+
+    alias ifconfig-lan='ifconfig | grep -E "inet.[0-9]" | grep -v "10.*.*.*" | grep -v "127.0.0.1" | cut -d" " -f 2'
+    alias ifconfig-active="ifconfig -a | grep ': active' -B 7 | grep 'en.:' -A 7"
+
+    ifconfig-allports() {
+      if [[ $(lsof -Pn -i4 | grep ESTABLISHED) ]]; then
+        lsof -Pn -i4 | awk 'NR<2 {printf "%10s\t%6s\t  PORT\n", $1, $2} /ESTABLISHED/ {printf "%10s\t%6s\t  %s\n", $1, $2, $9}'
+      else
+        echo "No Ports Established"
+      fi
+    }
+
+    reset-dns-old() {
+      sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
+      sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
+    }
+    alias reset-dns='sudo killall -HUP mDNSResponder; sleep 2'
+
+    alias hiddenfiles-on='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+    alias showfiles='hiddenfiles-on'
+
+    alias hiddenfiles-off='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
+    alias hidefiles='hiddenfiles-off'
+
+    # set sub-strings for LS alias
+    if $(gls &> /dev/null); then  # gls installed, but not in path
+      lscmd="gls"
+      colorflag=" --color"
+      versionparam="v"
+      extraparam=" --group-directories-first"
+      if $(ls --color &> /dev/null); then    # gnu `ls` in path
+        # echo "using brew ls"  # DEBUG
+        lscmd="ls"
+        colorflag=" --color"
+        versionparam="v"
+        extraparam=" --group-directories-first"
+      fi
+    else    # not in gnu 'ls', use macos `ls`
+      # echo "using macos native"  # DEBUG
+      lscmd="ls"
+      colorflag=" -G"
+      versionparam="" # not supported
+      extraparam="" # not supported
+    fi
+    ;;
+
+  Linux)
+    defaultGroupOwner="$USER"   # mkdirsys function default group owner
+
+    # set timezone
+    alias settimezone="sudo timedatectl set-timezone"
+    alias settimezone-alt="sudo dpkg-reconfigure tzdata"
+    # update apt-key
+    alias getaptkey-goog='curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -'
+    alias getaptkey-docker='curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -'
+
+    # determine package manager
+    if $(apt -h &> /dev/null); then
+      pkg_cmd="apt"
+    elif $(apt-get &> /dev/null); then
+      pkg_cmd="apt-get"
+    elif $(yum -h &> /dev/null); then
+      pkg_cmd="yum"
+    fi
+
+    update-all() {
+      if [[ "$pkg_cmd" == apt* ]]; then
+        echo -e "${GREEN}Updating via ${pkg_cmd}...${WHITE}"
+        sudo ${pkg_cmd} update -qq -y
+        echo -e "${GREEN}upgrading via ${pkg_cmd}...${WHITE}"
+        sudo ${pkg_cmd} upgrade -y
+        if [[ "$1" == "clean" ]]; then
+          echo -e "${GREEN}Autoclean & Autoremove...${WHITE}"
+          sudo apt-get autoclean -qq
+          sudo apt-get autoremove -qq
+        fi
+      elif [[ "$pkg_cmd" == "yum" ]]; then
+        echo -e "${GREEN}Updating via ${pkg_cmd}...${WHITE}"
+        sudo yum makecache fast
+        sudo yum update -y
+        if [[ "$1" == "clean" ]]; then
+          sudo yum clean packages expire-cache
+        fi
+      else
+        echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
+      fi
+      if [[ $GIT_UPDATE ]]; then
+        update-repos
+      fi
+    }
+
+    # DISPLAY UNATTENDED UPDATE LOG
+    alias showuulog='cat /var/log/unattended-upgrades/unattended-upgrades.log'
+    alias showupdatelog='cat /var/log/unattended-upgrades/unattended-upgrades.log'
+    alias showrebootfiles='cat /var/run/reboot-required.pkgs'
+    alias showlivepatch='canonical-livepatch status --verbose'
+
+    #### SYSTEMD
+    alias svc-stat='sudo systemctl status'
+    alias svc-status='svc-stat'
+    alias svc-start='sudo systemctl start'
+    alias svc-stop='sudo systemctl stop'
+    alias svc-enable='sudo systemctl enable'
+    alias svc-status='sudo systemctl status'
+    alias svc-disable='sudo systemctl disable'
+    alias svc-daemon='sudo systemctl daemon-reload'
+    alias svc-journal='sudo SYSTEMD_LESS=FRXMK journalctl -u'
+    alias svc-edit='sudo systemctl edit'
+    alias svc-editfull='sudo systemctl edit --full'
+
+    alias ifconfig-lan='ifconfig | grep "inet addr:" | grep -v "127.0.0.1" | cut -d: -f2 | cut -d" " -f 1'
+    alias ifconfig-active="ifconfig -a | grep 'eth0' -A 6; ifconfig -a | grep 'wlan0' -A 6"
+    alias ifconfig-ports='netstat -ntlp | grep LISTEN'
+
+    lscmd="ls"
+    colorflag=" --color"
+    versionparam="v"
+    extraparam=" --group-directories-first"
+    ;;
+
+esac
+
+#### LS ALIASES - made from OS specific sub-strings (set above)
+  # ls - normal with colors, symbols and readable numbers
+  alias ls="${lscmd}${colorflag} -Fh"
+  # ls - all files
+  alias lsa="${lscmd} -laFh${versionparam}${colorflag}${extraparam}"
   alias ll='lsa'
-  alias lsh="ls -laFhdv --color --group-directories-first .*"
-  alias lsd="ls --color -laFh | grep --color=never '^d'"
+  # ls - hidden files
+  alias lsh="${lscmd} -laFhd${versionparam}${colorflag}${extraparam} .*"
+  # ls - directories
+  alias lsd="${lscmd}${colorflag} -laFh ${colorflag} | grep --color=never '^d'"
   alias lld='lsd'
 
 #### DIR NAVIGATION
@@ -144,8 +265,7 @@ update-all() {
   alias gcm="git commit -m"
   alias gacmpush='git add .;git commit -m "updates";git push'
   alias gremote='git remote -v'
-  # alias gremote='git remote get-url --all $(git remote)'
-  # alias grpl="git reset HEAD --hard; git pull"
+  alias gundocm='git reset --soft HEAD~'
   alias glog='git log --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset" --date=format:"%m-%d-%Y %H:%M" --abbrev-commit'
   gitaddupstream () {
     [[ -z "$1" ]] && echo "specify URL or remote as param1" && return 1
@@ -173,32 +293,14 @@ update-all() {
   }
   alias gsyncupstream='gitsyncupstream'
 
-#### SYSTEMD
-  alias svc-stat='sudo systemctl status'
-  alias svc-status='svc-stat'
-  alias svc-start='sudo systemctl start'
-  alias svc-stop='sudo systemctl stop'
-  alias svc-enable='sudo systemctl enable'
-  alias svc-status='sudo systemctl status'
-  alias svc-disable='sudo systemctl disable'
-  alias svc-daemon='sudo systemctl daemon-reload'
-  alias svc-journal='sudo SYSTEMD_LESS=FRXMK journalctl -u'
-  alias svc-edit='sudo systemctl edit'
-  alias svc-editfull='sudo systemctl edit --full'
-
 #### NETWORK
   # LOCAL IP ADDRESS
-  alias ifconfig-lan='ifconfig | grep "inet addr:" | grep -v "127.0.0.1" | cut -d: -f2 | cut -d" " -f 1'
   alias ifconfig-local='ifconfig-lan'
   alias ifconfig-private='ifconfig-lan'
   # IP ADDRESS - PUBLIC INTERNET
   alias ifconfig-ext='curl -s ipinfo.io/ip'
   alias ifconfig-pub='ifconfig-ext'
   alias ifconfig-public='ifconfig-ext'
-  # SHOW ALL ACTIVE ETHNET CARDS & IP ADDRESS INFO
-  alias ifconfig-active="ifconfig -a | grep 'eth0' -A 6; ifconfig -a | grep 'wlan0' -A 6"
-  # NETSTAT
-  alias ifconfig-ports='netstat -ntlp | grep LISTEN'
 
 #### DISK / MEMORY USAGE
   # TOP TEN LARGEST FILES IN CURRENT DIRECTORY
@@ -214,19 +316,26 @@ update-all() {
   # DISPLAY OCTAL FILE PERMISSIONS
   alias octalmode='stat -c "%a %n" '
   alias getoctal='octalmode'
+  alias fileoctal='octalmode'
   # MAKE DIR ANYWHERE AND TAKE OWNERSHIP
   mkdirsys() {
+    [[ -z "$1" ]] && echo "\$1 = dir to create (owned by $USER), \$2 = group owner (OPTIONAL: default $defaultGroupOwner)" && return
+    [[ "$1" == "-h" ]] && echo "\$1 = dir to create (owned by $USER), \$2 (optional) sets group owner" && return
     if [[ "$2" ]]; then
       grpOwner="$2"
     else
-      grpOwner="$USER"
+      grpOwner="$defaultGroupOwner"
     fi
     sudo mkdir -p "$1"
     sudo chown ${USER:=$(/usr/bin/id -run)}:$grpOwner $1
     sudo chmod g+srwx "$1"
   }
-  find-broken() {
-    eval $(dircolors)
+  alias mkdir-sys='mkdirsys'
+  alias mksysdir='mkdirsys'
+  findbroken() {
+    if which dircolors 2&> /dev/null; then
+      eval $(dircolors)
+    fi
     if [[ ! "$1" ]]; then
       searchDir="."
     else
@@ -234,16 +343,12 @@ update-all() {
     fi
     find -L "$searchDir" -type l -exec ls -lF --color=yes '{}' +
   }
+  alias find-broken='findbroken'
 
-#### GENERAL ALIASES
-  # DISPLAY UNATTENDED UPDATE LOG
-  alias showuulog='cat /var/log/unattended-upgrades/unattended-upgrades.log'
-  alias showupdatelog='cat /var/log/unattended-upgrades/unattended-upgrades.log'
-  alias showrebootfiles='cat /var/run/reboot-required.pkgs'
-  alias showlivepatch='canonical-livepatch status --verbose'
+#### GENERAL ALISES
   # ENABLE SUDOING ALIASES
   alias sudo='sudo '
-  # RELOAD SHELL (invoke as a login shell)
+  # RELOAD SHELL (i.e. invoke as a login shell)
   alias reload="exec $SHELL -l"
   # OUTPUT CLARIFIERS
   alias mv='mv -v'
@@ -254,42 +359,27 @@ update-all() {
   alias ln='ln -v'
 
 #### HOST SETUP AND CONFIG
-  # SET TIMEZONE
-  alias settimezone="sudo timedatectl set-timezone "
-  # alias settimezone="sudo dpkg-reconfigure tzdata"
-  # UPDATE APT-KEY
-  alias getaptkey-goog='curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -'
-  alias getaptkey-docker='curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -'
   # MAKE SSH KEY
   alias make-key='ssh-keygen -t rsa -b 4096'
   # SEND SSH KEY
-  send-key-to-host() {
-    if [ "$1" == "-h" ]; then
-      echo -e "usage:  send-key-to-host REMOTESERVER"
-      echo -e "\n\t REMOTESERVER supports 'user@host' or 'HOST'"
-      echo -e "\t depending on username in use on local/remot HOST"
+  sendsshkey() {
+    if [ -z "$1" ] || [ "$1" == "-h" ]; then
+      echo -e "usage:  send-ssh-key REMOTESERVER"
+      echo -e "\n\t REMOTESERVER supports 'HOST' or 'USER@HOST'"
       return
     fi
     cat ~/.ssh/id_rsa.pub | ssh "$1" "mkdir -p ~/.ssh; cat >>  ~/.ssh/authorized_keys"
   }
-  # INSTALL SYSIS
-  alias install-sysis='bash -c "`curl -s -L https://raw.github.com/robertpeteuil/sysis/master/install.sh`"'
-  # INSTALL PIP
-  pip-installer () {
-    curl -s https://bootstrap.pypa.io/get-pip.py > get-pip.py
-    chmod +x get-pip.py
-    sudo -H python get-pip.py
-  }
-  alias install-pip='pip-installer'
+  alias send-ssh-key='sendsshkey'
 
 #### COLORIZATION
   # COLOR DIR / VDIR
-  if $(dir --color &> /dev/null); then
+  if $(dir --color &> /dev/null); then    # part of coreutils
     alias dir='dir --color'
   else
     alias dir='dir -G'
   fi
-  if $(vdir --color &> /dev/null); then
+  if $(vdir --color &> /dev/null); then   # part of coreutils
     alias vdir='vdir --color'
   else
     alias vdir='vdir -G'
@@ -298,4 +388,3 @@ update-all() {
   alias grep='grep --color=auto'
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
-

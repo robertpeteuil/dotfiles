@@ -3,10 +3,9 @@
 #   CLOUDRC - enabled cloud SDKs and aliases
 #
 #     This script is a component of dotfiles
-#       https://github.com/robertpeteuil/dotfile
+#       https://github.com/robertpeteuil/dotfiles
 #
 #     Robert Peteuil (c) 2018
-#
 
 
 cloudrcname=".cloudrc"
