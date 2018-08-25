@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+#   CLOUDRC - enabled cloud SDKs and aliases
+#
+#     This script is a component of dotfiles
+#       https://github.com/robertpeteuil/dotfile
+#
+#     Robert Peteuil (c) 2018
+#
+
+
+cloudrcname=".cloudrc"
+cloudrcnum="3.0.1"
+cloudrcdate="2018-08-23"
+
+
+###### FUNCTIONS
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+
+
+##### LOAD GLOBAL CLOUD CREDENTIALS
+sourceIf "$HOME/.cloud/.cloud_config"
+
+
+##### LOAD PROVIDER SPECIFIC SDK & ALIASES ON DEMAND
+
+# LOAD AWS SPECIFIC RC FILE
+cloud-init-aws () {
+  sourceIf "$HOME/.cloudrc_aws"
+}
+alias init-aws='cloud-init-aws'
+
+# LOAD GCP SPECIFIC RC FILE
+cloud-init-gcp () {
+  sourceIf "$HOME/.cloudrc_gcp"
+}
+alias init-gcp='cloud-init-gcp'
+
+# LOAD AZURE SPECIFIC RC FILE
+cloud-init-azure () {
+  sourceIf "$HOME/.cloudrc_azure"
+}
+alias init-azure='cloud-init-azure'
+
+# SERVERLESS CLOUD FUNCTION PACKAGE
+cloud-init-serverless () {
+  # tabtab source for serverless package
+  # uninstall by removing these lines or running `tabtab uninstall serverless`
+  # [ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.bash ] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.bash
+  sourceIf /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.bash
+  # tabtab source for sls package
+  # uninstall by removing these lines or running `tabtab uninstall sls`
+  # [ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash ] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash
+  sourceIf /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.bash
+}
+alias init-serverless='cloud-init-serverless'

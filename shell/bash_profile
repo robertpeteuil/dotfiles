@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#   BASH Profile
+#
+#     This script is a component of dotfiles
+#       https://github.com/robertpeteuil/dotfile
+#
+#     Robert Peteuil (c) 2018
+#
+
+profilename=".bash_profile"
+profilenum="2.0.2"
+profiledate="2018-01-22"
+
+
+if [ -f ~/.bashrc ]; then
+  . ~/.bashrc
+fi

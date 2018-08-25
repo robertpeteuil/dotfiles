@@ -1,0 +1,15 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+ 
+- link:
+    ~/.cloudrc:
+      path: cloud/cloudrc
+    ~/.cloudrc_aws:
+      path: cloud/cloudrc_aws
+    ~/.cloudrc_azure:
+      path: cloud/cloudrc_azure
+    ~/.cloudrc_gcp:
+      path: cloud/cloudrc_gcp

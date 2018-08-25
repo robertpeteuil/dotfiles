@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+#   CLOUDRC AZURE - enabled AZURE cloud SDKs and aliases
+#
+#     This script is a component of dotfiles
+#       https://github.com/robertpeteuil/dotfile
+#
+#     Robert Peteuil (c) 2018
+#
+
+
+cloudrcazurename=".cloudrc_azure"
+cloudrcazurenum="1.0.1"
+cloudrcazuredate="2018-08-23"
+
+echo "AZURE cloudrc sourced"
+
+
+###### FUNCTIONS
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+
+##### SOURCE AZURE SPECIFIC HELPERS & SET FUNCTIONS
+
+## SOURCE AZURE BASH HELPERS
+sourceIf "$HOME/lib/azure-cli/az.completion"
+sourceIf "/usr/local/bin/az.completion.sh"
+
+# LIST INSTANCES
+azure-list() {
+  az vm list -d --query "[].{ name: name, ResourceGroup: resourceGroup, MachineType: hardwareProfile.vmSize, FQDNS: fqdns, State: powerState}" -o=table
+}
+alias az-list='azure-list'
+
+# MOBILE FORMATTED LIST INSTANCES - NAME, GROUP, STATE
+azure-list-m() {
+  az vm list -d --query "[].{ name: name, ResourceGroup: resourceGroup, State: powerState}" -o=table
+}
+alias az-list-m='azure-list-m'
+
+# MOBILE FORMATTED LIST INSTANCES - NAME & FQDN
+azure-list-m2() {
+  az vm list -d --query "[].{ name: name, FQDNS: fqdns}" -o=table
+}
+alias az-list-m2='azure-list-m2'
+
+# LIST INSTANCES WITH LOCATION
+azure-list-loc() {
+  az vm list -d --query "[].{ name: name, ResourceGroup: resourceGroup, Location: location, FQDNS: fqdns, State: powerState}" -o=table
+}
+alias az-list-loc='azure-list-loc'
+
+# LIST RUNNING INSTANCES
+azure-list-r() {
+  az vm list -d --query "[?contains(powerState,'running')].{ name: name, ResourceGroup: resourceGroup, MachineType: hardwareProfile.vmSize, FQDNS: fqdns, PublicIP: publicIps}" -o=table
+}
+alias az-list-r='azure-list-r'
+
+
+# START INSTANCE
+az-start() {
+  if [[ -z "$2" ]] && [[ -n "$1" ]]; then
+    az vm start --ids $(az vm list -g "$1" --query "[].id" -o tsv)
+  elif [[ -n "$1" ]] && [[ -n "$2" ]]; then
+    az vm start -n "$1" -g "$2"
+  else
+    echo "One or Two Params Required:"
+    echo -e "\t \$1 = GROUP"
+    echo -e "\t \$1 = NAME, \$2 = GROUP"
+  fi
+}
+
+# STOP INSTANCE
+az-stop() {
+  if [[ -z "$2" ]] && [[ -n "$1" ]]; then
+    az vm deallocate --ids $(az vm list -g "$1" --query "[].id" -o tsv) --no-wait
+  elif [[ -n "$1" ]] && [[ -n "$2" ]]; then
+    az vm deallocate -n "$1" -g "$2"
+  else
+    echo "One or Two Params Required:"
+    echo -e "\t \$1 = GROUP"
+    echo -e "\t \$1 = NAME, \$2 = GROUP"
+  fi
+}
+
+
+if [[ -n "$AZURE_TENANT_ID" ]]; then
+  # GET TOKEN USING AZURE CREDS IN ENV VARS
+  azure-get-token() {
+    AZURE_TOKEN=$(curl -s --header "accept: application/json" --request POST "https://login.windows.net/$AZURE_TENANT_ID/oauth2/token" --data-urlencode "resource=https://management.core.windows.net/" --data-urlencode "client_id=$AZURE_CLIENT_ID" --data-urlencode "grant_type=client_credentials" --data-urlencode "client_secret=$AZURE_CLIENT_SECRET" | jq -r '.access_token')
+  }
+fi

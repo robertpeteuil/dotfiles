@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+
+#   CLOUDRC GCP - enabled GCP cloud SDKs and aliases
+#
+#     This script is a component of dotfiles
+#       https://github.com/robertpeteuil/dotfile
+#
+#     Robert Peteuil (c) 2018
+#
+
+
+cloudrcgcpname=".cloudrc_gcp"
+cloudrcgcpnum="1.0.1"
+cloudrcgcpdate="2018-08-23"
+
+echo "GCP cloudrc sourced"
+
+
+##### VARS
+GCP_DOCKER_LOGIN=""
+
+
+###### FUNCTIONS
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+
+
+##### SOURCE GCP SDKs
+sourceIf "$HOME/google-cloud-sdk/path.bash.inc"
+sourceIf "$HOME/google-cloud-sdk/completion.bash.inc"
+sourceIf "/usr/lib/google-cloud-sdk/completion.bash.inc"
+sourceIf "/usr/share/google-cloud-sdk/completion.bash.inc"
+
+
+##### GCP SPECIFIC FUNCTION
+
+# STANDALONE ALIASES
+alias gcp-list="gcloud compute instances list --format='table(name:sort=1, zone, machineType.machine_type().basename(), networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP, networkInterfaces[].accessConfigs[0].natIP.notnull().list():label=EXTERNAL_IP, status)'"
+# MOBILE FORMATTED LIST OF INSTANCES
+alias gcp-lists="gcloud compute instances list --format='table(name:sort=1, zone, networkInterfaces[].accessConfigs[0].natIP.notnull().list():label=EXTERNAL_IP, status)'"
+# LIST RUNNING INSTANCES
+alias gcp-listrun="gcloud compute instances list --filter STATUS=RUNNING --format='table(name:sort=1, zone, machineType.machine_type().basename(), networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP, networkInterfaces[].accessConfigs[0].natIP.notnull().list():label=EXTERNAL_IP)'"
+alias gcp-docker='gcloud docker'
+alias docker-gcp='gcloud docker'
+
+# CUSTOM FUNCTIONS AND RELATED ALIASES
+gcp-mount-shell () {
+  [[ -z "$1" ]] && echo "Specify \$1 as location to mount shell drive at" && return
+  GCP_MNT_DIR="${1/'~'/$HOME}"
+  get_cmd="gcloud alpha cloud-shell get-mount-command $GCP_MNT_DIR"
+  mnt_result=$(bash -c "$get_cmd" | awk '/sshfs/ {{print $0} if (getline == 1) {next; print $0}}')
+  # mnt_result=$(bash -c "$get_cmd" | grep -v "ERROR")
+  if [[ "$mnt_result" ]]; then
+    mnt_cmd_raw="${mnt_result//\'/}"
+    mnt_cmd=$(echo "$mnt_cmd_raw" | tr '\n' ' ')
+    mkdir -p "$GCP_MNT_DIR"
+    if $(bash -c "$mnt_cmd"); then
+      export GCP_MNT_DIR
+      echo "Gcp shell volume mounted at: $GCP_MNT_DIR"
+    else
+      echo "Mouting with sshfs failed"
+      unset GCP_MNT_DIR
+    fi
+  else
+    echo "Retrieving mount string from gcloud util failed"
+    unset GCP_MNT_DIR
+  fi
+}
+alias gcp-mount='gcp-mount-shell'
+
+gcp-unmount-shell () {
+  [[ -z "$GCP_MNT_DIR" ]] && echo "Gcp shell volume not mounted" && return
+  OS=$(uname -s)
+  if [ "$OS" == 'Linux' ]; then
+    if $(fusermount -u "$GCP_MNT_DIR"); then
+      echo "Sucessfully unmounted gcp shell volume"
+      unset GCP_MNT_DIR
+    fi
+  elif [ "$OS" == 'Darwin' ]; then
+    if $(umount "$GCP_MNT_DIR"); then
+      echo "Sucessfully unmounted gcp shell volume"
+      unset GCP_MNT_DIR
+    fi
+  fi
+}
+alias gcp-unmount='gcp-unmount-shell'
+
+# GCP-GET PROJECT ID
+gcp-get-project () {
+  [[ -z "$GCP_PROJECT_ID" ]] && GCP_PROJECT_ID=$(gcloud config list 2> /dev/null | awk '/^project/ {print $3}')
+}
+
+# GET-GCP-TOKEN
+gcp-get-token () {
+  GCP_TOKEN=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token" -H "Metadata-Flavor: Google")
+}
+
+# GCP-DOCKER-LOGIN
+docker-login-gcp () {
+  gcp-get-token
+  if [[ "$GCP_TOKEN" =~ access_token ]]; then
+    echo "login to gcp registry via gcp host - using token login"
+    docker login -u oauth2accesstoken -p "$GCP_TOKEN" https://gcr.io
+    [[ "$?" == 0 ]] && GCP_DOCKER_LOGIN="success" || GCP_DOCKER_LOGIN="failed"
+  elif [[ -n "${GCP_SVR_ACCT_KEY}" ]]; then
+    echo "login to gcp registry using key based login"
+    docker login -u _json_key -p "$(cat $GCP_SVR_ACCT_KEY)" https://gcr.io
+    [[ "$?" == 0 ]] && GCP_DOCKER_LOGIN="success" || GCP_DOCKER_LOGIN="failed"
+  else
+    echo -n "cannot login to gcp registry: no token or key - "
+    GCP_DOCKER_LOGIN="failed"
+  fi
+  [[ "$GCP_DOCKER_LOGIN" == "failed" ]] && echo "gcp-docker login failed" && return 1
+}
+alias dlogin-gcp='docker-login-gcp'
+
+# PUSH TO GCP IMAGE REPO
+docker-push-gcp () {
+  [[ -z "$1" ]] && echo "specify \$1 as image name to push" && return 1
+  gcp-get-project
+  [[ -z "$GCP_PROJECT_ID" ]] && echo "gcloud project not set, exiting..." && return 1
+  [[ "$GCP_DOCKER_LOGIN" == "failed" ]] && echo "cannot push to gcp-docker - login failed" && return 1
+  [[ "$GCP_DOCKER_LOGIN" != "success" ]] && d-login-gcp
+  if [[ "$GCP_DOCKER_LOGIN" == "success" ]]; then
+    # remove one repo prefix if exists, change to ## to remove all
+    image_name=${1#*/}
+    docker tag $1 "gcr.io/${GCP_PROJECT_ID}/$image_name"
+    docker push "gcr.io/${GCP_PROJECT_ID}/$image_name"
+    docker rmi "gcr.io/${GCP_PROJECT_ID}/$image_name"
+  fi
+}
+alias dpush-gcp='docker-push-gcp'
+
+gcp-start() {
+  if [[ -n "$1" ]] && [[ -n "$2" ]]; then
+    gcloud compute instances start "$1" --zone="$2"
+  else
+    echo "Two Params Required:"
+    echo -e "\t \$1 = NAME, \$2 = ZONE"
+  fi
+}
+gcp-stop() {
+  if [[ -n "$1" ]] && [[ -n "$2" ]]; then
+    gcloud compute instances stop "$1" --zone="$2"
+  else
+    echo "Two Params Required:"
+    echo -e "\t \$1 = NAME, \$2 = ZONE"
+  fi
+}
+gcp-ssh() {
+  if [[ -n "$1" ]] && [[ -n "$2" ]]; then
+    gcloud compute ssh "$1" --zone="$2" --ssh-key-file="~/.ssh/id_rsa" -- -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+  else
+    echo "Two Params Required:"
+    echo -e "\t \$1 = NAME, \$2 = ZONE"
+  fi
+}

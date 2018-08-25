@@ -1,0 +1,10 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
+ 
+- link:
+    ~/.pip:
+      path: development/pip
+      force: false

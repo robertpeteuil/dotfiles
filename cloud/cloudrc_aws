@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+#   CLOUDRC AWS - enabled AWS cloud SDKs and aliases
+#
+#     This script is a component of dotfiles
+#       https://github.com/robertpeteuil/dotfile
+#
+#     Robert Peteuil (c) 2018
+#
+
+
+cloudrcawsname=".cloudrc_aws"
+cloudrcawsnum="1.0.1"
+cloudrcawsdate="2018-08-23"
+
+echo "AWS cloudrc sourced"
+
+
+###### FUNCTIONS
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+
+
+##### SOURCE AWS SDKs
+if [ -x /usr/local/bin/aws ]; then
+  complete -C aws_completer aws
+fi
+
+## SET AWS SPECIFIC ALIASES
+  # LIST INSTANCES
+  alias aws-list="aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==\`Name\`].Value|[0],Placement.AvailabilityZone,InstanceType,PublicIpAddress,State.Name,InstanceLifecycle]' --output table"
+  # MOBILE FORMATTED LIST OF INSTANCES
+  alias aws-list-m="aws ec2 describe-instances --query 'Reservations[].Instances[].[Tags[?Key==\`Name\`].Value|[0],PublicIpAddress,State.Name]' --output table"
+  # LIST RUNNING INSTANCES
+  alias aws-list-r="aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' --query 'Reservations[].Instances[].[Tags[?Key==\`Name\`].Value|[0],Placement.AvailabilityZone,InstanceType,PrivateIpAddress,PublicIpAddress,InstanceLifecycle]' --output table"
