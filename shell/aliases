@@ -28,7 +28,7 @@ update-repos () {
   GIT_INST=$(check-git-installed)
   prev_dir=$(pwd)
   if [[ -e "$HOME/.dotfiles/.git" ]] && [[ -n $GIT_INST ]]; then
-    echo -e "${GREEN}Updating .configfile repo...${WHITE}"
+    echo -e "${GREEN}Updating .dotfiles repo...${WHITE}"
     cd "$HOME/.dotfiles"; git pull; cd "$prev_dir"
     GIT_UPDATE=True
   fi
