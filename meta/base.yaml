@@ -7,4 +7,5 @@
 - clean: ["~", "~/.config"]
  
 - shell:
-  - [git submodule update --init --recursive, Installing submodules] 
+  - [git submodule update --init --recursive, Installing submodules]
+  - [touch "~/.hushlogin", Configuring hush login mode]
