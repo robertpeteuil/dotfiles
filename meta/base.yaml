@@ -8,4 +8,4 @@
  
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
-  - [touch "~/.hushlogin", Configuring hush login mode]
+  - [touch "$HOME/.hushlogin", Configuring hush login mode]
