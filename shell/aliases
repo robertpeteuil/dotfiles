@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.0"
-aliasfiledate="2018-08-25"
+aliasfilenum="3.0.1"
+aliasfiledate="2018-08-26"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -94,21 +94,24 @@ case "$OS" in
     alias hiddenfiles-off='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
     alias hidefiles='hiddenfiles-off'
 
+    alias copylastcmd='fc -ln -1 | awk '\''{$1=$1}1'\'' ORS='\'''\'' | pbcopy'
+    alias copy-last-cmd='copylastcmd'
+    alias copy-previous-cmd='copylastcmd'
+    alias saycomplete="say 'Process complete.'"
+
     # set sub-strings for LS alias
-    if $(gls &> /dev/null); then  # gls installed, but not in path
+    if [[ -f '/usr/local/bin/gls' ]] || $(gls &> /dev/null); then   # GNU ls installed
       lscmd="gls"
       colorflag=" --color"
       versionparam="v"
       extraparam=" --group-directories-first"
-      if $(ls --color &> /dev/null); then    # gnu `ls` in path
-        # echo "using brew ls"  # DEBUG
+      if $(ls --color &> /dev/null); then    # GNU ls on path
         lscmd="ls"
         colorflag=" --color"
         versionparam="v"
         extraparam=" --group-directories-first"
       fi
-    else    # not in gnu 'ls', use macos `ls`
-      # echo "using macos native"  # DEBUG
+    else    # macOS native ls
       lscmd="ls"
       colorflag=" -G"
       versionparam="" # not supported
@@ -241,6 +244,11 @@ esac
     docker exec -it "$1" bash
   }
   alias dexec='dockerexec'
+  alias docker-login="echo 'logging into docker hub'; docker login -u $DOCKER_USER -p '$DOCKER_TOKEN'"
+  alias dlogin='docker-login'
+  alias docker-login-gitlab="echo 'logging into gitlab'; docker login registry.gitlab.com -u $GITLAB_USER -p '$GITLAB_TOKEN'"
+  alias dlogin-gl='docker-login-gitlab'
+  alias dlogout='docker logout'
 
 #### GIT
   if [[ -n $GIT_INST ]]; then
