@@ -12,7 +12,7 @@ Quickly and simply install settings, packages, aliases and functions on Linux, m
 $ curl iac.sh/dotfiles | sh
 ```
 
-For enhanced security, use `https` and verify the script's SHA checksum is `50580ef9f81113288eb869251804c538019bed66b875c146a65f53df5d9377de`.
+For enhanced security, use `https` and verify the script's SHA checksum is `dc4701d7eb9cd58a3717fce6cc13f687aa89c27d6ecb58ceeaa9d8e27129ccfe`.
 
 ``` bash
 # retrieve SHA of the script and verify it matches above listed SHA
