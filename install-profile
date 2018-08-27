@@ -12,12 +12,26 @@ PROFILES_DIR="profiles"
 DOTBOT_DIR="dotbot"
 DOTBOT_BIN="bin/dotbot"
 
+PRIVATE_DIR="private"
+
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-
+## INIT SUBMODULES
 cd "${BASE_DIR}"
 git submodule update --init --recursive --remote
 
+## INIT PRIVATE FILES REPO IF EXIST
+if [[ -d "${BASE_DIR}/${PRIVATE_DIR}/.git" ]]; then
+  echo "private repo present - updating"
+  cd "${BASE_DIR}/${PRIVATE_DIR}"
+  git remote update -p > /dev/null 2>&1
+  git merge --ff-only @{u} > /dev/null 2>&1
+  cd "${BASE_DIR}"
+  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}"
+elif $(git clone --quiet --depth 1 git@github.com:$USER/dotfiles-private.git "${BASE_DIR}/${PRIVATE_DIR}" 2> /dev/null); then
+  echo "private files cloned"
+  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}"
+fi
 
 while IFS= read -r config; do
     CONFIGS+=" ${config}"
