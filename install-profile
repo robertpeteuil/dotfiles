@@ -20,6 +20,13 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASE_DIR}"
 git submodule update --init --recursive --remote
 
+# READ SPECIFIED PROFILE
+while IFS= read -r config; do
+    CONFIGS+=" ${config}"
+done < "${META_DIR}/${PROFILES_DIR}/$1"
+
+shift
+
 ## INIT PRIVATE FILES REPO IF EXIST
 if [[ -d "${BASE_DIR}/${PRIVATE_DIR}/.git" ]]; then
   echo "private repo present - updating"
@@ -33,13 +40,7 @@ elif $(git clone --quiet --depth 1 git@github.com:$USER/dotfiles-private.git "${
   "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}"
 fi
 
-while IFS= read -r config; do
-    CONFIGS+=" ${config}"
-done < "${META_DIR}/${PROFILES_DIR}/$1"
-
-shift
-
-## EXECUTE BASE CONFIGURATION
+## RUN DOTBOT FOR BASE CONFIGURATION
 "${BASE_DIR}/${META_DIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASE_DIR}" --plugin-dir "${META_DIR}/dotbot-aptget-sudo/aptget.py" -c "${META_DIR}/${BASE_CONFIG}${CONFIG_SUFFIX}"
 
 ## RUN DOTBOT FOR EACH PROFILE SPECIFIED
