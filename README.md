@@ -12,12 +12,13 @@ Quickly and simply install settings, packages, aliases and functions on Linux, m
 $ curl iac.sh/dotfiles | sh
 ```
 
-For enhanced security, use `https` and verify the script's SHA checksum is `dc4701d7eb9cd58a3717fce6cc13f687aa89c27d6ecb58ceeaa9d8e27129ccfe`.
+For enhanced security use `https` and verify the SHA before running installer
 
 ``` bash
-# retrieve SHA of the script and verify it matches above listed SHA
-$ curl https://iac.sh/dotfiles | shasum -a 256
-# after verifying the SHA, run the installer over https
+# verify SHA = dc4701d7eb9cd58a3717fce6cc13f687aa89c27d6ecb58ceeaa9d8e27129ccfe
+curl https://iac.sh/dotfiles | shasum -a 256
+
+# run installer
 $ curl https://iac.sh/dotfiles | sh
 ```
 
