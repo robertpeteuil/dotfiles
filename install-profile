@@ -27,10 +27,10 @@ if [[ -d "${BASE_DIR}/${PRIVATE_DIR}/.git" ]]; then
   git remote update -p > /dev/null 2>&1
   git merge --ff-only @{u} > /dev/null 2>&1
   cd "${BASE_DIR}"
-  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}"
+  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${META_DIR}/${CONFIG_DIR}"
 elif $(git clone --quiet --depth 1 git@github.com:$USER/dotfiles-private.git "${BASE_DIR}/${PRIVATE_DIR}" 2> /dev/null); then
   echo "private files cloned"
-  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${BASE_DIR}/${META_DIR}/${CONFIG_DIR}"
+  "${BASE_DIR}/${PRIVATE_DIR}/setup" "${BASE_DIR}" "${PRIVATE_DIR}" "${META_DIR}/${CONFIG_DIR}"
 fi
 
 # READ SPECIFIED PROFILE
