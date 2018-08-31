@@ -1,0 +1,2 @@
+- shell:
+  - [touch "$HOME/.hushlogin", Configuring hush login mode]
