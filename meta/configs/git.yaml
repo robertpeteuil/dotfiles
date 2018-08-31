@@ -6,8 +6,8 @@
  
 - link:
     ~/.gitconfig:
-      path: development/git/gitconfig
+      path: dev/git/gitconfig
     ~/.gitignore_global:
-      path: development/git/gitignore_global
+      path: dev/git/gitignore_global
     ~/.hgignore_global:
-      path: development/git/hgignore_global
+      path: dev/git/hgignore_global

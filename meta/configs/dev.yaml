@@ -6,5 +6,5 @@
  
 - link:
     ~/.pip:
-      path: development/pip
+      path: dev/pip
       force: false
