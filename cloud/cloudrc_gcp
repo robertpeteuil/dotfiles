@@ -9,8 +9,8 @@
 
 
 cloudrcgcpname=".cloudrc_gcp"
-cloudrcgcpnum="1.0.1"
-cloudrcgcpdate="2018-08-23"
+cloudrcgcpnum="1.0.2"
+cloudrcgcpdate="2018-09-02"
 
 echo "GCP cloudrc sourced"
 
@@ -42,10 +42,18 @@ alias gcp-list="gcloud compute instances list --format='table(name:sort=1, zone,
 alias gcp-lists="gcloud compute instances list --format='table(name:sort=1, zone, networkInterfaces[].accessConfigs[0].natIP.notnull().list():label=EXTERNAL_IP, status)'"
 # LIST RUNNING INSTANCES
 alias gcp-listrun="gcloud compute instances list --filter STATUS=RUNNING --format='table(name:sort=1, zone, machineType.machine_type().basename(), networkInterfaces[].networkIP.notnull().list():label=INTERNAL_IP, networkInterfaces[].accessConfigs[0].natIP.notnull().list():label=EXTERNAL_IP)'"
+
 alias gcp-docker='gcloud docker'
 alias docker-gcp='gcloud docker'
 
-# CUSTOM FUNCTIONS AND RELATED ALIASES
+# FILTERED LIST OF GCP COMPUTE IMAGES
+gcp-search-images () {
+  [[ -z "$1" ]] && echo "\$1 should specify an image family to search (wildcards supported)" && return
+  gcloud compute images list --filter="family:$1"
+}
+alias gcp-images='gcp-search-images'
+
+# MOUNT & UNMOUNT GCP SHELL VOLUME
 gcp-mount-shell () {
   [[ -z "$1" ]] && echo "Specify \$1 as location to mount shell drive at" && return
   GCP_MNT_DIR="${1/'~'/$HOME}"
