@@ -9,8 +9,8 @@
 
 
 cloudrcname=".cloudrc"
-cloudrcnum="3.0.1"
-cloudrcdate="2018-08-23"
+cloudrcnum="3.0.2"
+cloudrcdate="2018-09-02"
 
 
 ###### FUNCTIONS
@@ -32,18 +32,21 @@ cloud-init-aws () {
   sourceIf "$HOME/.cloudrc_aws"
 }
 alias init-aws='cloud-init-aws'
+alias aws-init='cloud-init-aws'
 
 # LOAD GCP SPECIFIC RC FILE
 cloud-init-gcp () {
   sourceIf "$HOME/.cloudrc_gcp"
 }
 alias init-gcp='cloud-init-gcp'
+alias gcp-init='cloud-init-gcp'
 
 # LOAD AZURE SPECIFIC RC FILE
 cloud-init-azure () {
   sourceIf "$HOME/.cloudrc_azure"
 }
 alias init-azure='cloud-init-azure'
+alias azure-init='cloud-init-azure'
 
 # SERVERLESS CLOUD FUNCTION PACKAGE
 cloud-init-serverless () {
