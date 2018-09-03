@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.1"
-aliasfiledate="2018-08-26"
+aliasfilenum="3.0.2"
+aliasfiledate="2018-09-03"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -353,7 +353,7 @@ esac
   }
   alias find-broken='findbroken'
 
-#### GENERAL ALISES
+#### GENERAL ALIASES
   # ENABLE SUDOING ALIASES
   alias sudo='sudo '
   # RELOAD SHELL (i.e. invoke as a login shell)
@@ -365,6 +365,8 @@ esac
   alias mkdir='mkdir -p'
   alias df='df -h'
   alias ln='ln -v'
+  # SSH WITHOUT CHECKING HOST KEYS
+  alias sshnc='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 
 #### HOST SETUP AND CONFIG
   # MAKE SSH KEY
