@@ -9,7 +9,7 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.2"
+aliasfilenum="3.0.3"
 aliasfiledate="2018-09-03"
 
 # OS SPECIFIC ALIASES
@@ -365,10 +365,14 @@ esac
   alias mkdir='mkdir -p'
   alias df='df -h'
   alias ln='ln -v'
-  # SSH WITHOUT CHECKING HOST KEYS
-  alias sshnc='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 
-#### HOST SETUP AND CONFIG
+#### SSH RELATED ALIASES
+  # SSH with No host key Checking
+  alias sshnc='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+  # SSH with No Agent
+  alias sshna='SSH_AUTH_SOCK= ssh'
+  # SSH with No Agent & no host key Checking
+  alias sshnac='SSH_AUTH_SOCK= sshnc'
   # MAKE SSH KEY
   alias make-key='ssh-keygen -t rsa -b 4096'
   # SEND SSH KEY
