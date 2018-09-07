@@ -15,7 +15,7 @@ $ curl iac.sh/dotfiles | sh
 For enhanced security use `https` and verify the SHA before running installer
 
 ``` bash
-# verify SHA = dc4701d7eb9cd58a3717fce6cc13f687aa89c27d6ecb58ceeaa9d8e27129ccfe
+# verify SHA = 727dbe8038b2a4da5739a41cfacf918de1b8d24caa2b6774a9f1965527827531
 curl https://iac.sh/dotfiles | shasum -a 256
 
 # run installer
