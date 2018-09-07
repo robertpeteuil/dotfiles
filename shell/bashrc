@@ -9,7 +9,7 @@
 
 
 bashconfigname=".bashrc"
-bashconfignum="3.0.1"
+bashconfignum="3.0.2"
 bashconfigdate="2018-09-07"
 
 # EXIT IF NOT RUNNING INTERACTIVELY
@@ -198,11 +198,13 @@ if [ "$OS" == 'Linux' ]; then
   # IF BREW INSTALLED ADD PATHS
   if $(brew --prefix &> /dev/null); then
     if [ -d ~/.linuxbrew ]; then
-      PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
+      pathIfPre "$HOME/.linuxbrew/bin"
+      pathIfPre "$HOME/.linuxbrew/sbin"
       export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
       export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
     elif [ -d /home/linuxbrew/.linuxbrew ]; then
-      PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+      pathIfPre "/home/linuxbrew/.linuxbrew/bin"
+      pathIfPre "/home/linuxbrew/.linuxbrew/sbin"
       export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"
       export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
     fi
