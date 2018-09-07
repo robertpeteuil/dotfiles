@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.3"
-aliasfiledate="2018-09-03"
+aliasfilenum="3.0.4"
+aliasfiledate="2018-09-07"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -158,6 +158,13 @@ case "$OS" in
         fi
       else
         echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
+      fi
+      if $(brew --prefix &> /dev/null); then
+        echo -e "${GREEN}Updating via brew...${WHITE}"
+        brew update && brew upgrade
+        if [[ "$1" == "clean" ]]; then
+          brew cleanup && brew cask cleanup 2> /dev/null
+        fi
       fi
       if [[ $GIT_UPDATE ]]; then
         update-repos
