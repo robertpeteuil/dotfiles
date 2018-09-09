@@ -196,18 +196,16 @@ if [ "$OS" == 'Linux' ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   fi
   # IF BREW INSTALLED ADD PATHS
-  if $(brew --prefix &> /dev/null); then
-    if [ -d ~/.linuxbrew ]; then
-      pathIfPre "$HOME/.linuxbrew/bin"
-      pathIfPre "$HOME/.linuxbrew/sbin"
-      export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-      export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-    elif [ -d /home/linuxbrew/.linuxbrew ]; then
-      pathIfPre "/home/linuxbrew/.linuxbrew/bin"
-      pathIfPre "/home/linuxbrew/.linuxbrew/sbin"
-      export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"
-      export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
-    fi
+  if [ -d ~/.linuxbrew ]; then
+    pathIfPre "$HOME/.linuxbrew/bin"
+    pathIfPre "$HOME/.linuxbrew/sbin"
+    export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
+    export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+  elif [ -d /home/linuxbrew/.linuxbrew ]; then
+    pathIfPre "/home/linuxbrew/.linuxbrew/bin"
+    pathIfPre "/home/linuxbrew/.linuxbrew/sbin"
+    export MANPATH="/home/linuxbrew/.linuxbrew/share/man:$MANPATH"
+    export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:$INFOPATH"
   fi
   if ! shopt -oq posix; then
     sourceIf "/usr/share/bash-completion/bash_completion"
