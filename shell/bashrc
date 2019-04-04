@@ -5,12 +5,12 @@
 #     This script is a component of dotfiles
 #       https://github.com/robertpeteuil/dotfiles
 #
-#     Robert Peteuil (c) 2018
+#     Robert Peteuil (c) 2019
 
 
 bashconfigname=".bashrc"
-bashconfignum="3.0.3"
-bashconfigdate="2018-12-22"
+bashconfignum="3.0.4"
+bashconfigdate="2019-04-04"
 
 # EXIT IF NOT RUNNING INTERACTIVELY
 case $- in
@@ -225,6 +225,6 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
 fi
 
 ###### SOURCE FILES
-sourceIf "$HOME/.bashrc_pers"
 sourceIf "$HOME/.cloudrc"
+sourceIf "$HOME/.bashrc_pers"
 sourceIf "$HOME/.aliases"
