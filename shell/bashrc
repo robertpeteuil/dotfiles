@@ -9,8 +9,8 @@
 
 
 bashconfigname=".bashrc"
-bashconfignum="3.0.4"
-bashconfigdate="2019-04-04"
+bashconfignum="3.0.5"
+bashconfigdate="2019-06-10"
 
 # EXIT IF NOT RUNNING INTERACTIVELY
 case $- in
@@ -177,6 +177,13 @@ if [ "$OS" == 'Darwin' ]; then
   # ENABLE BREW - IF INSTALLED
   if $(brew --prefix &> /dev/null); then
     BrewPrefix=$(brew --prefix)
+    # copied from https://github.com/scop/bash-completion/bash_completion
+    # Work Around for scripts using bash_completion 2 syntax
+    _have() {
+        # Completions for system administrator commands are installed as well in
+        # case completion is attempted via `sudo command ...'.
+        PATH=$PATH:/usr/sbin:/sbin:/usr/local/sbin type $1 &>/dev/null
+    }
     sourceIf "${BrewPrefix}/etc/bash_completion"    # enable brew bash completion
   fi
   # Move GPG2 to beginning of path
