@@ -5,12 +5,12 @@
 #     This script is a component of dotfiles
 #       https://github.com/robertpeteuil/dotfiles
 #
-#     Robert Peteuil (c) 2018
+#     Robert Peteuil (c) 2019
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.4"
-aliasfiledate="2018-09-07"
+aliasfilenum="3.0.5"
+aliasfiledate="2019-07-22"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -297,7 +297,7 @@ esac
     fi
     updefined=$(git remote)
     if [[ ! "$updefined" =~ upstream ]]; then
-      echo "Upstream Repo not Configured - use 'gitaddup' alias to add it"
+      echo "Upstream Repo not Configured - use 'gaddupstream' alias to add it"
       return 1
     else
       git fetch upstream
