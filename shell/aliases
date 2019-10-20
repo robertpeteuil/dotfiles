@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.5"
-aliasfiledate="2019-07-22"
+aliasfilenum="3.0.6"
+aliasfiledate="2019-10-20"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -248,7 +248,7 @@ esac
   alias d-ip='dockerip'
   dockerexec () {
     [[ -z "$1" ]] && echo "specify name of container as \$1" && return 1
-    docker exec -it "$1" bash
+    docker exec -it "$1" /bin/sh
   }
   alias dexec='dockerexec'
   alias docker-login="echo 'logging into docker hub'; docker login -u $DOCKER_USER -p '$DOCKER_TOKEN'"
