@@ -5,12 +5,12 @@
 #     This script is a component of dotfiles
 #       https://github.com/robertpeteuil/dotfiles
 #
-#     Robert Peteuil (c) 2019
+#     Robert Peteuil (c) 2020
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.6"
-aliasfiledate="2019-10-20"
+aliasfilenum="3.0.7"
+aliasfiledate="2020-01-15"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -251,7 +251,7 @@ esac
     docker exec -it "$1" /bin/sh
   }
   alias dexec='dockerexec'
-  alias docker-login="echo 'logging into docker hub'; docker login -u $DOCKER_USER -p '$DOCKER_TOKEN'"
+  alias docker-login="echo 'logging into docker hub'; echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin"
   alias dlogin='docker-login'
   alias docker-login-gitlab="echo 'logging into gitlab'; docker login registry.gitlab.com -u $GITLAB_USER -p '$GITLAB_TOKEN'"
   alias dlogin-gl='docker-login-gitlab'
