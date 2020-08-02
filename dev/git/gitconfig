@@ -41,3 +41,5 @@
   assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 [pull]
   ff = only
+[url "git@github.com:"]
+  insteadOf = https://github.com/
