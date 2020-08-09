@@ -11,3 +11,5 @@
       path: dev/git/gitignore_global
     ~/.hgignore_global:
       path: dev/git/hgignore_global
+    ~/.gitconfig_ssh:
+      path: dev/git/gitconfig_ssh

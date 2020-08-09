@@ -43,3 +43,9 @@
   ff = only
 [url "git@github.com:"]
   insteadOf = https://github.com/
+# use ssh for all repositories inside $HOME/Versioned
+[includeIf "gitdir:~/Versioned/"]
+  path = ~/.gitconfig_ssh
+# use ssh for all repositories inside $HOME/go
+[includeIf "gitdir:~/go/"]
+  path = ~/.gitconfig_ssh
