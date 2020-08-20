@@ -5,12 +5,12 @@
 #     This script is a component of dotfiles
 #       https://github.com/robertpeteuil/dotfiles
 #
-#     Robert Peteuil (c) 2019
+#     Robert Peteuil (c) 2020
 
 
 bashconfigname=".bashrc"
-bashconfignum="3.0.5"
-bashconfigdate="2019-06-10"
+bashconfignum="3.0.6"
+bashconfigdate="2020-08-19"
 
 # EXIT IF NOT RUNNING INTERACTIVELY
 case $- in
@@ -67,6 +67,7 @@ pathIf "/usr/local/bin"
 pathIf "/usr/local/sbin"
 pathIf "$HOME/bin"
 pathIf "$HOME/go/bin"
+pathIf "/usr/local/go/bin"
 pathIfPre "$HOME/.local/bin"
 
 ###### CHECK FOR REBOOT REQUIRED
