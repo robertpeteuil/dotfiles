@@ -5,12 +5,12 @@
 #     This script is a component of dotfiles
 #       https://github.com/robertpeteuil/dotfiles
 #
-#     Robert Peteuil (c) 2020
+#     Robert Peteuil (c) 2021
 
 
 bashconfigname=".bashrc"
-bashconfignum="3.0.6"
-bashconfigdate="2020-08-19"
+bashconfignum="3.0.7"
+bashconfigdate="2021-01-14"
 
 # EXIT IF NOT RUNNING INTERACTIVELY
 case $- in
@@ -236,3 +236,4 @@ fi
 sourceIf "$HOME/.cloudrc"
 sourceIf "$HOME/.bashrc_pers"
 sourceIf "$HOME/.aliases"
+sourceIf "$HOME/.localrc"
