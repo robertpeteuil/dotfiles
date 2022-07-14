@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.0.7"
-aliasfiledate="2020-01-15"
+aliasfilenum="3.1.0"
+aliasfiledate="2022-07-13"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -100,7 +100,7 @@ case "$OS" in
     alias saycomplete="say 'Process complete.'"
 
     # set sub-strings for LS alias
-    if [[ -f '/usr/local/bin/gls' ]] || $(gls &> /dev/null); then   # GNU ls installed
+    if [[ -f '/usr/local/bin/gls' ]] || [[ -f '/opt/homebrew/opt/coreutils/libexec/gnubin/ls' ]] || $(gls &> /dev/null); then   # GNU ls installed
       lscmd="gls"
       colorflag=" --color"
       versionparam="v"
