@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.1.0"
-aliasfiledate="2022-07-13"
+aliasfilenum="3.1.1"
+aliasfiledate="2022-07-24"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -206,10 +206,12 @@ esac
   # ls - normal with colors, symbols and readable numbers
   alias ls="${lscmd}${colorflag} -Fh"
   # ls - all files
-  alias lsa="${lscmd} -laFh${versionparam}${colorflag}${extraparam}"
+  # alias lsa="${lscmd} -laFh${versionparam}${colorflag}${extraparam}"
+  alias lsa="${lscmd} -laFh${colorflag}"
   alias ll='lsa'
   # ls - hidden files
-  alias lsh="${lscmd} -laFhd${versionparam}${colorflag}${extraparam} .*"
+  # alias lsh="${lscmd} -laFhd${versionparam}${colorflag}${extraparam} .*"
+  alias lsh="${lscmd} -laFhd${colorflag} .*"
   # ls - directories
   alias lsd="${lscmd}${colorflag} -laFh ${colorflag} | grep --color=never '^d'"
   alias lld='lsd'
