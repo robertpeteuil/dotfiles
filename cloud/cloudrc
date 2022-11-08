@@ -9,8 +9,8 @@
 
 
 cloudrcname=".cloudrc"
-cloudrcnum="3.0.2"
-cloudrcdate="2018-09-02"
+cloudrcnum="4.0.0"
+cloudrcdate="2022-09-15"
 
 
 ###### FUNCTIONS
@@ -22,7 +22,7 @@ sourceIf () {
 
 
 ##### LOAD GLOBAL CLOUD CREDENTIALS
-sourceIf "$HOME/.cloud/.cloud_config"
+# sourceIf "$HOME/.cloud/.cloud_config"
 
 
 ##### LOAD PROVIDER SPECIFIC SDK & ALIASES ON DEMAND
