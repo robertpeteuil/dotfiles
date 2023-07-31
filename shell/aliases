@@ -100,7 +100,13 @@ case "$OS" in
     alias saycomplete="say 'Process complete.'"
 
     # set sub-strings for LS alias
-    if [[ -f '/usr/local/bin/gls' ]] || [[ -f '/opt/homebrew/opt/coreutils/libexec/gnubin/ls' ]] || $(gls &> /dev/null); then   # GNU ls installed
+    if $(ls --color &> /dev/null); then    # GNU ls on path
+      lscmd="ls"
+      colorflag=" --color"
+      versionparam="v"
+      extraparam=" --group-directories-first"
+    # fi
+    elif [[ -f '/usr/local/bin/gls' ]] || [[ -f '/opt/homebrew/opt/coreutils/libexec/gnubin/ls' ]] || $(gls &> /dev/null); then   # GNU ls installed
       lscmd="gls"
       colorflag=" --color"
       versionparam="v"
@@ -206,8 +212,8 @@ esac
   # ls - normal with colors, symbols and readable numbers
   alias ls="${lscmd}${colorflag} -Fh"
   # ls - all files
-  # alias lsa="${lscmd} -laFh${versionparam}${colorflag}${extraparam}"
-  alias lsa="${lscmd} -laFh${colorflag}"
+  alias lsa="${lscmd} -laFh${versionparam}${colorflag}${extraparam}"
+  # alias lsa="${lscmd} -laFh${colorflag}"
   alias ll='lsa'
   # ls - hidden files
   # alias lsh="${lscmd} -laFhd${versionparam}${colorflag}${extraparam} .*"
