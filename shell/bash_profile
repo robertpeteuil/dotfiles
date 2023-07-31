@@ -9,10 +9,25 @@
 
 
 profilename=".bash_profile"
-profilenum="3.0.0"
-profiledate="2018-08-25"
+profilenum="3.1.0"
+profiledate="2021-11-27"
+
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+pathIf () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$PATH:$1"
+  fi
+}
 
 
 if [ -f ~/.bashrc ]; then
   . ~/.bashrc
 fi
+
+pathIf "$HOME/go/bin"
+pathIf "/opt/homebrew/bin"
+sourceIf "$HOME/.localrc"
