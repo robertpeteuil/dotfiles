@@ -177,7 +177,7 @@ fi
 if [ "$OS" == 'Darwin' ]; then
   # ENABLE BREW - IF INSTALLED
   if $(brew --prefix &> /dev/null); then
-    BrewPrefix=$(brew --prefix)
+    BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
     # copied from https://github.com/scop/bash-completion/bash_completion
     # Work Around for scripts using bash_completion 2 syntax
     _have() {
@@ -224,8 +224,6 @@ if [ "$OS" == 'Linux' ]; then
 fi
 
 unset color_enabled
-
-export GOPATH="${HOME}/go"
 
 GRC=$(which grc 2>/dev/null)
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
