@@ -9,8 +9,8 @@
 
 
 aliasfilename=".aliases"
-aliasfilenum="3.2.1"
-aliasfiledate="2023-07-31"
+aliasfilenum="3.2.2"
+aliasfiledate="2024-10-21"
 
 # OS SPECIFIC ALIASES
 OS=$(uname -s)
@@ -68,6 +68,11 @@ case "$OS" in
       # fi
       if [[ $GIT_UPDATE ]]; then
         update-repos
+      fi
+      # vscode extension updates
+      if which code &> /dev/null; then
+        echo -e "${GREEN}Updating VSCode Extensions...${WHITE}"
+        code --update-extensions
       fi
       }
 
