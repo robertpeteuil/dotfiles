@@ -1,0 +1,229 @@
+#!/bin/bash
+# cspell: disable
+
+##  BASHRC
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+
+###### VARS
+export DOTFILES="$HOME/.dotfiles"
+OS=$(uname -s)
+## prompt vars
+# unset prompt_style    # typical-style prompt
+# prompt_style="GIT"    # 2-line prompt, displays info for repo dirs
+# prompt_style="DEMO"   # prompt for screen-caps, displays string set in $DEMOHOST var
+prompt_style="GIT"
+DEMOHOST="Host"         # required if prompt_style="DEMO"
+
+
+###### EXITS 
+## IF NOT INTERACTIVE
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+## EXIT IF NOT BASH
+if [ -z "$BASH_VERSION" ]; then
+  export PATH
+  # shellcheck disable=SC2317
+  return &> /dev/null || exit
+fi
+## REBOOT CHECKS
+if [[ "$OS" == "Linux" ]] && [[ -f /var/run/reboot-required ]]; then
+  echo "*** System restart required ****"
+fi
+
+
+###### FUNCTIONS
+# shellcheck disable=SC2154
+sourceIf () {
+  if [ -e "$1" ]; then
+  # shellcheck disable=SC1090,SC1091
+    . "$1"
+  fi
+}
+pathIf () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$PATH:$1"
+  fi
+}
+pathIfPre () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$1:$PATH"
+  fi
+}
+
+
+###### PATHS
+pathIf "/opt/homebrew/bin"
+pathIf "/opt/homebrew/sbin"
+pathIf "/usr/local/bin"
+pathIf "/usr/local/sbin"
+pathIf "$HOME/bin"
+pathIf "$HOME/go/bin"
+pathIf "/usr/local/go/bin"
+pathIfPre "$HOME/.local/bin"
+
+
+###### BASH CONFIGURATION
+# don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+# shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# SET BASH SCRIPT TRACE PROMPT
+export PS4='$LINENO + '
+
+# SET FILE DEFAULT MODE
+umask 0002
+
+
+###### DEFINE COLOR AND PROMPT VARS
+# DETERMINE COLOR CAPABILITY
+# if [ -x /usr/bin/tput ] && $(tput setaf 1 &> /dev/null); then
+if [ -x /usr/bin/tput ] && tput setaf 1 &> /dev/null; then
+  color_enabled=yes
+fi
+
+case "$TERM" in
+ xterm*) color_enabled=yes;;
+ ansi) color_enabled=yes;;
+ vt102) color_enabled=yes;;
+ linux) color_enabled=yes;;
+esac
+
+# SET PROMPT ITEMS
+ESCON="\["
+ESCOFF="\]"
+# shellcheck disable=SC2034
+P_TIME="\@"
+P_HOSTNAME="\h"
+# shellcheck disable=SC2034
+P_USER="\u"
+P_DIR="\w"
+P_DIR_SM="\W"
+P_SYMBOL="\$ "
+
+# SET COLOR VARS
+# shellcheck disable=SC2034
+if [ "$color_enabled" = yes ]; then
+  COLOR_RESET="\033[0m"
+  BLUE="\033[1;34m"
+  WHITE="\033[1;37m"
+  RED="\033[1;31m"
+  GREEN="\033[0;32m"
+  YELLOW="\033[0;33m"
+  CYAN="\033[0;36m"
+
+  PBLUE="${ESCON}${BLUE}${ESCOFF}"
+  PWHITE="${ESCON}${COLOR_RESET}${ESCOFF}"
+  PGREEN="${ESCON}${GREEN}${ESCOFF}"
+  PRED="${ESCON}${RED}${ESCOFF}"
+  PYELLOW="${ESCON}${YELLOW}${ESCOFF}"
+  PCYAN="${ESCON}${CYAN}${ESCOFF}"
+fi
+
+if [[ $TERM == "linux" ]]; then
+  PWHITE="${ESCON}${WHITE}${ESCOFF}"
+fi
+
+
+###### PROMPT
+# shellcheck disable=SC2034
+if [[ $prompt_style == "GIT" ]] && [ -e ~/.bash-git-prompt/gitprompt.sh ]; then
+  export PROMPT_COMMAND='echo -ne "\033]1;"$(hostname -s)"\007"'
+  # GIT_PROMPT_SHOW_UNTRACKED_FILES=no
+  GIT_PROMPT_IGNORE_SUBMODULES=1
+  GIT_PROMPT_THEME_FILE=~/.bash-git-prompt/custom_config.sh
+  # shellcheck disable=SC1090
+  . ~/.bash-git-prompt/gitprompt.sh
+elif [[ $prompt_style == "DEMO" ]]; then
+  export PROMPT_COMMAND='echo -ne "\033]1;${DEMOHOST}\007"'
+  if [ "$(id -u)" -eq 0 ]; then
+    export PS1="${PRED}${DEMOHOST}${COLOR_RESET}:${PYELLOW}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
+  else
+    export PS1="${PGREEN}${DEMOHOST}${COLOR_RESET}:${PCYAN}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
+  fi
+  export SUDO_PS1="${PRED}${DEMOHOST}${COLOR_RESET}:${PYELLOW}${P_DIR_SM}${COLOR_RESET}${P_SYMBOL}"
+else
+  export PROMPT_COMMAND='echo -ne "\033]1;"$(hostname -s)"\007"'
+  if [ "$(id -u)" -eq 0 ]; then
+    export PS1="${PRED}${P_HOSTNAME}${COLOR_RESET}:${PYELLOW}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
+  else
+    export PS1="${PGREEN}${P_HOSTNAME}${COLOR_RESET}:${PCYAN}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
+  fi
+  export SUDO_PS1="${PRED}${P_HOSTNAME}${PWHITE}:${PYELLOW}${P_DIR_SM}${COLOR_RESET}${P_SYMBOL}"
+fi
+
+
+###### MACOS
+if [ "$OS" == 'Darwin' ]; then
+  export BASH_SILENCE_DEPRECATION_WARNING=1
+
+  # enable brew - if installed
+  if [[ -r "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -r "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+  if brew --prefix &> /dev/null; then
+    BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
+    # Work Around for scripts using bash_completion 2 syntax
+    # _have() {
+    #     PATH=$PATH:/usr/sbin:/sbin:/usr/local/sbin type $1 &>/dev/null
+    # }
+    sourceIf "${BrewPrefix}/etc/bash_completion"    # enable brew bash completion
+  fi
+  # Move GPG2 to beginning of path
+  if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
+    tpath=${PATH/\/usr\/local\/MacGPG2\/bin:\///}
+    PATH="/usr/local/MacGPG2/bin:$tpath"
+  fi
+  export PATH
+fi
+
+
+###### LINUX
+if [ "$OS" == 'Linux' ]; then
+  # shellcheck disable=SC2015
+  if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  fi
+  if ! shopt -oq posix; then
+    sourceIf "/usr/share/bash-completion/bash_completion"
+    sourceIf "/etc/bash_completion"
+  fi
+  export PATH
+  export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+fi
+
+unset color_enabled
+
+GRC=$(which grc 2>/dev/null)
+if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
+  sourceIf "$HOME/.grc/grc.bashrc"
+fi
+
+
+###### SOURCE FILES
+
+sourceIf "$DOTFILES/private/shell/bashrc-private"   # private bashrc   - bash
+sourceIf "$DOTFILES/shell/includes"                 # includes file    - zsh & bash

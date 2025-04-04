@@ -1,0 +1,29 @@
+#!/bin/bash
+# cspell: disable
+# shellcheck shell=bash
+# shellcheck disable=SC1090
+
+## INCLUDE MULTI-SHELL DOTFILES
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+
+sourceIf () {
+  if [ -e "$1" ]; then
+    . "$1"
+  fi
+}
+
+###### SOURCE FILES
+
+## SOURCE COMMON FILES
+sourceIf "$DOTFILES/shell/aliases"                  # aliases          - zsh & bash
+
+## PRIVATE FILES (if present)
+sourceIf "$DOTFILES/private/shell/aliases-private"  # private-aliases  - zsh & bash
+sourceIf "$DOTFILES/private/shell/env-private"      # private env vars - zsh & bash
+
+## LOCAL FILES (if present)
+sourceIf "$HOME/.localrc"
+sourceIf "$HOME/.workrc"

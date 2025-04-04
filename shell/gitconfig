@@ -1,0 +1,108 @@
+[include]
+  path = ~/.gitconfig_private
+  path = ~/.gitconfig_custom
+[filter "lfs"]
+  clean = git-lfs clean %f
+  smudge = git-lfs smudge %f
+  required = true
+[push]
+  default = simple
+[format]
+  pretty = %Cblue%h%Creset %Cgreen[%ar]%Creset (%an) %s
+[core]
+  excludesfile = ~/.gitignore_global
+  editor = nano
+  autocrlf = input
+	pager = less -R
+[difftool "opendiff"]
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path = /usr/bin/opendiff
+[color]
+  ui = true
+  diff = true
+[diff]
+  color = true
+  colorMoved = zebra
+[pager]
+  color = true
+[status]
+  color = true
+[alias]
+  st = status
+  co = checkout
+  b = branch
+  wdiff = diff --word-diff=color --unified=1
+  up = "!git remote update -p; git merge --ff-only @{u}"
+  # Mark a file as "assume unchanged", which means that Git will treat it
+  # as though there are no changes to it even if there are. Useful for
+  # temporary changes to tracked files
+  assume = update-index --assume-unchanged
+  # Reverse the above
+  unassume = update-index --no-assume-unchanged
+  # Show the files that are currently assume-unchanged
+  assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+[pull]
+  ff = only
+[includeIf "gitdir:~/Versioned/"]
+  path = ~/.gitconfig_ssh
+[includeIf "gitdir:~/go/"]
+  path = ~/.gitconfig_ssh
+[color "status"]
+  branch = 12 normal
+  added = 10 normal
+  updated = 10 normal
+  localbranch = 12 normal
+  changed = 11 normal
+  header = normal
+  remotebranch = 6 normal
+  nobranch = 1 normal
+  unmerged = 9 normal
+  untracked = normal dim
+[color "branch"]
+  plain = normal
+  remote = 6 normal
+  current = 15 4
+  local = 12 normal
+  upstream = 6 normal
+[color "remote"]
+  hint = normal dim
+  success = 10 normal
+  error = 9 normal
+  warning = 11 normal
+[color "interactive"]
+  header = normal dim bold
+  prompt = 15 4
+  help = normal dim
+  error = 9 normal
+[color "diff"]
+  commit = 3 normal
+  newMoved = 15 4
+  oldMovedAlternativeDimmed = 7 5 dim
+  frag = normal dim
+  oldMovedAlternative = 7 5
+  contextBold = normal bold
+  newBold = 15 2 bold
+  context = normal
+  contextDimmed = normal dim
+  oldMoved = 7 4
+  oldBold = 7 1 bold
+  newMovedDimmed = 15 4 dim
+  func = normal dim
+  meta = normal dim
+  newDimmed = 15 2 dim
+  newMovedAlternative = 15 5
+  new = 15 2
+  newMovedAlternativeDimmed = 15 5 dim
+  whitespace = normal 9
+  oldMovedDimmed = 7 4 dim
+  oldDimmed = 7 1 dim
+  old = 7 1
+[color "decorate"]
+  branch = 12 normal
+  tag = 5 normal
+  remotebranch = 6 normal
+  stash = normal dim
+  grafted = 1 normal
+  HEAD = 15 4
+[init]
+	defaultBranch = main
