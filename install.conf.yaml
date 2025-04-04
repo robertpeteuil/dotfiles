@@ -1,0 +1,44 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: false
+
+- clean: ['~']
+
+# Zsh Settings
+- link:
+    ~/.zshenv: 
+      path: zsh/.zshenv
+      force: true
+
+# Bash Settings
+- link:
+    ~/.bash-git-prompt: 
+      path: shell/bash-git-prompt
+      force: true
+    ~/.grc: 
+      path: shell/grc
+      force: true
+    ~/.bash_profile:
+      path: shell/bash_profile
+      force: true
+    ~/.bashrc:
+      path: shell/bashrc
+      force: true
+
+# GitConfig Settings
+- link:
+    ~/.gitconfig:
+      path: shell/gitconfig
+      force: true
+    ~/.gitconfig_ssh:
+      path: shell/gitconfig_ssh
+      force: true
+    ~/.gitignore_global:
+      path: shell/gitignore_global
+      force: true
+    ~/.gitconfig_private:
+      if: 'test -e ./private/shell/gitconfig_private'
+      path: private/shell/gitconfig_private
+      force: true
