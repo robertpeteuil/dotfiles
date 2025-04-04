@@ -1,0 +1,137 @@
+#!/bin/bash
+# cspell: disable
+# shellcheck shell=bash
+
+## ALIASES
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+
+## NAVIGATION
+alias -- -='cd -'  # Type '-' to return to your previous dir.
+#   '--' is end of options. Else '-=...' would be interpreted as a flag.
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+## COLORIZATION
+#     colorize text using pygments - https://pygments.org
+#     shellcheck disable=SC2034,SC2139
+if pygmentize -h > /dev/null 2>&1; then
+  alias ccat='pygmentize -g'    
+  # on zsh remap extensions and '< FILE' to use pygmentize
+  if [[ -n "$ZSH_NAME" ]]; then   
+    alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
+    READNULLCMD='/opt/homebrew/bin/pygmentize'  
+  fi
+fi
+
+## PATHS
+alias pathdump='echo "$PATH" | tr ":" "\n"'
+# shellcheck disable=SC2154
+alias pathdebug='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
+alias fpathdump='echo "$FPATH" | tr ":" "\n"'
+
+## OUTPUT CLARIFIERS
+alias mv='mv -v'
+alias rm='rm -v'
+alias ln='ln -v'
+alias mkdir='mkdir -p'
+alias df='df -h'
+alias ln='ln -v'
+alias p='ps -f'
+alias rm='rm -v'
+alias cp='cp -i'
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
+alias fgrep='grep -F'
+
+## FILE OWNERSHIP
+alias mychown='chown $(id -u):$(id -g)'
+alias chownasme='mychown'
+alias octal='stat -c "%a %n" '   # display octal file permissions
+alias getoctal='octal'
+
+## LS
+alias ll="ls --color -laFh"
+alias lsd="ls --color -laFh | grep --color=never '^d'"
+alias lsl="ls --color -laFh | grep --color=never '^l'"
+alias lsh="ls --color -laFhd .*"
+alias ldot='ls --color -ld .*'
+
+## K8S
+alias k='kubectl '
+alias kaf='kubectl apply -f '
+alias kak='kubectl apply -k '
+alias kDf='kubectl delete -f '
+# shellcheck disable=SC2142
+alias kns='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
+# shellcheck disable=SC2142
+alias kctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+
+## GIT
+GIT_INST=$(git --version 2&> /dev/null)
+export GIT_MERGE_AUTOEDIT=no
+# If git installed, set up some aliases into a new config file: ~/.gitconfig_custom
+#   shellcheck disable=SC2086
+if [[ -n $GIT_INST ]]; then
+  # git clone shortcut 'ghweb' for https://github.com/
+  #   ex: "git clone ghweb:USER/REPO"
+  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/.insteadof ghweb:
+  # git clone shortcut 'gh' for git@github.com/
+  #   ex: "git clone gh:USER/REPO"
+  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:.insteadof gh:
+  # git clone shortcut 'myweb' for https://github.com/$USER/
+  #   ex: "git clone myweb:REPONAME"
+  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/$USER/.insteadof myweb:
+  # git clone shortcut 'my' for git@github.com/$USER/
+  #   ex: "git clone my:REPONAME"
+  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:$USER/.insteadof my:
+fi
+alias g="git"
+alias ga="git add"
+alias gaa='git add --all'
+alias gs="git status"
+alias gp="git pull"
+alias gup="git up"
+alias gcm="git commit -m"
+alias gpush="git push"
+alias gd='git diff'
+alias gdup='git diff @{upstream}'
+alias gcomb="git checkout main"
+alias gcodb="git checkout develop"
+alias gacmpush='git add .;git commit -m "updates";git push'
+alias gremote='git remote -v'
+alias gundocm='git reset --soft HEAD~'
+alias gignored='git ls-files -v | grep "^[[:lower:]]"'
+alias glogs='git log --stat'
+alias glog='git log --graph'
+alias glog10='git log --graph --max-count=10'
+alias gloga='git log --graph --decorate --all'
+alias gfixlog='git config --global core.pager "less -R"'
+
+## DOCKER
+alias d='docker'
+alias d-c='docker-compose'
+alias drmsc='docker rm $(docker ps -q -f 'status=exited') 2> /dev/null'
+alias drmsi='docker rmi $(docker images -q -f "dangling=true") 2> /dev/null'
+alias drmsv='docker volume prune -f'
+alias drmsall='drmsc; drmsi; drmsv'
+alias dim='docker images'
+alias dima='docker images -a'
+alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dpsa="docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dpss="docker ps --format 'table {{.Names}}\t{{.Status}}'"
+alias dpsi="docker ps --format 'table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dstat="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'"
+alias dstatn="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}'"
+alias dstatp="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}'"
+alias dstat-s="docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}'"
+
+## TERRAFORM
+alias tf='terraform'
+alias tfapplyaa='terraform apply -auto-approve'
+alias tfdestroyaa='terraform destroy -auto-approve'
