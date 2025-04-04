@@ -27,7 +27,6 @@ if [ -n "$SSH_CONNECTION" ]; then
     zstyle ':autocomplete:*' min-delay 0.5  # seconds
 fi
 
-
 # Clone new plugins in parallel
 znap clone $plugins
 

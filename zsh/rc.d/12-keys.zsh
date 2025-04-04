@@ -58,7 +58,6 @@ bindkey '^[w' where-is
   }
 } .sudo
 
-
 ## AUTOCOMPLETE HOTKEYS
 #   https://github.com/marlonrichert/zsh-autocomplete/blob/main/README.md#key-bindings
 #   https://github.com/marlonrichert/zsh-autocomplete?tab=readme-ov-file#reassign-keys
