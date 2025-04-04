@@ -37,23 +37,30 @@ fi
 
 
 ###### FUNCTIONS
-# shellcheck disable=SC2154
-sourceIf () {
-  if [ -e "$1" ]; then
-  # shellcheck disable=SC1090,SC1091
-    . "$1"
-  fi
-}
-pathIf () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$PATH:$1"
-  fi
-}
-pathIfPre () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$1:$PATH"
-  fi
-}
+# shellcheck disable=SC1091,SC2317
+ if [ -e "$DOTFILES/shell/bash_functions" ]; then
+  . "$DOTFILES/shell/bash_functions"
+else
+  echo "Required file $DOTFILES/shell/bash_functions not found"
+  echo "Using fallback..."
+  # shellcheck disable=SC2154
+  sourceIf () {
+    if [ -e "$1" ]; then
+    # shellcheck disable=SC1090,SC1091
+      . "$1"
+    fi
+  }
+  pathIf () {
+    if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+      PATH="$PATH:$1"
+    fi
+  }
+  pathIfPre () {
+    if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+      PATH="$1:$PATH"
+    fi
+  }
+fi
 
 
 ###### PATHS
@@ -177,8 +184,7 @@ fi
 ###### MACOS
 if [ "$OS" == 'Darwin' ]; then
   export BASH_SILENCE_DEPRECATION_WARNING=1
-
-  # enable brew - if installed
+  # config brew environment
   if [[ -r "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   elif [[ -r "/usr/local/bin/brew" ]]; then
@@ -186,11 +192,8 @@ if [ "$OS" == 'Darwin' ]; then
   fi
   if brew --prefix &> /dev/null; then
     BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
-    # Work Around for scripts using bash_completion 2 syntax
-    # _have() {
-    #     PATH=$PATH:/usr/sbin:/sbin:/usr/local/sbin type $1 &>/dev/null
-    # }
-    sourceIf "${BrewPrefix}/etc/bash_completion"    # enable brew bash completion
+    # enable brew bash completion
+    sourceIf "${BrewPrefix}/etc/bash_completion"    
   fi
   # Move GPG2 to beginning of path
   if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
@@ -212,10 +215,10 @@ if [ "$OS" == 'Linux' ]; then
     sourceIf "/etc/bash_completion"
   fi
   export PATH
-  export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+  # export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
 
-unset color_enabled
+# unset color_enabled
 
 GRC=$(which grc 2>/dev/null)
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
