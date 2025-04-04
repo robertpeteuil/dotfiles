@@ -37,11 +37,10 @@ The downloader script performs the following tasks:
 Install script performs actions from `install.conf.yaml`
 
 - ZSH
-  - symlinks `zshenv` to $HOME 
-  - sets ZDOTDIR to `.dotfiles`
+  - symlinks `zshenv` to $HOME
   - `zshrc`, `zlogout`, and all files in `zsh/rc.d` loaded by zsh
   - installs `znap` plugin manager (on first use)
-  - installs/sources plugins defined in `zsh/rc.d/08-plugins`
+  - installs & sources plugins defined in `zsh/rc.d/08-plugins`
 - Bash
   - symlinks `bashrc` and `bash_prpfile` to $HOME
   - symlinks `bash-git-prompt` and `grc` for bash prompt/colorization
