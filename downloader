@@ -1,0 +1,60 @@
+#!/bin/bash
+# cspell: disable
+# shellcheck shell=bash
+# shellcheck disable=SC1083
+
+set -e
+
+##  DOTFILES DOWNLOADER
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+
+DOTFILES_REPO="robertpeteuil/dotfiles"
+DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
+# must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
+DOTFILES_TARGET_DIR="$HOME/.dotfiles"  
+
+PRIVATE="private"
+PRIVATEDIR="${DOTFILES_TARGET_DIR}/${PRIVATE}"
+OS=$(uname -s)
+
+if [ -d "$DOTFILES_TARGET_DIR" ]; then
+  echo -e "ERROR: target dotfiles dir '${DOTFILES_TARGET_DIR}' exists.\n" >&2
+  exit 1
+fi
+
+## INSTALL PREREQS
+if ! [ -x "$(command -v git)" ]; then
+  if [ "$OS" = 'Darwin' ]; then
+    echo "installing: homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "installing: git"
+    brew install git
+  elif [ "$OS" = 'Linux' ]; then
+    sudo apt-get update -qq -y
+    echo "installing: git"
+    sudo apt-get install -y git
+    # type python >/dev/null 2>&1 && echo "installing: python-distutils" && sudo apt-get install -y git python-distutils
+    # type python3 >/dev/null 2>&1 && echo "installing: python3-distutils" && sudo apt-get install -y git python3-distutils
+  fi
+fi
+
+## CLONE DOTFILES REPO
+git clone --quiet --recursive --depth 1 git@github.com:$DOTFILES_REPO.git "$DOTFILES_TARGET_DIR"
+
+## CLONE PRIVATE DOTFILES REPO IF EXIST
+if [[ -d "${PRIVATEDIR}/.git" ]]; then
+  echo "private repo present - updating"
+  cd "${PRIVATEDIR}"
+  git remote update -p > /dev/null 2>&1
+  git merge --ff-only @{u} > /dev/null 2>&1
+elif git clone --quiet --depth 1 git@github.com:$DOTFILES_PRIVATE_REPO.git "${PRIVATEDIR}" 2> /dev/null; then
+  echo "private repo cloned"
+fi
+
+## RUN DOTBOT INSTALLER
+cd "$DOTFILES_TARGET_DIR" || exit 1
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+./install
