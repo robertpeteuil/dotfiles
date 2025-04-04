@@ -37,7 +37,6 @@ fi
 
 ## FUNCTION PATH
 #   $FPATH and $fpath dirs are where zsh looks for functions.
-#   Add your functions to your $fpath, so you can autoload them.
 fpath=(
     $ZDOTDIR/functions
     $fpath
@@ -46,13 +45,7 @@ fpath=(
 
 ## BREW ENVIRONMENT    
 if [[ -r "/opt/homebrew/bin/brew" ]]; then
-    # switch back to eval, as znap eval doesnt refresh the cache automatically
-    # znap eval brew-shellenv-opt '/opt/homebrew/bin/brew shellenv'
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    # fpath+=(
-    #     $HOMEBREW_PREFIX/share/zsh/site-functions
-    # )
 elif [[ -r "/usr/local/bin/brew" ]]; then
-    # znap eval brew-shellenv-local '/usr/local/bin/brew shellenv'
     eval "$(/usr/local/bin/brew shellenv)"
 fi
