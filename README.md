@@ -6,12 +6,20 @@
 
 Quickly and simply install settings, aliases and functions for Bash and Zsh on Linux, macOS, and WSL Shells.
 
+### Settings
+
+The following configs are installed:
+
+- zsh - configures zsh znap plugin manager, prompt, plugins, aliases
+- bash - configured bash settings, bash git prompt
+- git - general configuration, aliases, colorization, user settings
+
 ### Installation
 
-For enhanced security use `https` and verify script before running installer
+Verify and run downloader script to download/install
 
 ``` bash
-$ curl https://iac.sh/dotfiles > downloader
+$ curl -LO https://raw.githubusercontent.com/robertpeteuil/dotfiles/main/downloader
 
 # review script - e.g. cat downloader
 
@@ -19,16 +27,29 @@ $ chmod +x downloader
 $ ./downloader
 ```
 
-The installation script performs the following tasks:
+The downloader script performs the following tasks:
 
 - Install `git` if not installed (required to clone the `dotfiles` repo)
-- On Linux, installs `python3-distutils`
-- Clones the `dotfiles` repo into the `~/.dotfiles` directory
-- Install platform specific dotfiles configurations
-  - symlinks settings, aliases and settings files
-  - installs and symlink scripts
+- Clones `dotfiles` repo into the `~/.dotfiles` directory (configurable)
+- Clones `dotfiles-private` repo into the `~/.dotfiles/private` directory (configurable)
+- executes included `install` script
 
-### Usage
+Install script performs actions from `install.conf.yaml`
+
+- ZSH
+  - symlinks `zshenv` to $HOME 
+  - sets ZDOTDIR to `.dotfiles`
+  - `zshrc`, `zlogout`, and all files in `zsh/rc.d` loaded by zsh
+  - installs `znap` plugin manager (on first use)
+  - installs/sources plugins defined in `zsh/rc.d/08-plugins`
+- Bash
+  - symlinks `bashrc` and `bash_prpfile` to $HOME
+  - symlinks `bash-git-prompt` and `grc` for bash prompt/colorization
+- Git config
+  - symlinks `gitconfig`, `gitignore_global`
+  - symlinks `gitconfig_ssh` (url specific overrides)
+
+### Customization
 
 Customize this repo by forking it and customizing to your needs.
 
