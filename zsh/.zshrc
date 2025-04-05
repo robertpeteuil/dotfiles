@@ -24,6 +24,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+
 ### LOAD FILES IN RC.D DIR
 #   load files that start with integers and end in `.zsh`
 #     (n) sorts the results in numerical order
@@ -36,15 +37,18 @@ fi
   done
 } "$@"
 
+
 ### AUTOLOAD FUNCTIONS
 
 autoload -Uz define-update-all
 define-update-all  # run define-update-all once to define `update-all` function
 
+
 ### SOURCE FILES
 
-# Source common includes file
+## CROSS-SHELL FILES
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
 
+## PROMPT CONFIGURATION
 #   run `p10k configure` to configure, or edit ~/.df/zsh/.p10k.zsh
 [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh

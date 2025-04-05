@@ -17,10 +17,10 @@ sourceIf () {
 
 ###### SOURCE FILES
 
-## SOURCE COMMON FILES
+## CROSS-SHELL FILES
 sourceIf "$DOTFILES/shell/aliases"                  # aliases          - zsh & bash
 
-## PRIVATE FILES (if present)
+## EXTERNAL FILES (if present)
 sourceIf "$DOTFILES/private/shell/aliases-private"  # private-aliases  - zsh & bash
 sourceIf "$DOTFILES/private/shell/env-private"      # private env vars - zsh & bash
 
