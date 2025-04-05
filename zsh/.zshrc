@@ -36,6 +36,11 @@ fi
   done
 } "$@"
 
+### AUTOLOAD FUNCTIONS
+
+autoload -Uz define-update-all
+define-update-all  # run define-update-all once to define `update-all` function
+
 ### SOURCE FILES
 
 # Source common includes file
