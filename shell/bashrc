@@ -37,30 +37,22 @@ fi
 
 
 ###### FUNCTIONS
-# shellcheck disable=SC1091,SC2317
- if [ -e "$DOTFILES/shell/bash_functions" ]; then
-  . "$DOTFILES/shell/bash_functions"
-else
-  echo "Required file $DOTFILES/shell/bash_functions not found"
-  echo "Using fallback..."
-  # shellcheck disable=SC2154
-  sourceIf () {
-    if [ -e "$1" ]; then
-    # shellcheck disable=SC1090,SC1091
-      . "$1"
-    fi
-  }
-  pathIf () {
-    if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-      PATH="$PATH:$1"
-    fi
-  }
-  pathIfPre () {
-    if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-      PATH="$1:$PATH"
-    fi
-  }
-fi
+sourceIf () {
+  if [ -e "$1" ]; then
+  # shellcheck disable=SC1090,SC1091
+    . "$1"
+  fi
+}
+pathIf () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$PATH:$1"
+  fi
+}
+pathIfPre () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$1:$PATH"
+  fi
+}
 
 
 ###### PATHS
@@ -215,7 +207,6 @@ if [ "$OS" == 'Linux' ]; then
     sourceIf "/etc/bash_completion"
   fi
   export PATH
-  # export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
 
 # unset color_enabled
@@ -228,5 +219,11 @@ fi
 
 ###### SOURCE FILES
 
-sourceIf "$DOTFILES/private/shell/bashrc-private"   # private bashrc   - bash
+# bash specific files
+sourceIf "$DOTFILES/shell/bash_functions"           # bash_functions   - bash
+
+# cross-shell files
 sourceIf "$DOTFILES/shell/includes"                 # includes file    - zsh & bash
+
+# external files
+sourceIf "$DOTFILES/private/shell/bashrc-private"   # private bashrc   - bash
