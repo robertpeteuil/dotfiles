@@ -8,38 +8,12 @@
 
 
 ###### FUNCTIONS
-# shellcheck disable=SC2154,SC1090,SC1091
-sourceIf () {
-  if [ -e "$1" ]; then
-    . "$1"
-  fi
-}
-pathIf () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$PATH:$1"
-  fi
-}
-pathIfPre () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$1:$PATH"
-  fi
-}
-
-check-git-installed () {
-  if git --version &> /dev/null; then
-    GIT_INST=1
-  else
-    unset GIT_INST
-  fi
-  echo -n "$GIT_INST"
-}
-
 update-repos () {
-  GIT_INST=$(check-git-installed)
+  git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
   prev_dir=$(pwd)
-  if [[ -e "$HOME/$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
+  if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
     echo -e "${GREEN}Updating DOTFILES repo...${WHITE}"
-    cd "$HOME/$DOTFILES" || return; git pull; cd "$prev_dir" || return
+    cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
     GIT_UPDATE=True
   fi
 }
@@ -47,7 +21,6 @@ update-repos () {
 #### SET VARS
 OS=$(uname -s)
 GIT_UPDATE=False
-GIT_INST=$(check-git-installed)
 
 
 #### OS SPECIFIC FUNCTIONS
@@ -67,19 +40,17 @@ if [ "$OS" == 'Darwin' ]; then
                 mas upgrade
             fi
         fi
+        # update dotfiles
         if [[ $GIT_UPDATE ]]; then
         update-repos
         fi
         # vscode extension updates
         if which code &> /dev/null; then
             echo -e "${GREEN}Updating VSCode Extensions...${WHITE}"
-            code --update-extensions
+            code --update-extensions 2> /dev/null
         fi
     }   
-fi
-
-if [ "$OS" == 'Linux' ]; then
-
+elif [ "$OS" == 'Linux' ]; then
     update-all() {
         if apt-get &> /dev/null; then
             pkg_cmd="apt-get"
@@ -88,7 +59,7 @@ if [ "$OS" == 'Linux' ]; then
         elif yum -h &> /dev/null; then
             pkg_cmd="yum"
         fi
-        
+        # update packages
         if [[ "$pkg_cmd" == apt* ]]; then
             echo -e "${GREEN}Updating via ${pkg_cmd}...${WHITE}"
             sudo "${pkg_cmd}" update -qq -y
@@ -109,14 +80,14 @@ if [ "$OS" == 'Linux' ]; then
         else
             echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
         fi
-
+        # update dotfiles
         if [[ $GIT_UPDATE ]]; then
             update-repos
         fi
-        
+        # vscode extension updates
         if which code &> /dev/null; then
             echo -e "${GREEN}Updating VSCode Extensions...${WHITE}"
-            code --update-extensions
+            code --update-extensions 2> /dev/null
         fi
     }
 fi
