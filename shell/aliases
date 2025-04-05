@@ -33,7 +33,8 @@ fi
 alias pathdump='echo "$PATH" | tr ":" "\n"'
 # shellcheck disable=SC2154
 alias pathdebug='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
-alias fpathdump='echo "$FPATH" | tr ":" "\n"'
+# only define for zsh
+[[ -n "$ZSH_NAME" ]] && alias fpathdump='echo "$FPATH" | tr ":" "\n"'
 
 ## OUTPUT CLARIFIERS
 alias mv='mv -v'
