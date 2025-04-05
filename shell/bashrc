@@ -219,11 +219,11 @@ fi
 
 ###### SOURCE FILES
 
-# bash specific files
+## BASH SPECIFIC FILES
 sourceIf "$DOTFILES/shell/bash_functions"           # bash_functions   - bash
 
-# cross-shell files
+## CROSS-SHELL FILES
 sourceIf "$DOTFILES/shell/includes"                 # includes file    - zsh & bash
 
-# external files
+## EXTERNAL FILES
 sourceIf "$DOTFILES/private/shell/bashrc-private"   # private bashrc   - bash
