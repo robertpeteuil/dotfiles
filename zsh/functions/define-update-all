@@ -1,0 +1,95 @@
+#!/bin/zsh
+# cspell: disable
+# shellcheck shell=zsh
+
+##  UPDATE-ALL FUNCTION
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+
+#### SET VARS
+OS=$(uname -s)
+GIT_UPDATE=False
+
+
+###### FUNCTIONS
+update-repos () {
+  git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
+  prev_dir=$(pwd)
+  if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
+    echo -e "${fg[green]}Updating $DOTFILES repo...${fg[white]}"
+    cd "$DOTFILES/zsh" || return; git pull; cd "$prev_dir" || return
+    GIT_UPDATE=True
+  fi
+}
+
+#### OS SPECIFIC FUNCTIONS
+if [[ "$OS" == 'Darwin' ]]; then
+    update-all() {
+      if brew --prefix &> /dev/null; then
+        echo -e "${fg[green]}Updating via brew...${fg[white]}"
+        brew update && brew upgrade
+        if [[ "$1" == "clean" ]]; then
+          brew cleanup 2> /dev/null
+        fi
+      fi
+      # only run MAS if connected locally as it can launch UI dialog boxes
+      if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
+        if mas &> /dev/null; then
+          echo -e "${fg[green]}Updating Mac App Store apps...${fg[white]}"
+          mas upgrade
+        fi
+      fi
+      # update dotfiles
+      if [[ $GIT_UPDATE ]]; then
+        update-repos
+      fi
+      # vscode extension updates
+      if which code &> /dev/null; then
+        echo -e "${fg[green]}Updating VSCode Extensions...${fg[white]}"
+        code --update-extensions 2> /dev/null
+      fi
+    }
+fi
+
+if [[ "$OS" == 'Linux' ]]; then
+    update-all() {
+        if apt -h &> /dev/null; then
+            pkg_cmd="apt"
+        elif apt-get &> /dev/null; then
+            pkg_cmd="apt-get"
+        elif yum -h &> /dev/null; then
+            pkg_cmd="yum"
+        fi
+        if [[ "$pkg_cmd" == apt* ]]; then
+            echo -e "${fg[green]}Updating via ${pkg_cmd}...${fg[white]}"
+            sudo "${pkg_cmd}" update -qq -y
+            echo -e "${fg[green]}upgrading via ${pkg_cmd}...${fg[white]}"
+            sudo "${pkg_cmd}" upgrade -y
+            if [[ "$1" == "clean" ]]; then
+            echo -e "${fg[green]}Autoclean & Autoremove...${fg[white]}"
+            sudo apt-get autoclean -qq
+            sudo apt-get autoremove -qq
+            fi
+        elif [[ "$pkg_cmd" == "yum" ]]; then
+            echo -e "${fg[green]}Updating via ${pkg_cmd}...${fg[white]}"
+            sudo yum makecache fast
+            sudo yum update -y
+            if [[ "$1" == "clean" ]]; then
+            sudo yum clean packages expire-cache
+            fi
+        else
+            echo -e "${fg[red]}Unknown Package Manager - Packages not updated${fg[white]}"
+        fi
+        # update dotfiles
+        if [[ $GIT_UPDATE ]]; then
+            update-repos
+        fi
+        # vscode extension updates
+        if which code &> /dev/null; then
+            echo -e "${fg[green]}Updating VSCode Extensions...${fg[white]}"
+            code --update-extensions 2> /dev/null
+        fi
+    }
+fi
