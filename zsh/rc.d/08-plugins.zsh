@@ -21,12 +21,6 @@ local -a plugins=(
 #     zsh-users/zsh-syntax-highlighting         # Command-line syntax highlighting
 
 
-# DELAY AUTOCOMPLETE WHEN CONNECTED VIA SSH
-if [ -n "$SSH_CONNECTION" ]; then
-    echo "Running in an SSH session - delaying autocomplete"
-    zstyle ':autocomplete:*' min-delay 0.5  # seconds
-fi
-
 # Clone new plugins in parallel
 znap clone $plugins
 

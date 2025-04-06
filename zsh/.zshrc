@@ -24,6 +24,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+## DELAY AUTOCOMPLETE IF CONNECTED VIA SSH
+if [ -n "$SSH_CONNECTION" ]; then
+    zstyle ':autocomplete:*' min-delay 0.5  # seconds
+fi
+
 
 ### LOAD FILES IN RC.D DIR
 #   load files that start with integers and end in `.zsh`
