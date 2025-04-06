@@ -77,7 +77,6 @@ Install script performs actions from `install.conf.yaml`
 
 - `.bash_profile` - loaded by bash login shell
   - sources `.bashrc`
-    - commented out paths and sources (disabled)
 - `.bashrc` - loaded by non-login shells (unless sourced explicitly)
   - exits if non-interactive or not bash
   - sets paths
