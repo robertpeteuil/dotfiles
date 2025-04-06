@@ -219,9 +219,6 @@ fi
 
 ###### SOURCE FILES
 
-## BASH SPECIFIC FILES
-sourceIf "$DOTFILES/shell/bash_functions"           # bash_functions   - bash
-
 ## CROSS-SHELL FILES
 sourceIf "$DOTFILES/shell/includes"                 # includes file    - zsh & bash
 
