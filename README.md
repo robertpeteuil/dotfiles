@@ -6,7 +6,7 @@
 
 Quickly and simply install settings, aliases and functions for Bash and Zsh on Linux, macOS, and WSL Shells.
 
-### Settings
+## Settings
 
 The following configs are installed:
 
@@ -14,7 +14,7 @@ The following configs are installed:
 - bash - configured bash settings, bash git prompt
 - git - general configuration, aliases, colorization, user settings
 
-### Installation
+## Installation
 
 Verify and run downloader script to download/install
 
@@ -38,17 +38,59 @@ Install script performs actions from `install.conf.yaml`
 
 - ZSH
   - symlinks `zshenv` to $HOME
-  - `zshrc`, `zlogout`, and all files in `zsh/rc.d` loaded by zsh
-  - installs `znap` plugin manager (on first use)
-  - installs & sources plugins defined in `zsh/rc.d/08-plugins`
 - Bash
-  - symlinks `bashrc` and `bash_prpfile` to $HOME
+  - symlinks `bashrc` and `bash_profile` to $HOME
   - symlinks `bash-git-prompt` and `grc` for bash prompt/colorization
 - Git config
   - symlinks `gitconfig`, `gitignore_global`
   - symlinks `gitconfig_ssh` (url specific overrides)
 
-### Customization
+## Load details
+
+### ZSH dotfiles load process
+
+- `.zshenv` read from $HOME, sets $ZDOTDIR
+- `.zshrc` read from $ZDOTDIR directory
+- `.zshrc` sources the following
+  - `$HOME/.cache/p10k-insta-prompt` if present
+  - files in `$ZDOTDIR/rc.d`
+    - 01 - history
+    - 02 - znap install
+    - 04 - Env and Path
+    - 06 - prompt setup
+    - 08 - plugins
+      - `marlonrichert/zcolors`           # colors for completions and git
+      - `zsh-users/zsh-autosuggestions`   # Inline suggestions
+      - `zdharma-continuum/fast-syntax-highlighting`
+      - `zsh-users/zsh-completions`
+      - `marlonrichert/zsh-autocomplete`  # type-ahead completion
+    - 10 - options
+    - 12 - keys
+    - 20 - zsh specific aliases
+      - configure zsh dirstack, reload, zshrc edits, showcolors, zmv
+  - sources `DOTFILES/shell/includes` which includes
+    - `DOTFILES/shell/aliases` - cross-shell (used by both bash & zsh)
+    - `DOTFILES/shell/functions` - cross-shell (used by both bash & zsh)
+    - optional files
+
+### Bash dotfiles load process
+
+- `.bash_profile` - loaded by bash login shell
+  - sources `.bashrc`
+    - commented out paths and sources (disabled)
+- `.bashrc` - loaded by non-login shells (unless sourced explicitly)
+  - exits if non-interactive or not bash
+  - sets paths
+  - sets prompt, colors
+  - configured brew PATH
+  - configures GRC
+  - display linux reboot message, if appropriate
+  - sources `DOTFILES/shell/includes` which includes
+    - `DOTFILES/shell/aliases` - cross-shell (used by both bash & zsh)
+    - `DOTFILES/shell/functions` - cross-shell (used by both bash & zsh)
+    - optional files
+
+## Customization
 
 Customize this repo by forking it and customizing to your needs.
 
