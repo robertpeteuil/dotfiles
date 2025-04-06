@@ -56,7 +56,7 @@ update-all() {
         if [[ "$pkg_cmd" == apt* ]]; then
             echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
             sudo "${pkg_cmd}" update -qq -y
-            echo -e "${GREEN}upgrading via ${pkg_cmd}${WHITE}..."
+            echo -e "${GREEN}Upgrading via ${pkg_cmd}${WHITE}..."
             sudo "${pkg_cmd}" upgrade -y
             if [[ "$1" == "clean" ]]; then
                 echo -e "${BLUE}Autoclean & Autoremove${WHITE}..."
