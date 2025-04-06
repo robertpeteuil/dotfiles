@@ -39,12 +39,6 @@ alias which-command=whence
 alias %= \$=   # Enable pasting text with prompt symbols
 alias showcolors='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done'
 
-# Autocompletion control aliases
-alias autocompon='zstyle ":autocomplete:*" async yes'
-alias autocompoff='zstyle ":autocomplete:*" async no'
-alias autocompdelay='zstyle ":autocomplete:*" min-delay 0.5'
-alias autocompdelayoff='zstyle ":autocomplete:*" min-delay 0'
-
 ## ZMV
 #   batch rename/copy/link files with pattern matching.
 autoload -Uz zmv

@@ -12,3 +12,4 @@
 #   Once $ZDOTDIR is defined it will look there
 export DOTFILES="$HOME/.dotfiles"
 export ZDOTDIR="$DOTFILES/zsh"
+export ZSH_AUTOCOMPLETE_DISABLED=''  # set to disable autocomplete
