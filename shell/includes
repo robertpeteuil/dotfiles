@@ -19,6 +19,7 @@ sourceIf () {
 
 ## CROSS-SHELL FILES
 sourceIf "$DOTFILES/shell/aliases"                  # aliases          - zsh & bash
+sourceIf "$DOTFILES/shell/functions"                # functions        - zsh & bash
 
 ## EXTERNAL FILES (if present)
 sourceIf "$DOTFILES/private/shell/aliases-private"  # private-aliases  - zsh & bash
