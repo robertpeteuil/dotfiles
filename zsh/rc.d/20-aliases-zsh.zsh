@@ -42,9 +42,9 @@ alias showcolors='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}
 ## ZMV
 #   batch rename/copy/link files with pattern matching.
 autoload -Uz zmv
-# alias zmv='zmv -Mv'
-# alias zcp='zmv -Cv'
-# alias zln='zmv -Lv'
+alias zmv='zmv -Mv'
+alias zcp='zmv -Cv'
+alias zln='zmv -Lv'
 
 # SET $PAGER
 #   `:` is a builtin command that does nothing. We use it here to stop Zsh from
