@@ -42,7 +42,7 @@ if ! [ -x "$(command -v git)" ]; then
 fi
 
 ## CLONE DOTFILES REPO
-git clone --quiet --recursive --depth 1 git@github.com:$DOTFILES_REPO.git "$DOTFILES_TARGET_DIR"
+git clone --quiet --recursive --depth 1 "https://github.com/${DOTFILES_REPO}".git "$DOTFILES_TARGET_DIR"
 
 ## CLONE PRIVATE DOTFILES REPO IF EXIST
 if [[ -d "${PRIVATEDIR}/.git" ]]; then
@@ -50,7 +50,7 @@ if [[ -d "${PRIVATEDIR}/.git" ]]; then
   cd "${PRIVATEDIR}"
   git remote update -p > /dev/null 2>&1
   git merge --ff-only @{u} > /dev/null 2>&1
-elif git clone --quiet --depth 1 git@github.com:$DOTFILES_PRIVATE_REPO.git "${PRIVATEDIR}" 2> /dev/null; then
+elif git clone --quiet --depth 1 "https://github.com/${DOTFILES_PRIVATE_REPO}.git" "${PRIVATEDIR}" 2> /dev/null; then
   echo "private repo cloned"
 fi
 
