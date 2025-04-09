@@ -42,3 +42,10 @@
       if: 'test -e ./private/shell/gitconfig_private'
       path: private/shell/gitconfig_private
       force: true
+
+# Specific Settings
+- link:
+    ~/.tmux.conf:
+      if: 'test -e ./private/shell/tmux.conf'
+      path: private/shell/tmux.conf
+      force: true
