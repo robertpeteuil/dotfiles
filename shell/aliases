@@ -102,6 +102,7 @@ alias gcm="git commit -m"
 alias gpush="git push"
 alias gd='git diff'
 alias gdup='git diff @{upstream}'
+alias gco="git checkout --"
 alias gcomb="git checkout main"
 alias gcodb="git checkout develop"
 alias gacmpush='git add .;git commit -m "updates";git push'
