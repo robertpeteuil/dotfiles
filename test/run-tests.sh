@@ -1,19 +1,21 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # cspell: disable
 
 # Make test scripts executable
-chmod +x test-sourceIf.sh test-pathIf.sh
+chmod +x test-sourceIf.sh test-pathIf.sh test-pathIfPre.sh
 
 echo "=== Testing in Bash ==="
-echo -e "\n--- Testing sourceIf ---"
-env -i SHELL=/bin/bash bash --login -c './test-sourceIf.sh'
+echo
+bash --login -c './test-sourceIf.sh'
+echo
+bash --login -c './test-pathIf.sh'
+echo
+bash --login -c './test-pathIfPre.sh'
+echo
 
-echo -e "\n--- Testing pathIf ---"
-env -i SHELL=/bin/bash bash --login -c './test-pathIf.sh'
-
-echo -e "\n=== Testing in ZSH ==="
-echo -e "\n--- Testing sourceIf ---"
-env -i SHELL=/bin/zsh zsh --login -c './test-sourceIf.sh'
-
-echo -e "\n--- Testing pathIf ---"
-env -i SHELL=/bin/zsh zsh --login -c './test-pathIf.sh' 
+echo "=== Testing in ZSH ==="
+echo
+zsh -c './test-sourceIf.sh'
+echo
+zsh -c './test-pathIf.sh'
+echo 
