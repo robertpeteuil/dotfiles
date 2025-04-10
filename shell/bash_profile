@@ -20,6 +20,12 @@ pathIf () {
   fi
 }
 
+pathIfPre () {
+  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+    PATH="$1:$PATH"
+  fi
+}
+
 
 if [ -f ~/.bashrc ]; then
   . ~/.bashrc

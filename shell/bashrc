@@ -36,14 +36,6 @@ if [[ "$OS" == "Linux" ]] && [[ -f /var/run/reboot-required ]]; then
 fi
 
 
-###### FUNCTIONS
-pathIfPre () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$1:$PATH"
-  fi
-}
-
-
 ###### PATHS
 pathIf "/opt/homebrew/bin"
 pathIf "/opt/homebrew/sbin"
