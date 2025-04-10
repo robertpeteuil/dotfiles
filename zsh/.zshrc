@@ -47,7 +47,7 @@ fi
 } "$@"
 
 ### LOAD ZSH FUNCTIONS
-autoload -Uz pathIf
+autoload -Uz pathIf sourceIf
 
 ### SOURCE FILES
 # cross-shell files
