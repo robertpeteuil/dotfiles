@@ -9,7 +9,6 @@
 
 ###### VARS
 export DOTFILES="$HOME/.dotfiles"
-OS=$(uname -s)
 ## prompt vars
 # unset prompt_style    # typical-style prompt
 # prompt_style="GIT"    # 2-line prompt, displays info for repo dirs
@@ -31,7 +30,7 @@ if [ -z "$BASH_VERSION" ]; then
   return &> /dev/null || exit
 fi
 ## REBOOT CHECKS
-if [[ "$OS" == "Linux" ]] && [[ -f /var/run/reboot-required ]]; then
+if [[ "$(uname -s)" == "Linux" ]] && [[ -f /var/run/reboot-required ]]; then
   echo "*** System restart required ****"
 fi
 
@@ -154,41 +153,40 @@ else
 fi
 
 
-###### MACOS
-if [ "$OS" == 'Darwin' ]; then
-  export BASH_SILENCE_DEPRECATION_WARNING=1
-  # config brew environment
-  if [[ -r "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  elif [[ -r "/usr/local/bin/brew" ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-  fi
-  if brew --prefix &> /dev/null; then
-    BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
-    # enable brew bash completion
-    sourceIf "${BrewPrefix}/etc/bash_completion"    
-  fi
-  # Move GPG2 to beginning of path
-  if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
-    tpath=${PATH/\/usr\/local\/MacGPG2\/bin:\///}
-    PATH="/usr/local/MacGPG2/bin:$tpath"
-  fi
-  export PATH
-fi
-
-
-###### LINUX
-if [ "$OS" == 'Linux' ]; then
-  # shellcheck disable=SC2015
-  if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  fi
-  if ! shopt -oq posix; then
-    sourceIf "/usr/share/bash-completion/bash_completion"
-    sourceIf "/etc/bash_completion"
-  fi
-  export PATH
-fi
+###### OS-SPECIFIC CONFIGURATION
+case "$(uname -s)" in
+  Darwin)
+    export BASH_SILENCE_DEPRECATION_WARNING=1
+    # config brew environment
+    if [[ -r "/opt/homebrew/bin/brew" ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -r "/usr/local/bin/brew" ]]; then
+      eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    if brew --prefix &> /dev/null; then
+      BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
+      # enable brew bash completion
+      sourceIf "${BrewPrefix}/etc/bash_completion"    
+    fi
+    # Move GPG2 to beginning of path
+    if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
+      tpath=${PATH/\/usr\/local\/MacGPG2\/bin:\///}
+      PATH="/usr/local/MacGPG2/bin:$tpath"
+    fi
+    export PATH
+    ;;
+  Linux)
+    # shellcheck disable=SC2015
+    if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    fi
+    if ! shopt -oq posix; then
+      sourceIf "/usr/share/bash-completion/bash_completion"
+      sourceIf "/etc/bash_completion"
+    fi
+    export PATH
+    ;;
+esac
 
 # unset color_enabled
 
