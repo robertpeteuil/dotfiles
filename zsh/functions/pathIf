@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+# cspell: disable
+
+# Add directory to PATH if it exists and isn't already in PATH
+pathIf() {
+  if [[ -d "$1" && $PATH != *"$1"* ]]; then
+    PATH="$PATH:$1"
+  fi
+}
+
+pathIf "$@" 
