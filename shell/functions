@@ -6,7 +6,6 @@
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-
 update-all() {
     OS=$(uname -s)
 

@@ -1,4 +1,3 @@
-
 #!/bin/zsh
 # cspell: disable
 # shellcheck shell=zsh
@@ -46,6 +45,9 @@ fi
     . $file
   done
 } "$@"
+
+### LOAD ZSH FUNCTIONS
+autoload -Uz pathIf
 
 ### SOURCE FILES
 # cross-shell files
