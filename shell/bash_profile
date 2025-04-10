@@ -13,6 +13,7 @@ sourceIf () {
     . "$1"
   fi
 }
+
 pathIf () {
   if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
     PATH="$PATH:$1"
