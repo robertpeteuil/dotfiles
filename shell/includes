@@ -9,12 +9,6 @@
 #
 
 
-sourceIf () {
-  if [ -e "$1" ]; then
-    . "$1"
-  fi
-}
-
 ###### SOURCE FILES
 
 ## CROSS-SHELL FILES
