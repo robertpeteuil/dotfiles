@@ -43,11 +43,6 @@ sourceIf () {
     . "$1"
   fi
 }
-pathIf () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
-    PATH="$PATH:$1"
-  fi
-}
 pathIfPre () {
   if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
     PATH="$1:$PATH"
