@@ -79,9 +79,14 @@ update-all() {
     ## UPDATE DOTFILES
     git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
     if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
-        echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
         prev_dir=$(pwd)
+        echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
         cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
+        # check for private repo and update if found
+        if [[ -e "$DOTFILES/private/.git" ]]; then
+            echo -e "${GREEN}Updating private DOTFILES repo${WHITE}..."
+            cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
+        fi
     fi
 
     ## VSCODE EXTENSION UPDATES
