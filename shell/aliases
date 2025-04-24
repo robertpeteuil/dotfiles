@@ -56,13 +56,6 @@ alias chownasme='mychown'
 alias octal='stat -c "%a %n" '   # display octal file permissions
 alias getoctal='octal'
 
-## LS - moved to os-specific section
-# alias ll="ls --color -laFhv"
-# alias lsd="ls --color -laFhv | grep --color=never '^d'"
-# alias lsl="ls --color -laFhv | grep --color=never '^l'"
-# alias lsh="ls --color -laFhdv .*"
-# alias ldot='ls --color -ldv .*'
-
 ## K8S
 alias k='kubectl '
 alias kaf='kubectl apply -f '
