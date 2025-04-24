@@ -24,13 +24,17 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 ### AUTOCOMPLETE ADJUSTMENTS
-# Delay if connected via ssh
+# Delay autocomp display
+#   1 sec delay on ssh connecteions
 if [ -n "$SSH_CONNECTION" ]; then
-    zstyle ':autocomplete:*' min-delay 0.5  # seconds
+    zstyle ':autocomplete:*' min-delay 1  # seconds
 fi
-# Disable if ZSH_AUTOCOMPLETE_DISABLED set
-#   This is set in ~/.zshenv to disable autocomplete
-if [ -n "$ZSH_AUTOCOMPLETE_DISABLED" ]; then
+#   2.5 sec delay if ~/.slowzshcomp exists
+if [ -f $HOME/.slowzshcomp ]; then
+    zstyle ':autocomplete:*' min-delay 2.5
+fi
+# Disable if ZSH_AUTOCOMPLETE_DISABLED or ~/.hushzshcomp exists
+if [ -n "$ZSH_AUTOCOMPLETE_DISABLED" ] || [ -f $HOME/.hushzshcomp ]; then
     zstyle ':autocomplete:*' async no
 fi
 
