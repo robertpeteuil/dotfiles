@@ -16,6 +16,10 @@ export DOTFILES="$HOME/.dotfiles"
 prompt_style="GIT"
 DEMOHOST="Host"         # required if prompt_style="DEMO"
 
+# If sh shell, manually source bash_profile
+if [ "$SHELL" == "/bin/sh" ] && [ -f "$HOME/.bash_profile" ]; then
+    . "$HOME/.bash_profile"
+fi
 
 ###### EXITS 
 ## IF NOT INTERACTIVE
