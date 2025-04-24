@@ -15,19 +15,23 @@ sourceIf () {
 }
 
 pathIf () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+  # if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+  if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
     PATH="$PATH:$1"
   fi
 }
 
 pathIfPre () {
-  if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+  # if [ -d "$1" ] && [[ $PATH != *"$1"* ]]; then
+  if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
     PATH="$1:$PATH"
   fi
 }
 
 
-if [ -f ~/.bashrc ]; then
+# source bashrc, unless sh shell
+# if [ -f ~/.bashrc ]; then
+if [ "$SHELL" != "/bin/sh" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi
 
