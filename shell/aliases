@@ -57,11 +57,11 @@ alias octal='stat -c "%a %n" '   # display octal file permissions
 alias getoctal='octal'
 
 ## LS
-alias ll="ls --color -laFh"
-alias lsd="ls --color -laFh | grep --color=never '^d'"
-alias lsl="ls --color -laFh | grep --color=never '^l'"
-alias lsh="ls --color -laFhd .*"
-alias ldot='ls --color -ld .*'
+alias ll="ls --color -laFhv"
+alias lsd="ls --color -laFhv | grep --color=never '^d'"
+alias lsl="ls --color -laFhv | grep --color=never '^l'"
+alias lsh="ls --color -laFhdv .*"
+alias ldot='ls --color -ldv .*'
 
 ## K8S
 alias k='kubectl '
