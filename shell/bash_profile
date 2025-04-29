@@ -31,7 +31,6 @@ pathIfPre () {
 
 
 # source bashrc, unless sh shell
-# if [ "$SHELL" != "/bin/sh" ] && [ -f "$HOME/.bashrc" ]; then
 if [ -z "$BASH_RC_LOADED" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi

@@ -19,7 +19,6 @@ prompt_style="GIT"
 DEMOHOST="Host"         # required if prompt_style="DEMO"
 
 # If sh shell, manually source bash_profile
-# if [ "$SHELL" == "/bin/sh" ] && [ -f "$HOME/.bash_profile" ]; then
 if [ -z "$BASH_PROFILE_LOADED" ] && [ -f "$HOME/.bash_profile" ]; then
     . "$HOME/.bash_profile"
 fi
