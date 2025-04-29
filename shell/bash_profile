@@ -8,6 +8,9 @@
 #
 
 
+###### VARS
+export BASH_PROFILE_LOADED=1
+
 sourceIf () {
   if [ -e "$1" ]; then
     . "$1"
@@ -28,7 +31,8 @@ pathIfPre () {
 
 
 # source bashrc, unless sh shell
-if [ "$SHELL" != "/bin/sh" ] && [ -f "$HOME/.bashrc" ]; then
+# if [ "$SHELL" != "/bin/sh" ] && [ -f "$HOME/.bashrc" ]; then
+if [ -z "$BASH_RC_LOADED" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi
 
