@@ -8,6 +8,7 @@ private
 .vscode
 **/archive
 zsh/.zsh_sessions
+zsh/.zcompdump*
 
 # Ignore macOS system files
 .DS_Store
