@@ -141,7 +141,7 @@ alias tfplansave='tfsaveplan'
 case "$(uname -s)" in
   Darwin)
     ## Use dir sort if coreutils installed
-    if which gls 2>/dev/null; then
+    if which gls 2&>/dev/null; then
       alias ls="gls --color=always --group-directories-first"
       alias ll="gls --color -laFhv --group-directories-first"
       alias lsh="gls --color -laFhdv --group-directories-first .*"
