@@ -9,6 +9,8 @@
 
 ###### VARS
 export DOTFILES="$HOME/.dotfiles"
+export BASH_RC_LOADED=1
+
 ## prompt vars
 # unset prompt_style    # typical-style prompt
 # prompt_style="GIT"    # 2-line prompt, displays info for repo dirs
@@ -17,7 +19,8 @@ prompt_style="GIT"
 DEMOHOST="Host"         # required if prompt_style="DEMO"
 
 # If sh shell, manually source bash_profile
-if [ "$SHELL" == "/bin/sh" ] && [ -f "$HOME/.bash_profile" ]; then
+# if [ "$SHELL" == "/bin/sh" ] && [ -f "$HOME/.bash_profile" ]; then
+if [ -z "$BASH_PROFILE_LOADED" ] && [ -f "$HOME/.bash_profile" ]; then
     . "$HOME/.bash_profile"
 fi
 
