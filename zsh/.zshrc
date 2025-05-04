@@ -53,6 +53,13 @@ fi
 ### LOAD ZSH FUNCTIONS
 autoload -Uz pathIf sourceIf
 
+### COMPLETIONS
+## jujutsu completion
+if command -v jj >/dev/null 2>&1; then
+    source <(jj util completion zsh)
+    # source <(COMPLETE=zsh jj)   # dynamic completions
+fi
+
 ### SOURCE FILES
 # cross-shell files
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
