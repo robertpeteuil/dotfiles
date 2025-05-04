@@ -201,6 +201,12 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
   sourceIf "$HOME/.grc/grc.bashrc"
 fi
 
+###### COMPLETIONS
+## jujutsu completion
+if command -v jj >/dev/null 2>&1; then
+    source <(jj util completion bash)
+    # source <(COMPLETE=bash jj)   # dynamic completions
+fi
 
 ###### SOURCE FILES
 
