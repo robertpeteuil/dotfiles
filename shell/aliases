@@ -17,6 +17,12 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
+## EDITOR 
+if command -v nvim &>/dev/null; then
+  alias vim='nvim'
+  alias vi='nvim'
+fi
+
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
