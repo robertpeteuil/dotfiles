@@ -46,6 +46,9 @@
 # Specific Settings
 - link:
     ~/.tmux.conf:
-      if: 'test -e ./private/shell/tmux.conf'
-      path: private/shell/tmux.conf
+      if: 'test -e ./shell/tmux.conf'
+      path: shell/tmux.conf
+      force: true
+    ~/.tmux:
+      path: tmux
       force: true
