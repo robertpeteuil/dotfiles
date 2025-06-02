@@ -49,6 +49,3 @@
       if: 'test -e ./shell/tmux.conf'
       path: shell/tmux.conf
       force: true
-    ~/.tmux:
-      path: tmux
-      force: true
