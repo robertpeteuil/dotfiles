@@ -23,6 +23,11 @@ if command -v nvim &>/dev/null; then
   alias vi='nvim'
 fi
 
+## TMUX ########################
+alias tma='tmux new -A -s'  # attach to existing tmux session or create a new one
+alias tmls='tmux ls'  # list tmux sessions
+alias tmK='tmux kill-session -t'  # kill session
+
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
