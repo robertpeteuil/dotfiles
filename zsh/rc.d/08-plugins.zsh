@@ -13,6 +13,7 @@ local -a plugins=(
     zsh-users/zsh-autosuggestions               # Inline suggestions
     zdharma-continuum/fast-syntax-highlighting  # Fast syntax highlighting
     zsh-users/zsh-completions                   # 
+    jeffreytse/zsh-vi-mode                      # https://github.com/jeffreytse/zsh-vi-mode
     marlonrichert/zsh-autocomplete              # Real-time type-ahead completion
 )
 # Other plugins:
