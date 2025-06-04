@@ -59,6 +59,9 @@ if command -v jj >/dev/null 2>&1; then
     source <(jj util completion zsh)
     # source <(COMPLETE=zsh jj)   # dynamic completions
 fi
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
 
 ### SOURCE FILES
 # cross-shell files
