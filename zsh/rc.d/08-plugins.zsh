@@ -13,10 +13,10 @@ local -a plugins=(
     zsh-users/zsh-autosuggestions               # Inline suggestions
     zdharma-continuum/fast-syntax-highlighting  # Fast syntax highlighting
     zsh-users/zsh-completions                   # 
-    jeffreytse/zsh-vi-mode                      # https://github.com/jeffreytse/zsh-vi-mode
     marlonrichert/zsh-autocomplete              # Real-time type-ahead completion
 )
 # Other plugins:
+#     jeffreytse/zsh-vi-mode                      # https://github.com/jeffreytse/zsh-vi-mode
 #     marlonrichert/zsh-edit                    # Better keyboard shortcuts
 #     marlonrichert/zsh-hist                    # Edit history from the command line.
 #     zsh-users/zsh-syntax-highlighting         # Command-line syntax highlighting
