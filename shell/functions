@@ -88,15 +88,24 @@ update-packages() {
 update-dotfiles() {
     update-set-colors
     git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
+    # update dotfiles
     if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
         prev_dir=$(pwd)
         echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
-        cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
+        cd "$DOTFILES" || return; git up; cd "$prev_dir" || return
+        # cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
         # check for private repo and update if found
         if [[ -e "$DOTFILES/private/.git" ]]; then
             echo -e "${GREEN}Updating private DOTFILES repo${WHITE}..."
-            cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
+            cd "$DOTFILES/private" || return; git up; cd "$prev_dir" || return
+            # cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
         fi
+    fi
+    # update nvim config
+    if [[ -e ".config/nvim/.git" ]] && [[ -n $GIT_INST ]]; then
+        prev_dir=$(pwd)
+        echo -e "${GREEN}Updating nvim config${WHITE}..."
+        cd ".config/nvim" || return; git up; cd "$prev_dir" || return
     fi
 }
 
