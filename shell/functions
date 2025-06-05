@@ -102,7 +102,7 @@ update-dotfiles() {
         fi
     fi
     # update nvim config
-    if [[ -e ".config/nvim/.git" ]] && [[ -n $GIT_INST ]]; then
+    if [[ -e "$HOME/.config/nvim/.git" ]] && [[ -n $GIT_INST ]]; then
         prev_dir=$(pwd)
         echo -e "${GREEN}Updating nvim config${WHITE}..."
         cd ".config/nvim" || return; git up; cd "$prev_dir" || return
