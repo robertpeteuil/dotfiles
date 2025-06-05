@@ -122,14 +122,14 @@ final_space = true
     type = 'python'
     foreground = 'p:black2'
     background = 'p:yellow'
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}|{{ end }}{{ .Full }}{{ end }}  '
     style = 'powerline'
     invert_powerline = true
     powerline_symbol = ''
 
     [blocks.segments.properties]
       display_mode = 'files'
-      fetch_virtual_env = false
+      fetch_virtual_env = true
 
   # AWS
   [[blocks.segments]]
