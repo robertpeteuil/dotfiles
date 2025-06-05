@@ -6,9 +6,7 @@
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-update-all() {
-    OS=$(uname -s)
-
+update-set-colors() {
     ## SET SHELL SPECIFIC COLORS
     if [[ "$SHELL" == *"zsh"* ]]; then
         RED="\e[31m"
@@ -21,8 +19,25 @@ update-all() {
         WHITE="\033[1;37m"
         BLUE="\033[1;34m"
     fi
+}
 
-    ## UPDATE PACKAGES
+update-apps() {
+    OS=$(uname -s)
+    update-set-colors
+    if [[ "$OS" == 'Darwin' ]]; then
+        # Update Mac App Store Apps when NOT connected over SSH, may require UI action
+        if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
+            if mas &> /dev/null; then
+                echo -e "${GREEN}Updating Mac App Store apps${WHITE}..."
+                mas upgrade
+            fi
+        fi
+    fi
+}
+
+update-packages() {
+    OS=$(uname -s)
+    update-set-colors
     # Update Packages - MacOS
     if [[ "$OS" == 'Darwin' ]]; then
         # Update macos packages via brew
@@ -32,13 +47,6 @@ update-all() {
             if [[ "$1" == "clean" ]]; then
                 echo -e "${BLUE}Cleaning brew packages${WHITE}..."
                 brew cleanup 2> /dev/null
-            fi
-        fi
-        # Update Mac App Store Apps when NOT connected over SSH, may require UI action
-        if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
-            if mas &> /dev/null; then
-                echo -e "${GREEN}Updating Mac App Store apps${WHITE}..."
-                mas upgrade
             fi
         fi
     # Update Packages - Linux
@@ -75,8 +83,10 @@ update-all() {
     else
         echo -e "${RED}Unknown OS - Packages not updated${WHITE}"
     fi
+}
 
-    ## UPDATE DOTFILES
+update-dotfiles() {
+    update-set-colors
     git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
     if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
         prev_dir=$(pwd)
@@ -88,10 +98,19 @@ update-all() {
             cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
         fi
     fi
+}
 
-    ## VSCODE EXTENSION UPDATES
+update-code() {
+    update-set-colors
     if which code &> /dev/null; then
         echo -e "${GREEN}Updating VSCode Extensions${WHITE}..."
         code --update-extensions 2> /dev/null
     fi
+}
+
+update-all() {
+    update-packages "$1"
+    update-apps
+    update-dotfiles
+    update-code
 }
