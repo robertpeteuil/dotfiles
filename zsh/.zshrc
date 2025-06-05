@@ -19,9 +19,9 @@ trap shellExit EXIT
 
 ### ENABLE POWERLEVEL10K INSTANT PROMPT
 #   Keep near top of ~/.df/zsh/.zshrc, but before any console I/O
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 ### AUTOCOMPLETE ADJUSTMENTS
 # Delay autocomp display
@@ -60,12 +60,21 @@ if command -v jj >/dev/null 2>&1; then
     # source <(COMPLETE=zsh jj)   # dynamic completions
 fi
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
+    eval "$(zoxide init --cmd cd zsh)"
 fi
 
 ### SOURCE FILES
 # cross-shell files
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
-# prompt configuration
-#   run `p10k configure` to configure, or edit ~/.df/zsh/.p10k.zsh
-[[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+
+### ZSH PROMPT
+
+if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  ## OHMYPOSH
+  eval "$(oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml)"
+else
+  ## POWERLEVEL10K
+  znap prompt romkatv/powerlevel10k
+  # run `p10k configure` to configure, or edit ~/.df/zsh/.p10k.zsh
+  [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
+fi

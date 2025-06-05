@@ -9,4 +9,4 @@
 
 
 # Reduce startup time by making the left side of the primary prompt visible *immediately.*
-znap prompt romkatv/powerlevel10k
+# znap prompt romkatv/powerlevel10k
