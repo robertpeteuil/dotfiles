@@ -58,7 +58,12 @@ final_space = true
     background = 'p:green'
     type = 'git'
     style = 'powerline'
-    background_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}', '{{ if gt .Ahead 0 }}p:cyan{{ end }}', '{{ if gt .Behind 0 }}p:green{{ end }}']
+    background_templates = [
+      '{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}',
+      '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}',
+      '{{ if gt .Ahead 0 }}p:cyan{{ end }}',
+      '{{ if gt .Behind 0 }}p:green{{ end }}'
+      ]
 
     [blocks.segments.properties]
       branch_icon = ''
@@ -101,8 +106,8 @@ final_space = true
   # GO
   [[blocks.segments]]
     type = 'go'
-    foreground = '#111111'
-    background = '#00acd7'
+    foreground = 'p:black2'
+    background = 'p:cyan'
     template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
     style = 'powerline'
     invert_powerline = true
@@ -132,7 +137,10 @@ final_space = true
     powerline_symbol = ''
     type = 'aws'
     style = 'powerline'
-    background_templates = ['{{if contains "default" .Profile}}#FFA400{{end}}', '{{if contains "jan" .Profile}}#f1184c{{end}}']
+    background_templates = [
+      '{{if contains "default" .Profile}}p:orange2{{end}}',
+      '{{if contains "jan" .Profile}}p:red{{end}}'
+      ]
     invert_powerline = true
 
     [blocks.segments.properties]
@@ -177,7 +185,6 @@ final_space = true
   # SSH SESSION
   [[blocks.segments]]
     type = "session"
-    # foreground = "#ffffff"
     foreground = "p:black"
     background = 'p:magenta'
     template = "{{ if .SSHSession }} {{ .UserName }}@{{ .HostName }} {{ end }}"
