@@ -44,11 +44,12 @@ final_space = true
     foreground = 'p:black'
     background = 'p:blue'
     powerline_symbol = ''
-    template = ' {{ .Path }} '
+    template = '{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} '
 
     [blocks.segments.properties]
       home_icon = '~'
-      style = 'powerlevel'
+      style = 'mixed'
+      mixed_threshold = 10
   
   # GIT
   [[blocks.segments]]
