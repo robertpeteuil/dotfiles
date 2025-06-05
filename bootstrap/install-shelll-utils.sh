@@ -11,7 +11,8 @@ fi
 if ! command -v eza &>/dev/null; then
     echo "eza is not installed. Installing..."
     file_url="https://github.com/eza-community/eza/releases/latest/download/eza_${ARCH}-unknown-linux-gnu.tar.gz"
-    wget -c "$file_url" -O - | tar xz
+    # wget -c "$file_url" -O - | tar xz
+    curl -sL "$file_url" | tar xz
     chmod +x eza
 	sudo mv eza /usr/local/bin/eza
 fi
