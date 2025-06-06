@@ -37,6 +37,22 @@ final_space = true
   alignment = 'left'
   newline = true
 
+  # SSH SESSION
+  [[blocks.segments]]
+    type = "session"
+    foreground = "p:black"
+    background = 'p:magenta'
+    template = ' {{ if .SSHSession }} {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ end }}{{ .HostName }} '
+    style = "plain"
+
+  # session trailing character
+  [[blocks.segments]]
+    template = ''
+    foreground = 'p:magenta'
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+
   # PATH
   [[blocks.segments]]
     type = 'path'
@@ -122,7 +138,7 @@ final_space = true
     type = 'python'
     foreground = 'p:black2'
     background = 'p:yellow'
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}|{{ end }}{{ .Full }}{{ end }}  '
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
     style = 'powerline'
     invert_powerline = true
     powerline_symbol = ''
@@ -171,28 +187,24 @@ final_space = true
       style = "austin"
 
   # STATUS
+  # leading symbol - same color as status
+  [[blocks.segments]]
+    template = ''
+    foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+
+  # status code
   [[blocks.segments]]
     type = 'status'
     foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:white{{ end }}']
     background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
     template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    style = 'plain'
 
     [blocks.segments.properties]
       always_enabled = true
-
-  # SSH SESSION
-  [[blocks.segments]]
-    type = "session"
-    foreground = "p:black"
-    background = 'p:magenta'
-    # template = ' {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ if .SSHSession }}{{ .HostName }} {{ end }}'
-    template = ' {{ if .SSHSession }}{{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ .HostName }} {{ end }}'
-    style = "powerline"
-    powerline_symbol = ''
-    invert_powerline = true
 
 # SECOND PROMPT LINE
 [[blocks]]
