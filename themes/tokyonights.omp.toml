@@ -14,9 +14,9 @@ final_space = true
   red = '#f7768e'
   green = '#9ece6a'
   green2 = '#41a6b5'
-  yellow = '#c4a000'
-  orange = '#e0af68'
-  orange2='#ff9e64'
+  yellow = '#e0af68'
+  yellow2 = '#c4a000'
+  orange='#ff9e64'
   magenta = '#bb9af7'
   magenta2='#9d7cd8'
   cyan = '#7dcfff'
@@ -37,6 +37,22 @@ final_space = true
   alignment = 'left'
   newline = true
 
+  # SSH SESSION
+  [[blocks.segments]]
+    type = "session"
+    foreground = "p:black"
+    background = 'p:magenta'
+    template = ' {{ if .SSHSession }} {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ end }}{{ .HostName }} '
+    style = "plain"
+
+  # session trailing character
+  [[blocks.segments]]
+    template = ''
+    foreground = 'p:magenta'
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+
   # PATH
   [[blocks.segments]]
     type = 'path'
@@ -49,8 +65,8 @@ final_space = true
     [blocks.segments.properties]
       home_icon = '~'
       style = 'mixed'
-      mixed_threshold = 10
-  
+      mixed_threshold = 20
+
   # GIT
   [[blocks.segments]]
     template = ' {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} '
@@ -122,7 +138,7 @@ final_space = true
     type = 'python'
     foreground = 'p:black2'
     background = 'p:yellow'
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}|{{ end }}{{ .Full }}{{ end }}  '
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
     style = 'powerline'
     invert_powerline = true
     powerline_symbol = ''
@@ -139,7 +155,7 @@ final_space = true
     type = 'aws'
     style = 'powerline'
     background_templates = [
-      '{{if contains "default" .Profile}}p:orange2{{end}}',
+      '{{if contains "default" .Profile}}p:orange{{end}}',
       '{{if contains "jan" .Profile}}p:red{{end}}'
       ]
     invert_powerline = true
@@ -171,27 +187,24 @@ final_space = true
       style = "austin"
 
   # STATUS
+  # leading symbol - same color as status
+  [[blocks.segments]]
+    template = ''
+    foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+
+  # status code
   [[blocks.segments]]
     type = 'status'
     foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:white{{ end }}']
-    background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green2{{ end }}']
+    background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
     template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    style = 'plain'
 
     [blocks.segments.properties]
       always_enabled = true
-
-  # SSH SESSION
-  [[blocks.segments]]
-    type = "session"
-    foreground = "p:black"
-    background = 'p:magenta'
-    template = "{{ if .SSHSession }} {{ .UserName }}@{{ .HostName }} {{ end }}"
-    style = "powerline"
-    powerline_symbol = ''
-    invert_powerline = true
 
 # SECOND PROMPT LINE
 [[blocks]]
