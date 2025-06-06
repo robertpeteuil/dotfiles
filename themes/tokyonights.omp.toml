@@ -65,7 +65,7 @@ final_space = true
     [blocks.segments.properties]
       home_icon = '~'
       style = 'mixed'
-      mixed_threshold = 10
+      mixed_threshold = 20
 
   # GIT
   [[blocks.segments]]
