@@ -14,9 +14,9 @@ final_space = true
   red = '#f7768e'
   green = '#9ece6a'
   green2 = '#41a6b5'
-  yellow = '#c4a000'
-  orange = '#e0af68'
-  orange2='#ff9e64'
+  yellow = '#e0af68'
+  yellow2 = '#c4a000'
+  orange='#ff9e64'
   magenta = '#bb9af7'
   magenta2='#9d7cd8'
   cyan = '#7dcfff'
@@ -139,7 +139,7 @@ final_space = true
     type = 'aws'
     style = 'powerline'
     background_templates = [
-      '{{if contains "default" .Profile}}p:orange2{{end}}',
+      '{{if contains "default" .Profile}}p:orange{{end}}',
       '{{if contains "jan" .Profile}}p:red{{end}}'
       ]
     invert_powerline = true
@@ -174,7 +174,7 @@ final_space = true
   [[blocks.segments]]
     type = 'status'
     foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:white{{ end }}']
-    background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green2{{ end }}']
+    background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
     template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
     style = 'powerline'
     invert_powerline = true
