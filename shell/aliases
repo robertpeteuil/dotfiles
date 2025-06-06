@@ -149,41 +149,36 @@ tfsaveplan () {
   }
 alias tfplansave='tfsaveplan'
 
-## OS-SPECIFIC ALIASES ########################################
-case "$(uname -s)" in
-  Darwin)
-    ## Use dir sort if coreutils installed
-    if command -v eza >/dev/null 2>&1; then
-      alias ls="eza -bGF --header --git --color=always --group-directories-first --icons"
-      alias ll="eza -la --icons --octal-permissions --group-directories-first --icons"
-      alias lsh="eza --color -lad --icons --octal-permissions --group-directories-first .*"
-      alias ldot="eza --color -lad --icons --octal-permissions --group-directories-first .*"
-      alias lsd="eza -la --group-directories-first | grep '^d'"
-      alias lsl="eza -la --group-directories-first | grep '^l'"
-    elif command -v gls >/dev/null 2>&1; then
-      alias ls="gls --color=always --group-directories-first"
-      alias ll="gls --color -laFhv --group-directories-first"
-      alias lsh="gls --color -laFhdv --group-directories-first .*"
-      alias ldot='gls --color -ldv --group-directories-first .*'
-      alias lsd="gls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
-      alias lsl="gls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
-    else
-      alias ll="ls --color -laFhv"
-      alias lsh="ls --color -laFhdv .*"
-      alias ldot='ls --color -ldv .*'
-      alias lsd="ls --color=never -laFhv | grep --color=never '^d'"
-      alias lsl="ls --color=never -laFhv | grep --color=never '^l'"
-    fi
-  ;;
-  Linux)
-    if command -v eza >/dev/null 2>&1; then
-      alias ls="eza -bGF --header --git --color=always --group-directories-first --icons"
-      alias ll="eza -la --icons --octal-permissions --group-directories-first --icons"
-      alias lsh="eza --color -lad --icons --octal-permissions --group-directories-first .*"
-      alias ldot="eza --color -lad --icons --octal-permissions --group-directories-first .*"
-      alias lsd="eza -la --group-directories-first | grep '^d'"
-      alias lsl="eza -la --group-directories-first | grep '^l'"
-    else
+## LS ALIASES ########################################
+if command -v eza >/dev/null 2>&1; then
+  # use cross-platform eza, if available
+  alias ls="eza -bGF --header --git --color=always --group-directories-first --icons"
+  alias ll="eza -la --icons --octal-permissions --group-directories-first --icons"
+  alias lsh="eza --color -lad --icons --octal-permissions --group-directories-first .*"
+  alias ldot="eza --color -lad --icons --octal-permissions --group-directories-first .*"
+  alias lsd="eza -la --icons --octal-permissions --group-directories-first --icons -D"
+  alias lsl="eza -la --group-directories-first | grep '^l'"
+  alias lsgr="eza -la --icons --octal-permissions --group-directories-first --icons --git-repos"
+else
+  case "$(uname -s)" in
+    Darwin)
+      ## Use gls from coreutils if installed
+      if command -v gls >/dev/null 2>&1; then
+        alias ls="gls --color=always --group-directories-first"
+        alias ll="gls --color -laFhv --group-directories-first"
+        alias lsh="gls --color -laFhdv --group-directories-first .*"
+        alias ldot='gls --color -ldv --group-directories-first .*'
+        alias lsd="gls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
+        alias lsl="gls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
+      else
+        alias ll="ls --color -laFhv"
+        alias lsh="ls --color -laFhdv .*"
+        alias ldot='ls --color -ldv .*'
+        alias lsd="ls --color=never -laFhv | grep --color=never '^d'"
+        alias lsl="ls --color=never -laFhv | grep --color=never '^l'"
+      fi
+      ;;
+    Linux)
       ## LS with dir sort
       alias ls="ls --color=always --group-directories-first"
       alias ll="ls --color -laFhv --group-directories-first"
@@ -191,6 +186,6 @@ case "$(uname -s)" in
       alias ldot='ls --color -ldv --group-directories-first .*'
       alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
       alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
-    fi
-  ;;
-esac
+      ;;
+  esac
+fi
