@@ -126,8 +126,6 @@ case "$(uname -s)" in
     ;;
 esac
 
-# unset color_enabled
-
 GRC=$(which grc 2>/dev/null)
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
   sourceIf "$HOME/.grc/grc.bashrc"
@@ -137,7 +135,9 @@ fi
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
     source <(jj util completion bash)
-    # source <(COMPLETE=bash jj)   # dynamic completions
+fi
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init --cmd cd bash)"
 fi
 
 ###### SOURCE FILES
