@@ -42,11 +42,11 @@ if pygmentize -h > /dev/null 2>&1; then
 fi
 
 ## PATHS
-alias pathdump='echo "$PATH" | tr ":" "\n"'
+alias dumppath='echo "$PATH" | tr ":" "\n"'
 # shellcheck disable=SC2154
-alias pathdebug='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
+alias debugpath='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
 # only define for zsh
-[[ -n "$ZSH_NAME" ]] && alias fpathdump='echo "$FPATH" | tr ":" "\n"'
+[[ -n "$ZSH_NAME" ]] && alias dumpfpath='echo "$FPATH" | tr ":" "\n"'
 
 ## OUTPUT CLARIFIERS
 alias mv='mv -v'
@@ -158,6 +158,7 @@ if command -v eza >/dev/null 2>&1; then
   alias ldot="eza --color -lad --icons --octal-permissions --group-directories-first .*"
   alias lsd="eza -la --icons --octal-permissions --group-directories-first --icons -D"
   alias lsl="eza -la --group-directories-first | grep '^l'"
+  alias lsg="eza -la --icons --octal-permissions --group-directories-first --icons --git"
   alias lsgr="eza -la --icons --octal-permissions --group-directories-first --icons --git-repos"
 else
   case "$(uname -s)" in

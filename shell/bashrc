@@ -81,81 +81,13 @@ export PS4='$LINENO + '
 umask 0002
 
 
-###### DEFINE COLOR AND PROMPT VARS
-# DETERMINE COLOR CAPABILITY
-# if [ -x /usr/bin/tput ] && $(tput setaf 1 &> /dev/null); then
-if [ -x /usr/bin/tput ] && tput setaf 1 &> /dev/null; then
-  color_enabled=yes
-fi
-
-case "$TERM" in
- xterm*) color_enabled=yes;;
- ansi) color_enabled=yes;;
- vt102) color_enabled=yes;;
- linux) color_enabled=yes;;
-esac
-
-# SET PROMPT ITEMS
-ESCON="\["
-ESCOFF="\]"
-# shellcheck disable=SC2034
-P_TIME="\@"
-P_HOSTNAME="\h"
-# shellcheck disable=SC2034
-P_USER="\u"
-P_DIR="\w"
-P_DIR_SM="\W"
-P_SYMBOL="\$ "
-
-# SET COLOR VARS
-# shellcheck disable=SC2034
-if [ "$color_enabled" = yes ]; then
-  COLOR_RESET="\033[0m"
-  BLUE="\033[1;34m"
-  WHITE="\033[1;37m"
-  RED="\033[1;31m"
-  GREEN="\033[0;32m"
-  YELLOW="\033[0;33m"
-  CYAN="\033[0;36m"
-
-  PBLUE="${ESCON}${BLUE}${ESCOFF}"
-  PWHITE="${ESCON}${COLOR_RESET}${ESCOFF}"
-  PGREEN="${ESCON}${GREEN}${ESCOFF}"
-  PRED="${ESCON}${RED}${ESCOFF}"
-  PYELLOW="${ESCON}${YELLOW}${ESCOFF}"
-  PCYAN="${ESCON}${CYAN}${ESCOFF}"
-fi
-
-if [[ $TERM == "linux" ]]; then
-  PWHITE="${ESCON}${WHITE}${ESCOFF}"
-fi
-
-
 ###### PROMPT
-# shellcheck disable=SC2034
-if [[ $prompt_style == "GIT" ]] && [ -e ~/.bash-git-prompt/gitprompt.sh ]; then
-  export PROMPT_COMMAND='echo -ne "\033]1;"$(hostname -s)"\007"'
-  # GIT_PROMPT_SHOW_UNTRACKED_FILES=no
-  GIT_PROMPT_IGNORE_SUBMODULES=1
-  GIT_PROMPT_THEME_FILE=~/.bash-git-prompt/custom_config.sh
-  # shellcheck disable=SC1090
-  . ~/.bash-git-prompt/gitprompt.sh
-elif [[ $prompt_style == "DEMO" ]]; then
-  export PROMPT_COMMAND='echo -ne "\033]1;${DEMOHOST}\007"'
-  if [ "$(id -u)" -eq 0 ]; then
-    export PS1="${PRED}${DEMOHOST}${COLOR_RESET}:${PYELLOW}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
-  else
-    export PS1="${PGREEN}${DEMOHOST}${COLOR_RESET}:${PCYAN}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
-  fi
-  export SUDO_PS1="${PRED}${DEMOHOST}${COLOR_RESET}:${PYELLOW}${P_DIR_SM}${COLOR_RESET}${P_SYMBOL}"
+major_version=${BASH_VERSION%%.*}
+if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ] && [ "$major_version" -ge 5 ]; then
+  ## OHMYPOSH - if OMP installed and modern Bash and terminal
+  eval "$(oh-my-posh init bash --config $DOTFILES/themes/tokyonights-bash.omp.toml)"
 else
-  export PROMPT_COMMAND='echo -ne "\033]1;"$(hostname -s)"\007"'
-  if [ "$(id -u)" -eq 0 ]; then
-    export PS1="${PRED}${P_HOSTNAME}${COLOR_RESET}:${PYELLOW}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
-  else
-    export PS1="${PGREEN}${P_HOSTNAME}${COLOR_RESET}:${PCYAN}${P_DIR}${COLOR_RESET}${P_SYMBOL}"
-  fi
-  export SUDO_PS1="${PRED}${P_HOSTNAME}${PWHITE}:${PYELLOW}${P_DIR_SM}${COLOR_RESET}${P_SYMBOL}"
+  . $DOTFILES/shell/bash-prompt
 fi
 
 
@@ -194,8 +126,6 @@ case "$(uname -s)" in
     ;;
 esac
 
-# unset color_enabled
-
 GRC=$(which grc 2>/dev/null)
 if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
   sourceIf "$HOME/.grc/grc.bashrc"
@@ -205,7 +135,9 @@ fi
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
     source <(jj util completion bash)
-    # source <(COMPLETE=bash jj)   # dynamic completions
+fi
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init --cmd cd bash)"
 fi
 
 ###### SOURCE FILES

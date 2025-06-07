@@ -17,18 +17,8 @@ function shellExit {
 }
 trap shellExit EXIT
 
-### ENABLE POWERLEVEL10K INSTANT PROMPT
-#   Keep near top of ~/.df/zsh/.zshrc, but before any console I/O
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
 
 ### AUTOCOMPLETE ADJUSTMENTS
-# Delay autocomp display
-#   1 sec delay on ssh connecteions
-if [ -n "$SSH_CONNECTION" ]; then
-    zstyle ':autocomplete:*' min-delay 1  # seconds
-fi
 #   2.5 sec delay if ~/.slowzshcomp exists
 if [ -f $HOME/.slowzshcomp ]; then
     zstyle ':autocomplete:*' min-delay 2.5
