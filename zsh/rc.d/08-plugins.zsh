@@ -31,4 +31,4 @@ for p in $plugins; do
 done
 
 # Load zcolors
-znap eval zcolors zcolors   # Extra init code needed for zcolors.
+# znap eval zcolors zcolors   # Extra init code needed for zcolors.
