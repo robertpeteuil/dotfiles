@@ -25,7 +25,9 @@ fi
 
 ## TMUX ########################
 alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
+alias tml='tmux ls'
 alias tmls='tmux ls'
+alias tmlw'tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmK='tmux kill-session -t'
 alias tmr='tmux rename-session -t'
