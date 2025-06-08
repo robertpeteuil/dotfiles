@@ -24,8 +24,9 @@ if command -v nvim &>/dev/null; then
 fi
 
 ## TMUX ########################
-alias tma='tmux new -A -s'  # attach to existing tmux session or create a new one
-alias tmls='tmux ls'  # list tmux sessions
+alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
+alias tmls='tmux ls'
+alias tmlp='tmux list-panes -a'
 alias tmK='tmux kill-session -t'
 alias tmr='tmux rename-session -t'
 
