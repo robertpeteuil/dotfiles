@@ -1,0 +1,18 @@
+#!/bin/bash
+# cspell: disable
+
+set -e
+
+##  DOTFILES UPDATER
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+CONFIG="install.conf.yaml"
+DOTBOT_DIR="dotbot"
+DOTBOT_BIN="bin/dotbot"
+
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# RE-RUN DOTBOT WITH BASE CONFIGURATION
+"${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${CONFIG}" "${@}"
