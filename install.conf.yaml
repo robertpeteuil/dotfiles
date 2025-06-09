@@ -46,10 +46,14 @@
 # Specific Settings
 - link:
     ~/.tmux.conf:
-      if: 'test -e ./shell/tmux.conf'
-      path: shell/tmux.conf
-      force: false
+      if: 'test -e ./config/tmux.conf'
+      path: config/tmux.conf
+      force: true
     ~/.ssh/config:
       if: 'test -e ./private/ssh/config'
       path: private/ssh/config
+      force: false
+    ~/.config/ghostty/config:
+      if: '[ `uname` = Darwin ]'
+      path: config/ghostty-config-macos
       force: false
