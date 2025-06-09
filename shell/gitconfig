@@ -13,7 +13,7 @@
   excludesfile = ~/.gitignore_global
   editor = nano
   autocrlf = input
-	pager = less -R
+  pager = less -R
 [difftool "opendiff"]
   cmd = opendiff \"$LOCAL\" \"$REMOTE\"
   path = /usr/bin/opendiff
@@ -57,7 +57,7 @@
   remotebranch = 6 normal
   nobranch = 1 normal
   unmerged = 9 normal
-  untracked = normal dim
+  untracked = 8 normal
 [color "branch"]
   plain = normal
   remote = 6 normal
@@ -65,44 +65,44 @@
   local = 12 normal
   upstream = 6 normal
 [color "remote"]
-  hint = normal dim
+  hint = 8 normal
   success = 10 normal
   error = 9 normal
   warning = 11 normal
 [color "interactive"]
-  header = normal dim bold
+  header = 8 normal bold
   prompt = 15 4
-  help = normal dim
+  help = 8 normal
   error = 9 normal
 [color "diff"]
   commit = 3 normal
-  newMoved = 15 4
-  oldMovedAlternativeDimmed = 7 5 dim
-  frag = normal dim
-  oldMovedAlternative = 7 5
-  contextBold = normal bold
-  newBold = 15 2 bold
   context = normal
+  contextBold = normal bold
   contextDimmed = normal dim
-  oldMoved = 7 4
-  oldBold = 7 1 bold
-  newMovedDimmed = 15 4 dim
-  func = normal dim
-  meta = normal dim
-  newDimmed = 15 2 dim
-  newMovedAlternative = 15 5
+  frag = 8 normal
+  func = 8 normal
   new = 15 2
-  newMovedAlternativeDimmed = 15 5 dim
+  newBold = 15 2 bold
+  newDimmed = 15 2 dim
+  newMoved = 15 5
+  newMovedAlternative = 15 4
+  newMovedAlternativeDimmed = 15 4 dim
+  newMovedDimmed = 15 5 dim
+  meta = 8 normal
+  old = 15 1
+  oldBold = 15 1 bold
+  oldDimmed = 15 1 dim
+  oldMoved = 15 3
+  oldMovedAlternative = 15 8
+  oldMovedAlternativeDimmed = 15 8 dim
+  oldMovedDimmed = 15 3 dim
   whitespace = normal 9
-  oldMovedDimmed = 7 4 dim
-  oldDimmed = 7 1 dim
-  old = 7 1
 [color "decorate"]
   branch = 12 normal
   tag = 5 normal
   remotebranch = 6 normal
-  stash = normal dim
+  stash = 8 normal
   grafted = 1 normal
   HEAD = 15 4
 [init]
-	defaultBranch = main
+  defaultBranch = main

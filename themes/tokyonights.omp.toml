@@ -198,7 +198,7 @@ final_space = true
   # status code
   [[blocks.segments]]
     type = 'status'
-    foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:white{{ end }}']
+    foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:black{{ end }}']
     background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
     template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
     style = 'plain'

@@ -48,4 +48,8 @@
     ~/.tmux.conf:
       if: 'test -e ./shell/tmux.conf'
       path: shell/tmux.conf
-      force: true
+      force: false
+    ~/.ssh/config:
+      if: 'test -e ./private/ssh/config'
+      path: private/ssh/config
+      force: false

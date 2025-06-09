@@ -22,15 +22,15 @@ trap shellExit EXIT
 # Delay autocomp display
 #   1 sec delay on ssh connecteions
 if [ -n "$SSH_CONNECTION" ]; then
-    zstyle ':autocomplete:*' min-delay 1  # seconds
+  zstyle ':autocomplete:*' min-delay 1  # seconds
 fi
 #   2.5 sec delay if ~/.slowzshcomp exists
 if [ -f $HOME/.slowzshcomp ]; then
-    zstyle ':autocomplete:*' min-delay 2.5
+  zstyle ':autocomplete:*' min-delay 2.5
 fi
 # Disable if ZSH_AUTOCOMPLETE_DISABLED or ~/.hushzshcomp exists
 if [ -n "$ZSH_AUTOCOMPLETE_DISABLED" ] || [ -f $HOME/.hushzshcomp ]; then
-    zstyle ':autocomplete:*' async no
+  zstyle ':autocomplete:*' async no
 fi
 
 ### LOAD FILES IN RC.D DIR
@@ -51,11 +51,11 @@ autoload -Uz pathIf sourceIf
 ### COMPLETIONS
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
-    source <(jj util completion zsh)
-    # source <(COMPLETE=zsh jj)   # dynamic completions
+  source <(jj util completion zsh)
+  # source <(COMPLETE=zsh jj)   # dynamic completions
 fi
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init --cmd cd zsh)"
+  eval "$(zoxide init --cmd cd zsh)"
 fi
 
 ### SOURCE FILES

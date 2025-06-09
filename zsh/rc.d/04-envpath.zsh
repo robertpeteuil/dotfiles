@@ -24,28 +24,28 @@ export -UT INFOPATH infopath
 
 # PATH - OS SPECIFIC
 if [ "$(uname -s)" = "Darwin" ]; then
-    path=(
-        /usr/local/bin
-        $path
-    )
+  path=(
+    /usr/local/bin
+    $path
+  )
 elif [ "$(uname -s)" = "Linux" ]; then
-    path=(
-        $path
-        ~/.local/bin
-    )
+  path=(
+    $path
+    ~/.local/bin
+  )
 fi
 
 ## FUNCTION PATH
 #   $FPATH and $fpath dirs are where zsh looks for functions.
 fpath=(
-    $ZDOTDIR/functions
-    $fpath
-    ~/.local/share/zsh/site-functions
+  $ZDOTDIR/functions
+  $fpath
+  ~/.local/share/zsh/site-functions
 )
 
 ## BREW ENVIRONMENT    
 if [[ -r "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ -r "/usr/local/bin/brew" ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
+  eval "$(/usr/local/bin/brew shellenv)"
 fi

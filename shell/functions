@@ -7,119 +7,119 @@
 #
 
 update-set-colors() {
-    ## SET SHELL SPECIFIC COLORS
-    if [[ "$SHELL" == *"zsh"* ]]; then
-        RED="\e[31m"
-        GREEN="\e[32m"
-        WHITE="\e[0m"
-        BLUE="\e[34m"
-    else
-        RED="\033[1;31m"
-        GREEN="\033[0;32m"
-        WHITE="\033[1;37m"
-        BLUE="\033[1;34m"
-    fi
+  ## SET SHELL SPECIFIC COLORS
+  if [[ "$SHELL" == *"zsh"* ]]; then
+    RED="\e[31m"
+    GREEN="\e[32m"
+    WHITE="\e[0m"
+    BLUE="\e[34m"
+  else
+    RED="\033[1;31m"
+    GREEN="\033[0;32m"
+    WHITE="\033[1;37m"
+    BLUE="\033[1;34m"
+  fi
 }
 
 update-apps() {
-    OS=$(uname -s)
-    update-set-colors
-    if [[ "$OS" == 'Darwin' ]]; then
-        # Update Mac App Store Apps when NOT connected over SSH, may require UI action
-        if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
-            if mas &> /dev/null; then
-                echo -e "${GREEN}Updating Mac App Store apps${WHITE}..."
-                mas upgrade
-            fi
-        fi
+  OS=$(uname -s)
+  update-set-colors
+  if [[ "$OS" == 'Darwin' ]]; then
+    # Update Mac App Store Apps when NOT connected over SSH, may require UI action
+    if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
+      if mas &> /dev/null; then
+        echo -e "${GREEN}Updating Mac App Store apps${WHITE}..."
+        mas upgrade
+      fi
     fi
+  fi
 }
 
 update-packages() {
-    OS=$(uname -s)
-    update-set-colors
-    # Update Packages - MacOS
-    if [[ "$OS" == 'Darwin' ]]; then
-        # Update macos packages via brew
-        if brew --prefix &> /dev/null; then
-            echo -e "${GREEN}Updating via brew${WHITE}..."
-            brew update && brew upgrade
-            if [[ "$1" == "clean" ]]; then
-                echo -e "${BLUE}Cleaning brew packages${WHITE}..."
-                brew cleanup 2> /dev/null
-            fi
-        fi
-    # Update Packages - Linux
-    elif [[ "$OS" == 'Linux' ]]; then
-        # Ddetermine linux package manager
-        if apt-get &> /dev/null; then
-            pkg_cmd="apt-get"
-        elif apt -h &> /dev/null; then
-            pkg_cmd="apt"
-        elif yum -h &> /dev/null; then
-            pkg_cmd="yum"
-        fi
-        # Update Linux packages
-        if [[ "$pkg_cmd" == apt* ]]; then
-            echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
-            sudo "${pkg_cmd}" update -qq -y
-            echo -e "${GREEN}Upgrading via ${pkg_cmd}${WHITE}..."
-            sudo "${pkg_cmd}" upgrade -y
-            if [[ "$1" == "clean" ]]; then
-                echo -e "${BLUE}Autoclean & Autoremove${WHITE}..."
-                sudo apt-get autoclean -qq
-                sudo apt-get autoremove -qq
-            fi
-        elif [[ "$pkg_cmd" == "yum" ]]; then
-            echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
-            sudo yum makecache fast
-            sudo yum update -y
-            if [[ "$1" == "clean" ]]; then
-                sudo yum clean packages expire-cache
-            fi
-        else
-            echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
-        fi
-    else
-        echo -e "${RED}Unknown OS - Packages not updated${WHITE}"
+  OS=$(uname -s)
+  update-set-colors
+  # Update Packages - MacOS
+  if [[ "$OS" == 'Darwin' ]]; then
+    # Update macos packages via brew
+    if brew --prefix &> /dev/null; then
+      echo -e "${GREEN}Updating via brew${WHITE}..."
+      brew update && brew upgrade
+      if [[ "$1" == "clean" ]]; then
+        echo -e "${BLUE}Cleaning brew packages${WHITE}..."
+        brew cleanup 2> /dev/null
+      fi
     fi
+  # Update Packages - Linux
+  elif [[ "$OS" == 'Linux' ]]; then
+    # Ddetermine linux package manager
+    if apt-get &> /dev/null; then
+      pkg_cmd="apt-get"
+    elif apt -h &> /dev/null; then
+      pkg_cmd="apt"
+    elif yum -h &> /dev/null; then
+      pkg_cmd="yum"
+    fi
+    # Update Linux packages
+    if [[ "$pkg_cmd" == apt* ]]; then
+      echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
+      sudo "${pkg_cmd}" update -qq -y
+      echo -e "${GREEN}Upgrading via ${pkg_cmd}${WHITE}..."
+      sudo "${pkg_cmd}" upgrade -y
+      if [[ "$1" == "clean" ]]; then
+        echo -e "${BLUE}Autoclean & Autoremove${WHITE}..."
+        sudo apt-get autoclean -qq
+        sudo apt-get autoremove -qq
+      fi
+    elif [[ "$pkg_cmd" == "yum" ]]; then
+      echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
+      sudo yum makecache fast
+      sudo yum update -y
+      if [[ "$1" == "clean" ]]; then
+        sudo yum clean packages expire-cache
+      fi
+    else
+      echo -e "${RED}Unknown Package Manager - Packages not updated${WHITE}"
+    fi
+  else
+    echo -e "${RED}Unknown OS - Packages not updated${WHITE}"
+  fi
 }
 
 update-dotfiles() {
-    update-set-colors
-    git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
-    # update dotfiles
-    if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
-        prev_dir=$(pwd)
-        echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
-        cd "$DOTFILES" || return; git up; cd "$prev_dir" || return
-        # cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
-        # check for private repo and update if found
-        if [[ -e "$DOTFILES/private/.git" ]]; then
-            echo -e "${GREEN}Updating private DOTFILES repo${WHITE}..."
-            cd "$DOTFILES/private" || return; git up; cd "$prev_dir" || return
-            # cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
-        fi
+  update-set-colors
+  git --version &> /dev/null && GIT_INST=1 || GIT_INST=0
+  # update dotfiles
+  if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
+    prev_dir=$(pwd)
+    echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
+    cd "$DOTFILES" || return; git up; cd "$prev_dir" || return
+    # cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
+    # check for private repo and update if found
+    if [[ -e "$DOTFILES/private/.git" ]]; then
+      echo -e "${GREEN}Updating private DOTFILES repo${WHITE}..."
+      cd "$DOTFILES/private" || return; git up; cd "$prev_dir" || return
+      # cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
     fi
-    # update nvim config
-    if [[ -e "$HOME/.config/nvim/.git" ]] && [[ -n $GIT_INST ]]; then
-        prev_dir=$(pwd)
-        echo -e "${GREEN}Updating nvim config${WHITE}..."
-        cd ".config/nvim" || return; git up; cd "$prev_dir" || return
-    fi
+  fi
+  # update nvim config
+  if [[ -e "$HOME/.config/nvim/.git" ]] && [[ -n $GIT_INST ]]; then
+    prev_dir=$(pwd)
+    echo -e "${GREEN}Updating nvim config${WHITE}..."
+    cd ".config/nvim" || return; git up; cd "$prev_dir" || return
+  fi
 }
 
 update-code() {
-    update-set-colors
-    if which code &> /dev/null; then
-        echo -e "${GREEN}Updating VSCode Extensions${WHITE}..."
-        code --update-extensions 2> /dev/null
-    fi
+  update-set-colors
+  if which code &> /dev/null; then
+    echo -e "${GREEN}Updating VSCode Extensions${WHITE}..."
+    code --update-extensions 2> /dev/null
+  fi
 }
 
 update-all() {
-    update-packages "$1"
-    update-apps
-    update-dotfiles
-    update-code
+  update-packages "$1"
+  update-apps
+  update-dotfiles
+  update-code
 }
