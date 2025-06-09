@@ -9,13 +9,13 @@
 
 
 local -a plugins=(
-    marlonrichert/zcolors                       # Colors for completions and Git
     zsh-users/zsh-autosuggestions               # Inline suggestions
     zdharma-continuum/fast-syntax-highlighting  # Fast syntax highlighting
     zsh-users/zsh-completions                   # 
     marlonrichert/zsh-autocomplete              # Real-time type-ahead completion
 )
 # Other plugins:
+#     marlonrichert/zcolors                       # Colors for completions and Git
 #     jeffreytse/zsh-vi-mode                      # https://github.com/jeffreytse/zsh-vi-mode
 #     marlonrichert/zsh-edit                    # Better keyboard shortcuts
 #     marlonrichert/zsh-hist                    # Edit history from the command line.
@@ -31,4 +31,4 @@ for p in $plugins; do
 done
 
 # Load zcolors
-znap eval zcolors zcolors   # Extra init code needed for zcolors.
+# znap eval zcolors zcolors   # Extra init code needed for zcolors.
