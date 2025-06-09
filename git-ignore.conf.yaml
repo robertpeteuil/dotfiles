@@ -1,8 +1,8 @@
 - defaults:
-    link:
-      create: true
-      relink: true
-      force: false
+  link:
+    create: true
+    relink: true
+    force: false
 
 # Ignore changes in gitconfig
 - shell:
