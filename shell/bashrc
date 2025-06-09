@@ -20,14 +20,14 @@ DEMOHOST="Host"         # required if prompt_style="DEMO"
 
 # If sh shell, manually source bash_profile
 if [ -z "$BASH_PROFILE_LOADED" ] && [ -f "$HOME/.bash_profile" ]; then
-    . "$HOME/.bash_profile"
+  . "$HOME/.bash_profile"
 fi
 
 ###### EXITS 
 ## IF NOT INTERACTIVE
 case $- in
-    *i*) ;;
-      *) return;;
+  *i*) ;;
+    *) return;;
 esac
 ## EXIT IF NOT BASH
 if [ -z "$BASH_VERSION" ]; then
@@ -87,7 +87,7 @@ if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ] 
   ## OHMYPOSH - if OMP installed and modern Bash and terminal
   eval "$(oh-my-posh init bash --config $DOTFILES/themes/tokyonights-bash.omp.toml)"
 else
-  . $DOTFILES/shell/bash-prompt
+  $DOTFILES/shell/bash-prompt
 fi
 
 
@@ -134,10 +134,10 @@ fi
 ###### COMPLETIONS
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
-    source <(jj util completion bash)
+  source <(jj util completion bash)
 fi
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init --cmd cd bash)"
+  eval "$(zoxide init --cmd cd bash)"
 fi
 
 ###### SOURCE FILES
