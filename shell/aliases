@@ -149,9 +149,9 @@ alias tf='terraform'
 alias tfapplyaa='terraform apply -auto-approve'
 alias tfdestroyaa='terraform destroy -auto-approve'
 tfsaveplan () {
-    [[ -z "$1" ]] && echo "specify name for plan output as \$1" && return 1
-    terraform plan -no-color -out="${1}.plan" > "${1}.txt"
-  }
+  [[ -z "$1" ]] && echo "specify name for plan output as \$1" && return 1
+  terraform plan -no-color -out="${1}.plan" > "${1}.txt"
+}
 alias tfplansave='tfsaveplan'
 
 ## LS ALIASES ########################################

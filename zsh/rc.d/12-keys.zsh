@@ -50,7 +50,7 @@ bindkey '^[w' where-is
     # If the command line is empty or just whitespace, then first load the
     # previous line.
     [[ $BUFFER == [[:space:]]# ]] &&
-        zle .up-history
+      zle .up-history
 
     # $LBUFFER is the part of the command line that's left of the cursor. This
     # way, we preserve the cursor's position.
