@@ -31,3 +31,4 @@ window-height = 45
 # Other
 copy-on-select = clipboard
 # term = "xterm-256color"
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
