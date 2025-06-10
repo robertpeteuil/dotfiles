@@ -24,6 +24,9 @@ if command -v nvim &>/dev/null; then
 fi
 
 ## TMUX ########################
+# fix for ctrl keys in tmux with EDITOR='nvim'
+# see - https://stackoverflow.com/questions/18240683/how-to-force-emacs-style-status-keys-in-tmux/39520371#39520371
+alias tmux='EDITOR= VISUAL= tmux'
 alias tm='tmux '
 alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
 alias tml='tmux ls'
