@@ -35,7 +35,6 @@ final_space = true
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
-  # newline = true
 
   # SSH SESSION
   [[blocks.segments]]
