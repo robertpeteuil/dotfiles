@@ -14,15 +14,15 @@
   editor = nano
   autocrlf = input
   pager = less -R
-[difftool "opendiff"]
-  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path = /usr/bin/opendiff
+[diff]
+  tool = nvimdiff
+[difftool]
+  prompt = true
+[difftool "nvimdiff"]
+  cmd = nvim -d  \"$LOCAL\" \"$REMOTE\"
 [color]
   ui = true
   diff = true
-[diff]
-  color = true
-  colorMoved = zebra
 [pager]
   color = true
 [status]
