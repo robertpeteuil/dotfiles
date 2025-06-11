@@ -123,10 +123,9 @@ alias gremote='git remote -v'
 alias gundocm='git reset --soft HEAD~'
 alias gignored='git ls-files -o -i --exclude-standard'
 alias gignored2='git ls-files -v | grep "^[[:lower:]]"'
-alias glogs='git log --stat'
-alias glog='git log --graph'
-alias glog10='git log --graph --max-count=10'
+alias glog='git log --graph --decorate'
 alias gloga='git log --graph --decorate --all'
+alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
 
 ## DOCKER
