@@ -34,6 +34,7 @@ alias tmls='tmux ls'
 alias tmlw'tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
+alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
 alias tmKs='tmux kill-server'
 
