@@ -190,8 +190,8 @@ else
     Linux)
       ## LS with dir sort
       alias ls="ls --color=always --group-directories-first"
-      alias ll="ls --color -laFhv --group-directories-first"
-      alias lsh="ls --color -laFhdv --group-directories-first .*"
+      alias ll="ls --color -lahv --group-directories-first"
+      alias lsh="ls --color -lahdv --group-directories-first .*"
       alias ldot='ls --color -ldv --group-directories-first .*'
       alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
       alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
