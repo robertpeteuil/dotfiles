@@ -31,12 +31,12 @@ alias tm='tmux '
 alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
 alias tml='tmux ls'
 alias tmls='tmux ls'
-alias tmlw'tmux list-windows -a'
+alias tmlw='tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
 alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
-alias tmKs='tmux kill-server'
+alias tmKS='tmux kill-server'
 
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
