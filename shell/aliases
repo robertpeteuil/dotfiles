@@ -31,11 +31,17 @@ alias tm='tmux '
 alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
 alias tml='tmux ls'
 alias tmls='tmux ls'
-alias tmlw'tmux list-windows -a'
+alias tmlw='tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
+alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
-alias tmKs='tmux kill-server'
+tmux-kill-server() {
+  if read -q "choice?kill tmux server [Y/n]?"; then
+    tmux kill-server
+  fi
+}
+alias tmKS='tmux-kill-server'
 
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
@@ -123,10 +129,9 @@ alias gremote='git remote -v'
 alias gundocm='git reset --soft HEAD~'
 alias gignored='git ls-files -o -i --exclude-standard'
 alias gignored2='git ls-files -v | grep "^[[:lower:]]"'
-alias glogs='git log --stat'
-alias glog='git log --graph'
-alias glog10='git log --graph --max-count=10'
+alias glog='git log --graph --decorate'
 alias gloga='git log --graph --decorate --all'
+alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
 
 ## DOCKER
@@ -190,8 +195,8 @@ else
     Linux)
       ## LS with dir sort
       alias ls="ls --color=always --group-directories-first"
-      alias ll="ls --color -laFhv --group-directories-first"
-      alias lsh="ls --color -laFhdv --group-directories-first .*"
+      alias ll="ls --color -lahv --group-directories-first"
+      alias lsh="ls --color -lahdv --group-directories-first .*"
       alias ldot='ls --color -ldv --group-directories-first .*'
       alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
       alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"

@@ -87,7 +87,7 @@ if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ] 
   ## OHMYPOSH - if OMP installed and modern Bash and terminal
   eval "$(oh-my-posh init bash --config $DOTFILES/themes/tokyonights-bash.omp.toml)"
 else
-  $DOTFILES/shell/bash-prompt
+  . $DOTFILES/shell/bash-prompt
 fi
 
 

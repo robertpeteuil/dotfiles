@@ -15,7 +15,7 @@ mouse-hide-while-typing = true
 # Theme
 theme = tokyonight_night
 minimum-contrast = 4
-background-opacity = 0.9
+# background-opacity = 0.9
 background-blur = 0
 window-theme = ghostty
 cursor-style = "block"
@@ -31,3 +31,4 @@ window-height = 45
 # Other
 copy-on-select = clipboard
 # term = "xterm-256color"
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
