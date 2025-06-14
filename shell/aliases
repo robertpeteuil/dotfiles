@@ -36,7 +36,12 @@ alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
 alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
-alias tmKS='tmux kill-server'
+tmux-kill-server() {
+  if read -q "choice?kill tmux server [Y/n]?"; then
+    tmux kill-server
+  fi
+}
+alias tmKS='tmux-kill-server'
 
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
