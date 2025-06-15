@@ -38,10 +38,6 @@
     ~/.gitignore_global:
       path: shell/gitignore_global
       force: true
-    ~/.gitconfig_private:
-      if: 'test -e ./private/shell/gitconfig_private'
-      path: private/shell/gitconfig_private
-      force: true
 
 # Config
 - link:
@@ -57,11 +53,18 @@
       if: '[ `uname` = Darwin ]'
       path: config/ghostty/config-macos
       force: false
+
+# Private Config
+- link:
+    ~/.gitconfig_private:
+      if: 'test -e ./private/config/gitconfig_private'
+      path: private/config/gitconfig_private
+      force: true
     ~/.ssh/config:
-      if: 'test -e ./private/ssh/config'
-      path: private/ssh/config
+      if: 'test -e ./private/config/ssh/config'
+      path: private/config/ssh/config
       force: false
     ~/.config/jj/config.toml:
-      if: 'test -e ./private/shell/jj-config.toml'
-      path: private/shell/jj-config.toml
+      if: 'test -e ./private/config/jj-config.toml'
+      path: private/config/jj-config.toml
       force: false
