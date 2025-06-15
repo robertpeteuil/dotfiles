@@ -38,22 +38,33 @@
     ~/.gitignore_global:
       path: shell/gitignore_global
       force: true
-    ~/.gitconfig_private:
-      if: 'test -e ./private/shell/gitconfig_private'
-      path: private/shell/gitconfig_private
-      force: true
 
-# Specific Settings
+# Config
 - link:
     ~/.tmux.conf:
-      if: 'test -e ./config/tmux.conf'
-      path: config/tmux.conf
+      if: 'test -e ./config/tmux/tmux.conf'
+      path: config/tmux/tmux.conf
       force: true
-    ~/.ssh/config:
-      if: 'test -e ./private/ssh/config'
-      path: private/ssh/config
+    ~/.config/nvim:
+      if: 'test -e ./config/nvim'
+      path: config/nvim
       force: false
     ~/.config/ghostty/config:
       if: '[ `uname` = Darwin ]'
-      path: config/ghostty-config-macos
+      path: config/ghostty/config-macos
+      force: false
+
+# Private Config
+- link:
+    ~/.gitconfig_private:
+      if: 'test -e ./private/config/gitconfig_private'
+      path: private/config/gitconfig_private
+      force: true
+    ~/.ssh/config:
+      if: 'test -e ./private/config/ssh/config'
+      path: private/config/ssh/config
+      force: false
+    ~/.config/jj/config.toml:
+      if: 'test -e ./private/config/jj-config.toml'
+      path: private/config/jj-config.toml
       force: false
