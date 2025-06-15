@@ -61,3 +61,7 @@
       if: 'test -e ./private/ssh/config'
       path: private/ssh/config
       force: false
+    ~/.config/jj/config.toml:
+      if: 'test -e ./private/shell/jj-config.toml'
+      path: private/shell/jj-config.toml
+      force: false
