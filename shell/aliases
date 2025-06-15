@@ -7,9 +7,8 @@
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-
 ## NAVIGATION
-alias -- -='cd -'  # Type '-' to return to your previous dir.
+alias -- -='cd -' # Type '-' to return to your previous dir.
 #   '--' is end of options. Else '-=...' would be interpreted as a flag.
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -17,10 +16,11 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
-## EDITOR 
+## EDITOR
 if command -v nvim &>/dev/null; then
   alias vim='nvim'
   alias vi='nvim'
+  alias v='nvim'
 fi
 
 ## TMUX ########################
@@ -28,7 +28,7 @@ fi
 # see - https://stackoverflow.com/questions/18240683/how-to-force-emacs-style-status-keys-in-tmux/39520371#39520371
 alias tmux='EDITOR= VISUAL= tmux'
 alias tm='tmux '
-alias tma='tmux new -A -s'   # attach to existing tmux session or create a new one
+alias tma='tmux new -A -s' # attach to existing tmux session or create a new one
 alias tml='tmux ls'
 alias tmls='tmux ls'
 alias tmlw='tmux list-windows -a'
@@ -46,12 +46,12 @@ alias tmKS='tmux-kill-server'
 ## COLORIZATION
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
-if pygmentize -h > /dev/null 2>&1; then
-  alias ccat='pygmentize -g'    
+if command -v pygmentize &>/dev/null; then
+  alias ccat='pygmentize -g'
   # on zsh remap extensions and '< FILE' to use pygmentize
-  if [[ -n "$ZSH_NAME" ]]; then   
+  if [[ -n "$ZSH_NAME" ]]; then
     alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
-    READNULLCMD='pygmentize'  
+    READNULLCMD='pygmentize'
   fi
 fi
 
@@ -79,7 +79,7 @@ alias fgrep='grep -F'
 ## FILE OWNERSHIP
 alias mychown='chown $(id -u):$(id -g)'
 alias chownasme='mychown'
-alias octal='stat -c "%a %n" '   # display octal file permissions
+alias octal='stat -c "%a %n" ' # display octal file permissions
 alias getoctal='octal'
 
 ## K8S
@@ -93,11 +93,10 @@ alias kns='f() { [ "$1" ] && kubectl config set-context --current --namespace $1
 alias kctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
 
 ## GIT
-GIT_INST=$(git --version 2&> /dev/null)
 export GIT_MERGE_AUTOEDIT=no
 # If git installed, set up some aliases into a new config file: ~/.gitconfig_custom
 #   shellcheck disable=SC2086
-if [[ -n $GIT_INST ]]; then
+if command -v git >/dev/null 2>&1; then
   # git clone shortcut 'ghweb' for https://github.com/
   #   ex: "git clone ghweb:USER/REPO"
   git config -f ~/.gitconfig_custom --replace-all url.https://github.com/.insteadof ghweb:
@@ -156,9 +155,9 @@ alias dstat-s="docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage
 alias tf='terraform'
 alias tfapplyaa='terraform apply -auto-approve'
 alias tfdestroyaa='terraform destroy -auto-approve'
-tfsaveplan () {
+tfsaveplan() {
   [[ -z "$1" ]] && echo "specify name for plan output as \$1" && return 1
-  terraform plan -no-color -out="${1}.plan" > "${1}.txt"
+  terraform plan -no-color -out="${1}.plan" >"${1}.txt"
 }
 alias tfplansave='tfsaveplan'
 
@@ -175,31 +174,31 @@ if command -v eza >/dev/null 2>&1; then
   alias lsgr="eza -la --icons --octal-permissions --group-directories-first --icons --git-repos"
 else
   case "$(uname -s)" in
-    Darwin)
-      ## Use gls from coreutils if installed
-      if command -v gls >/dev/null 2>&1; then
-        alias ls="gls --color=always --group-directories-first"
-        alias ll="gls --color -laFhv --group-directories-first"
-        alias lsh="gls --color -laFhdv --group-directories-first .*"
-        alias ldot='gls --color -ldv --group-directories-first .*'
-        alias lsd="gls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
-        alias lsl="gls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
-      else
-        alias ll="ls --color -laFhv"
-        alias lsh="ls --color -laFhdv .*"
-        alias ldot='ls --color -ldv .*'
-        alias lsd="ls --color=never -laFhv | grep --color=never '^d'"
-        alias lsl="ls --color=never -laFhv | grep --color=never '^l'"
-      fi
-      ;;
-    Linux)
-      ## LS with dir sort
-      alias ls="ls --color=always --group-directories-first"
-      alias ll="ls --color -lahv --group-directories-first"
-      alias lsh="ls --color -lahdv --group-directories-first .*"
-      alias ldot='ls --color -ldv --group-directories-first .*'
-      alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
-      alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
-      ;;
+  Darwin)
+    ## Use gls from coreutils if installed
+    if command -v gls >/dev/null 2>&1; then
+      alias ls="gls --color=always --group-directories-first"
+      alias ll="gls --color -laFhv --group-directories-first"
+      alias lsh="gls --color -laFhdv --group-directories-first .*"
+      alias ldot='gls --color -ldv --group-directories-first .*'
+      alias lsd="gls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
+      alias lsl="gls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
+    else
+      alias ll="ls --color -laFhv"
+      alias lsh="ls --color -laFhdv .*"
+      alias ldot='ls --color -ldv .*'
+      alias lsd="ls --color=never -laFhv | grep --color=never '^d'"
+      alias lsl="ls --color=never -laFhv | grep --color=never '^l'"
+    fi
+    ;;
+  Linux)
+    ## LS with dir sort
+    alias ls="ls --color=always --group-directories-first"
+    alias ll="ls --color -lahv --group-directories-first"
+    alias lsh="ls --color -lahdv --group-directories-first .*"
+    alias ldot='ls --color -ldv --group-directories-first .*'
+    alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
+    alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
+    ;;
   esac
 fi
