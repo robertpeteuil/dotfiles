@@ -15,13 +15,12 @@ mouse-hide-while-typing = true
 # Theme
 theme = tokyonight_night
 minimum-contrast = 4
-background-opacity = 0.9
+# background-opacity = 0.95
 background-blur-radius = 40
 # background-blur = 0
 window-theme = ghostty
 cursor-style = "block"
 cursor-style-blink = false
-# cursor-invert-fg-bg = true
 
 # Window
 window-decoration = auto
