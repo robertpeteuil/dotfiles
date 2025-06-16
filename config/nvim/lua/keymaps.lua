@@ -48,8 +48,11 @@ end, { desc = 'Update register timestamp' })
 vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
 
 -- Meta keybinds require setting iTerm profile key bindings to send Esc+ for left option key
-vim.keymap.set('n', '<M-j>', ':m .+1<CR>==') -- move line down
-vim.keymap.set('n', '<M-k>', ':m .-2<CR>==') -- move line up
+-- toggle transparency
+vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency' })
+-- move lines up/down
+vim.keymap.set('n', '<M-j>', ':m .+1<CR>==')
+vim.keymap.set('n', '<M-k>', ':m .-2<CR>==')
 
 -- END PERSONAL
 -- ------------------------------------------------

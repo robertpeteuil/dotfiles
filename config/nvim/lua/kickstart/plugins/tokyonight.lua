@@ -10,7 +10,7 @@ return {
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
         style = 'night',
-        transparent = true,
+        transparent = vim.g.transparent_enabled,
         styles = {
           comments = { italic = false }, -- Disable italics in comments
           keywords = { italic = false }, -- Disable italics in keywords
