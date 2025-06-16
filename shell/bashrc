@@ -6,7 +6,6 @@
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-
 ###### VARS
 export DOTFILES="$HOME/.dotfiles"
 export BASH_RC_LOADED=1
@@ -16,30 +15,29 @@ export BASH_RC_LOADED=1
 # prompt_style="GIT"    # 2-line prompt, displays info for repo dirs
 # prompt_style="DEMO"   # prompt for screen-caps, displays string set in $DEMOHOST var
 prompt_style="GIT"
-DEMOHOST="Host"         # required if prompt_style="DEMO"
+DEMOHOST="Host" # required if prompt_style="DEMO"
 
 # If sh shell, manually source bash_profile
 if [ -z "$BASH_PROFILE_LOADED" ] && [ -f "$HOME/.bash_profile" ]; then
   . "$HOME/.bash_profile"
 fi
 
-###### EXITS 
+###### EXITS
 ## IF NOT INTERACTIVE
 case $- in
-  *i*) ;;
-    *) return;;
+*i*) ;;
+*) return ;;
 esac
 ## EXIT IF NOT BASH
 if [ -z "$BASH_VERSION" ]; then
   export PATH
   # shellcheck disable=SC2317
-  return &> /dev/null || exit
+  return &>/dev/null || exit
 fi
 ## REBOOT CHECKS
 if [[ "$(uname -s)" == "Linux" ]] && [[ -f /var/run/reboot-required ]]; then
   echo "*** System restart required ****"
 fi
-
 
 ###### PATHS
 pathIf "/opt/homebrew/bin"
@@ -50,7 +48,6 @@ pathIf "$HOME/bin"
 pathIf "$HOME/go/bin"
 pathIf "/usr/local/go/bin"
 pathIfPre "$HOME/.local/bin"
-
 
 ###### BASH CONFIGURATION
 # don't put duplicate lines or lines starting with space in the history.
@@ -80,7 +77,6 @@ export PS4='$LINENO + '
 # SET FILE DEFAULT MODE
 umask 0002
 
-
 ###### PROMPT
 major_version=${BASH_VERSION%%.*}
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ] && [ "$major_version" -ge 5 ]; then
@@ -90,40 +86,39 @@ else
   . $DOTFILES/shell/bash-prompt
 fi
 
-
 ###### OS-SPECIFIC CONFIGURATION
 case "$(uname -s)" in
-  Darwin)
-    export BASH_SILENCE_DEPRECATION_WARNING=1
-    # config brew environment
-    if [[ -r "/opt/homebrew/bin/brew" ]]; then
-      eval "$(/opt/homebrew/bin/brew shellenv)"
-    elif [[ -r "/usr/local/bin/brew" ]]; then
-      eval "$(/usr/local/bin/brew shellenv)"
-    fi
-    if brew --prefix &> /dev/null; then
-      BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
-      # enable brew bash completion
-      sourceIf "${BrewPrefix}/etc/bash_completion"    
-    fi
-    # Move GPG2 to beginning of path
-    if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
-      tpath=${PATH/\/usr\/local\/MacGPG2\/bin:\///}
-      PATH="/usr/local/MacGPG2/bin:$tpath"
-    fi
-    export PATH
-    ;;
-  Linux)
-    # shellcheck disable=SC2015
-    if [ -x /usr/bin/dircolors ]; then
-      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    fi
-    if ! shopt -oq posix; then
-      sourceIf "/usr/share/bash-completion/bash_completion"
-      sourceIf "/etc/bash_completion"
-    fi
-    export PATH
-    ;;
+Darwin)
+  export BASH_SILENCE_DEPRECATION_WARNING=1
+  # config brew environment
+  if [[ -r "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -r "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+  if brew --prefix &>/dev/null; then
+    BrewPrefix=$(/opt/homebrew/bin/brew --prefix)
+    # enable brew bash completion
+    sourceIf "${BrewPrefix}/etc/bash_completion"
+  fi
+  # Move GPG2 to beginning of path
+  if [[ $PATH == *"/usr/local/MacGPG2/bin"* ]]; then
+    tpath=${PATH/\/usr\/local\/MacGPG2\/bin:\///}
+    PATH="/usr/local/MacGPG2/bin:$tpath"
+  fi
+  export PATH
+  ;;
+Linux)
+  # shellcheck disable=SC2015
+  if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  fi
+  if ! shopt -oq posix; then
+    sourceIf "/usr/share/bash-completion/bash_completion"
+    sourceIf "/etc/bash_completion"
+  fi
+  export PATH
+  ;;
 esac
 
 GRC=$(which grc 2>/dev/null)
@@ -139,11 +134,15 @@ fi
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd bash)"
 fi
+## fzf completions
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --bash)"
+fi
 
 ###### SOURCE FILES
 
 ## CROSS-SHELL FILES
-sourceIf "$DOTFILES/shell/includes"                 # includes file    - zsh & bash
+sourceIf "$DOTFILES/shell/includes" # includes file    - zsh & bash
 
 ## EXTERNAL FILES
-sourceIf "$DOTFILES/private/shell/bashrc-private"   # private bashrc   - bash
+sourceIf "$DOTFILES/private/shell/bashrc-private" # private bashrc   - bash
