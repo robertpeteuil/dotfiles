@@ -19,6 +19,7 @@ DEMOHOST="Host" # required if prompt_style="DEMO"
 
 # If sh shell, manually source bash_profile
 if [ -z "$BASH_PROFILE_LOADED" ] && [ -f "$HOME/.bash_profile" ]; then
+  # shellcheck source=bash_profile
   . "$HOME/.bash_profile"
 fi
 
