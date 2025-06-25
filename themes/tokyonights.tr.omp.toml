@@ -39,7 +39,7 @@ final_space = true
   # SSH SESSION
   [[blocks.segments]]
     type = "session"
-    foreground = "p:black"
+    # foreground = "p:black"
     background = 'p:magenta'
     template = ' {{ if .SSHSession }} {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ end }}{{ .HostName }} '
     style = "plain"
@@ -48,7 +48,7 @@ final_space = true
   [[blocks.segments]]
     template = ''
     foreground = 'p:magenta'
-    background = 'p:black'
+    # background = 'p:black'
     type = 'text'
     style = 'plain'
 
@@ -56,9 +56,12 @@ final_space = true
   [[blocks.segments]]
     type = 'path'
     style = 'powerline'
-    foreground = 'p:black'
+    # foreground = 'p:black'
+    foreground = 'default'
     background = 'p:blue'
     powerline_symbol = ''
+    leading_powerline_symbol = ''
+    # invert_powerline = true
     template = '{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} '
 
     [blocks.segments.properties]
@@ -92,15 +95,36 @@ final_space = true
   type = 'prompt'
   alignment = 'right'
 
+  # EXECUTION TIME
+  [[blocks.segments]]
+    type = 'executiontime'
+    background = 'p:yellow'
+    template = ' {{ .FormattedMs }}  '
+    # foreground = 'p:black'
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
+
+    [blocks.segments.properties]
+      style = "austin"
+
   # KUBERNETES
   [[blocks.segments]]
     type = 'kubernetes'
-    foreground = 'p:purewhite'
+    # foreground = 'p:purewhite'
     background = 'p:magenta2'
     template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
     [blocks.segments.properties]
       display_context = true
@@ -109,12 +133,16 @@ final_space = true
   # NODE
   [[blocks.segments]]
     type = 'node'
-    foreground = 'p:purewhite'
+    # foreground = 'p:purewhite'
     background = 'p:green'
     template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
     [blocks.segments.properties]
       fetch_version = true
@@ -122,12 +150,16 @@ final_space = true
   # GO
   [[blocks.segments]]
     type = 'go'
-    foreground = 'p:black2'
+    # foreground = 'p:black2'
     background = 'p:cyan'
     template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
     [blocks.segments.properties]
       fetch_version = true
@@ -135,12 +167,18 @@ final_space = true
   # PYTHON
   [[blocks.segments]]
     type = 'python'
-    foreground = 'p:black2'
+    # foreground = 'p:black2'
     background = 'p:green2'
     template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    # leading_powerline_symbol = ''
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
     [blocks.segments.properties]
       display_mode = 'files'
@@ -149,15 +187,21 @@ final_space = true
   # AWS
   [[blocks.segments]]
     template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
+    # foreground = 'p:purewhite'
+    # powerline_symbol = ''
     type = 'aws'
-    style = 'powerline'
+    # style = 'powerline'
     background_templates = [
       '{{if contains "default" .Profile}}p:orange{{end}}',
       '{{if contains "jan" .Profile}}p:red{{end}}'
       ]
-    invert_powerline = true
+    # invert_powerline = true
+    # leading_powerline_symbol = ''
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
     [blocks.segments.properties]
       display_default = false
@@ -165,34 +209,43 @@ final_space = true
   # ROOT
   [[blocks.segments]]
     type = 'root'
-    foreground = 'p:black2'
+    # foreground = 'p:black2'
     background = 'p:orange'
     template = '  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
+    # style = 'powerline'
+    # invert_powerline = true
+    # powerline_symbol = ''
+    # leading_powerline_symbol = ''
+    # powerline_symbol = ''
+    style = 'diamond'
+    foreground = 'default'
+    leading_diamond = ''
+    trailing_diamond = ''
 
   # EXECUTION TIME
-  [[blocks.segments]]
-    type = 'executiontime'
-    foreground = 'p:black'
-    background = 'p:yellow'
-    template = ' {{ .FormattedMs }}  '
-    style = 'powerline'
-    invert_powerline = true
-    powerline_symbol = ''
-
-    [blocks.segments.properties]
-      style = "austin"
+  # [[blocks.segments]]
+  #   type = 'executiontime'
+  #   # foreground = 'p:black'
+  #   foreground = 'default'
+  #   background = 'p:yellow'
+  #   template = ' {{ .FormattedMs }}  '
+  #   style = 'powerline'
+  #   # invert_powerline = true
+  #   # powerline_symbol = ''
+  #   leading_powerline_symbol = ''
+  #   powerline_symbol = ''
+  #
+  #   [blocks.segments.properties]
+  #     style = "austin"
 
   # STATUS
   # leading symbol - same color as status
   [[blocks.segments]]
-    template = ''
     foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
-    background = 'p:black'
+    template = ''
     type = 'text'
     style = 'plain'
+    # background = 'p:black'
 
   # status code
   [[blocks.segments]]
