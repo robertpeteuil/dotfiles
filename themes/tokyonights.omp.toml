@@ -136,7 +136,7 @@ final_space = true
   [[blocks.segments]]
     type = 'python'
     foreground = 'p:black2'
-    background = 'p:yellow'
+    background = 'p:green2'
     template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
     style = 'powerline'
     invert_powerline = true
