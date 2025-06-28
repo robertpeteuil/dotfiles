@@ -87,6 +87,18 @@ final_space = true
       fetch_status = true
       fetch_upstream_icon = false
 
+  # JJ
+  [[blocks.segments]]
+    template = " 󰜛 {{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} "
+    foreground = 'p:black'
+    powerline_symbol = ''
+    background = 'p:green2'
+    type = 'jujutsu'
+    style = 'powerline'
+
+    [blocks.segments.properties]
+      fetch_status = true
+
 # RIGHT PROMPT
 [[blocks]]
   type = 'prompt'
