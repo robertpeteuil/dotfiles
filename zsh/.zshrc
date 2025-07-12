@@ -63,6 +63,10 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 compdef _gnu_generic fzf
 
+### setup NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+
 ### SOURCE FILES
 # cross-shell files
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes

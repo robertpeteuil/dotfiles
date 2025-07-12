@@ -127,6 +127,11 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
   sourceIf "$HOME/.grc/grc.bashrc"
 fi
 
+### setup NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"                                       # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+
 ###### COMPLETIONS
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
