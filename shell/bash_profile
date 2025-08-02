@@ -7,31 +7,28 @@
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-
 ###### VARS
 export BASH_PROFILE_LOADED=1
 
-sourceIf () {
+sourceIf() {
   if [ -e "$1" ]; then
     . "$1"
   fi
 }
 
-pathIf () {
+pathIf() {
   if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
     PATH="$PATH:$1"
   fi
 }
 
-pathIfPre () {
+pathIfPre() {
   if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
     PATH="$1:$PATH"
   fi
 }
 
-
 # source bashrc, unless sh shell
 if [ -z "$BASH_RC_LOADED" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi
-
