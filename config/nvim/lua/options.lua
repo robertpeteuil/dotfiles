@@ -83,6 +83,16 @@ vim.api.nvim_create_autocmd({ 'BufLeave' }, {
   end,
 })
 
+-- source: https://github.com/nvim-lualine/lualine.nvim/issues/1372
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'neo-tree',
+  callback = function()
+    -- Set the buffer to be unlisted
+    vim.opt_local.buflisted = false
+  end,
+  desc = 'Prevent neo-tree from appearing in the buffer list',
+})
+
 -- END PERSONAL
 -- ------------------------------------------------
 
