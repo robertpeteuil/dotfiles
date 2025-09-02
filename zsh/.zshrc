@@ -68,8 +68,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 
 ### setup atuin
+. "$HOME/.atuin/bin/env"
 if command -v atuin &>/dev/null; then
-  . "$HOME/.atuin/bin/env"
   eval "$(atuin init zsh)"
 fi
 
