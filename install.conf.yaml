@@ -59,6 +59,12 @@
     ~/.config/lazygit/config.yml:
       path: config/lazygit/tokyonight_night.yml
       force: false
+    ~/.config/atuin/config.toml:
+      path: config/atuin/config.toml
+      force: true
+    ~/.config/atuin/themes:
+      path: config/atuin/themes
+      force: true
 
 # Private Config
 - link:
