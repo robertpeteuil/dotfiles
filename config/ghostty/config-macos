@@ -29,6 +29,8 @@ window-width = 170
 window-height = 45
 
 # Other
+# shell-integration = zsh
 copy-on-select = clipboard
 # term = "xterm-256color"
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
+auto-update-channel = tip
