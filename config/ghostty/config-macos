@@ -13,7 +13,8 @@ font-thicken-strength = 50
 mouse-hide-while-typing = true
 
 # Theme
-theme = tokyonight_night
+# theme = tokyonight_night
+theme = TokyoNight Night
 minimum-contrast = 4
 background-opacity = 0.9
 background-blur-radius = 20
