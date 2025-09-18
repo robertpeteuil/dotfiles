@@ -43,7 +43,7 @@
 ## which filter mode to use by default
 ## possible values: "global", "host", "session", "directory", "workspace"
 ## consider using search.filters to customize the enablement and order of filter modes
-# filter_mode = "global"
+filter_mode = "workspace"
 
 ## With workspace filtering enabled, Atuin will filter for commands executed
 ## in any directory within a git repository tree (default: false).
@@ -51,7 +51,7 @@
 ## To use workspace mode by default when available, set this to true and
 ## set filter_mode to "workspace" or leave it unspecified and 
 ## set search.filters to include "workspace" before other filter modes.
-# workspaces = false
+workspaces = true
 
 ## which filter mode to use when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "filter_mode"
@@ -152,10 +152,10 @@ inline_height = 15
 
 ## Defaults to true. If enabled, upon hitting enter Atuin will immediately execute the command. Press tab to return to the shell and edit.
 # This applies for new installs. Old installs will keep the old behaviour unless configured otherwise.
-enter_accept = true
+enter_accept = false
 
 ## Defaults to false. If enabled, when triggered after && or ||, Atuin will complete commands to chain rather than replace the current line.
-# command_chaining = false
+command_chaining = true
 
 ## Defaults to "emacs".  This specifies the keymap on the startup of `atuin
 ## search`.  If this is set to "auto", the startup keymap mode in the Atuin
@@ -217,7 +217,7 @@ enter_accept = true
 
 [keys]
 # Defaults to true. If disabled, using the up/down key won't exit the TUI when scrolled past the first/last entry.
-# scroll_exits = true
+scroll_exits = false
 # Defaults to true. The left arrow key will exit the TUI when scrolling before the first character
 # exit_past_line_start = true
 # Defaults to true. The right arrow key performs the same functionality as Tab and copies the selected line to the command line to be modified.
@@ -277,4 +277,4 @@ name = "tokyo-night"
 ## The list of enabled filter modes, in order of priority.
 ## The "workspace" mode is skipped when not in a workspace or workspaces = false.
 ## Default filter mode can be overridden with the filter_mode setting.
-# filters = [ "global", "host", "session", "workspace", "directory" ]
+filters = [ "workspace", "directory", "session", "host", "global" ]
