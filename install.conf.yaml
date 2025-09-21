@@ -69,6 +69,9 @@
     ~/.config/atuin/themes:
       path: config/atuin/themes
       force: true
+    ~/.jqp.yaml:
+      path: config/jqp/jqp.yaml
+      force: false
 
 # Private Config
 - link:
