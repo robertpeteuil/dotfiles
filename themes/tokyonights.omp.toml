@@ -27,11 +27,6 @@ final_space = true
   grey = '#565f89'
   grey2 = '#283457'
 
-# [transient_prompt]
-#   background = "transparent"
-#   foreground = 'p:blue'
-#   template = "❯ "
-
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
