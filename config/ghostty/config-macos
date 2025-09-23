@@ -13,9 +13,10 @@ font-thicken-strength = 50
 mouse-hide-while-typing = true
 
 # Theme
-theme = tokyonight_night
+# theme = tokyonight_night
+theme = TokyoNight Night
 minimum-contrast = 4
-background-opacity = 0.95
+background-opacity = 0.9
 background-blur-radius = 20
 # background-blur = 0
 window-theme = ghostty
@@ -29,6 +30,8 @@ window-width = 170
 window-height = 45
 
 # Other
+# shell-integration = zsh
 copy-on-select = clipboard
 # term = "xterm-256color"
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
+auto-update-channel = tip

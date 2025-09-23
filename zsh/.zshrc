@@ -67,6 +67,14 @@ compdef _gnu_generic fzf
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 
+### setup atuin
+if [[ -f "$HOME/.atuin/bin/env" ]]; then
+  . "$HOME/.atuin/bin/env"
+fi
+if command -v atuin &>/dev/null; then
+  eval "$(atuin init zsh)"
+fi
+
 ### SOURCE FILES
 # cross-shell files
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
