@@ -11,7 +11,7 @@ require('lazy').setup({
 
   require 'kickstart.plugins.which-key',
 
-  require 'kickstart.plugins.telescope',
+  -- require 'kickstart.plugins.telescope',
 
   require 'kickstart.plugins.lspconfig',
 
@@ -29,6 +29,7 @@ require('lazy').setup({
 
   require 'kickstart.plugins.autopairs',
 
+  -- require 'kickstart.plugins.telescope',   customized and moved to custom/plugins dir
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.lint',
 
