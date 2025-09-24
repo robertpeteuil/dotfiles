@@ -61,6 +61,19 @@ return {
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          vimgrep_arguments = {
+            'rg',
+            '--hidden',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            -- '!**/.git/*',
+          },
+        },
         pickers = {
           find_files = {
             hidden = true,
