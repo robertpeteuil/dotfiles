@@ -30,8 +30,14 @@ window-width = 170
 window-height = 45
 
 # Other
+macos-option-as-alt = true
 # shell-integration = zsh
 copy-on-select = clipboard
 # term = "xterm-256color"
-keybind = global:ctrl+grave_accent=toggle_quick_terminal
 auto-update-channel = tip
+
+# keybinds
+keybind = cmd+shift+f=write_scrollback_file:paste
+keybind = "cmd+.=text:\x03"
+# keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
