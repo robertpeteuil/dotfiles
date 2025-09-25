@@ -6,10 +6,10 @@ OS="$(uname -s)"
 if [[ "$OS" == 'Darwin' ]]; then
 
   if command -v brew &>/dev/null; then
-    echo "installing eza, lazygit, zoxide and oh-my-posh with 'brew'..."
-    brew install eza lazygit zoxide oh-my-posh
+    echo "installing eza, lazygit, zoxide, jqp and oh-my-posh with 'brew'..."
+    brew install eza lazygit zoxide oh-my-posh jqp
   else
-    echo "brew missing... lazygit not installed"
+    echo "brew missing... utils not installed"
     exit 1
   fi
 
