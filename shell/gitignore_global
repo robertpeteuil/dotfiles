@@ -178,7 +178,7 @@ build
 #######
 # .*.s[a-w][a-z]
 # *.un~
-# Session.vim
+Session.vim
 # .netrwhist
 # *~
 
