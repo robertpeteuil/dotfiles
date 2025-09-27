@@ -13,7 +13,7 @@ return {
         lualine_c = { 'filename' },
         lualine_x = { 'filetype' },
         lualine_y = { 'progress' },
-        lualine_z = { 'location' },
+        lualine_z = { 'location', '%{ObsessionStatus()}' },
       },
       inactive_sections = {
         lualine_a = { 'mode' },
@@ -21,7 +21,7 @@ return {
         lualine_c = { 'filename' },
         lualine_x = { 'filetype' },
         lualine_y = { 'progress' },
-        lualine_z = { 'location' },
+        lualine_z = { 'location', '%{ObsessionStatus()}' },
       },
     }
   end,
