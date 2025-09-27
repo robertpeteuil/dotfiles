@@ -53,6 +53,10 @@
       if: '[ `uname` = Darwin ]'
       path: config/ghostty/config-macos
       force: false
+    ~/.config/ghostty/themes/tokyonight_night:
+      if: '[ `uname` = Darwin ]'
+      path: config/ghostty/tokyonight_night
+      force: false
     ~/.config/eza/theme.yml:
       path: config/eza/tokyonight.yml
       force: false
