@@ -93,6 +93,9 @@ vim.api.nvim_create_autocmd('FileType', {
   desc = 'Prevent neo-tree from appearing in the buffer list',
 })
 
+-- auto-session options
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
 -- END PERSONAL
 -- ------------------------------------------------
 
