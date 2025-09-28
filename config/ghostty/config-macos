@@ -26,7 +26,8 @@ cursor-style-blink = false
 # Window
 window-decoration = auto
 window-theme = dark
-window-width = 170
+# window-width = 170
+window-width = 155
 window-height = 45
 
 # Other
