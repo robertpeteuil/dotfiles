@@ -45,7 +45,7 @@ vim.keymap.set('n', '<leader>d', function()
 end, { desc = 'Update register timestamp' })
 
 -- leader key mappings
-vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
+-- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
 
 -- Meta keybinds require setting iTerm profile key bindings to send Esc+ for left option key
 -- toggle transparency
