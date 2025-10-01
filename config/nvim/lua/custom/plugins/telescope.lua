@@ -75,6 +75,21 @@ return {
           },
         },
         pickers = {
+          buffers = {
+            show_all_buffers = true,
+            sort_lastused = true,
+            previewer = true,
+            -- enable closing selected buffer with d (Normal) and Control-d (Insert)
+            --   ref: https://github.com/nvim-telescope/telescope.nvim/pull/828
+            mappings = {
+              n = {
+                ['d'] = 'delete_buffer',
+              },
+              i = {
+                ['<c-d>'] = 'delete_buffer',
+              },
+            },
+          },
           find_files = {
             hidden = true,
           },
