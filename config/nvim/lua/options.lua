@@ -96,6 +96,11 @@ vim.api.nvim_create_autocmd('FileType', {
 -- auto-session options
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
+-- gets surround working - but disable some which-key features
+-- vim.o.timeout = false
+-- vim.o.ttimeout = true
+-- vim.o.ttimeoutlen = 100
+
 -- END PERSONAL
 -- ------------------------------------------------
 
