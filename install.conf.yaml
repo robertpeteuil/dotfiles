@@ -66,6 +66,9 @@
     ~/.config/atuin/config.toml:
       path: config/atuin/config.toml
       force: true
+    ~/.config/mise/config.toml:
+      path: config/mise/config.toml
+      force: true
     ~/.config/atuin/themes:
       path: config/atuin/themes
       force: true
