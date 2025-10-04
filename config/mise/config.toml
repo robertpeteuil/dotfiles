@@ -1,9 +1,0 @@
-[settings]
-lockfile = true
-experimental = true
-
-[tools]
-neovim = "0.11"
-node = "22"
-terraform = "1.13"
-

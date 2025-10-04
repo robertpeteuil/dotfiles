@@ -66,12 +66,6 @@
     ~/.config/atuin/config.toml:
       path: config/atuin/config.toml
       force: true
-    ~/.config/mise/config.toml:
-      path: config/mise/config.toml
-      force: true
-    ~/.config/mise/mise.lock:
-      path: config/mise/mise.lock
-      force: true
     ~/.config/atuin/themes:
       path: config/atuin/themes
       force: true
@@ -94,3 +88,11 @@
       if: 'test -e ./private/config/jj-config.toml'
       path: private/config/jj-config.toml
       force: false
+    ~/.config/mise/config.toml:
+      if: 'test -e ./private/config/mise/config.toml'
+      path: private/config/mise/config.toml
+      force: true
+    ~/.config/mise/mise.lock:
+      if: 'test -e ./private/config/mise/mise.lock'
+      path: private/config/mise/mise.lock
+      force: true
