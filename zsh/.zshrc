@@ -75,6 +75,11 @@ if command -v atuin &>/dev/null; then
   eval "$(atuin init zsh)"
 fi
 
+# setup MISE
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 ### SOURCE FILES
 # cross-shell files
 [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
