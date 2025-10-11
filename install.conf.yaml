@@ -4,20 +4,20 @@
       relink: true
       force: false
 
-- clean: ['~']
+- clean: ["~"]
 
 # Zsh Settings
 - link:
-    ~/.zshenv: 
+    ~/.zshenv:
       path: zsh/.zshenv
       force: true
 
 # Bash Settings
 - link:
-    ~/.bash-git-prompt: 
+    ~/.bash-git-prompt:
       path: shell/bash-git-prompt
       force: true
-    ~/.grc: 
+    ~/.grc:
       path: shell/grc
       force: true
     ~/.bash_profile:
@@ -42,19 +42,23 @@
 # Config
 - link:
     ~/.tmux.conf:
-      if: 'test -e ./config/tmux/tmux.conf'
+      if: "test -e ./config/tmux/tmux.conf"
       path: config/tmux/tmux.conf
       force: true
     ~/.config/nvim:
-      if: 'test -e ./config/nvim'
+      if: "test -e ./config/nvim"
       path: config/nvim
       force: false
     ~/.config/ghostty/config:
-      if: '[ `uname` = Darwin ]'
+      if: "[ `uname` = Darwin ]"
       path: config/ghostty/config-macos
       force: false
+    ~/.config/ghostty/shaders:
+      if: "[ `uname` = Darwin ]"
+      path: config/ghostty/shaders
+      force: false
     ~/.config/ghostty/themes/tokyonight_night:
-      if: '[ `uname` = Darwin ]'
+      if: "[ `uname` = Darwin ]"
       path: config/ghostty/tokyonight_night
       force: false
     ~/.config/eza/theme.yml:
@@ -70,29 +74,29 @@
       path: config/atuin/themes
       force: true
     ~/.jqp.yaml:
-      if: '[ `uname` = Darwin ]'
+      if: "[ `uname` = Darwin ]"
       path: config/jqp/jqp.yaml
       force: false
 
 # Private Config
 - link:
     ~/.gitconfig_private:
-      if: 'test -e ./private/config/gitconfig_private'
+      if: "test -e ./private/config/gitconfig_private"
       path: private/config/gitconfig_private
       force: true
     ~/.ssh/config:
-      if: 'test -e ./private/config/ssh/config'
+      if: "test -e ./private/config/ssh/config"
       path: private/config/ssh/config
       force: false
     ~/.config/jj/config.toml:
-      if: 'test -e ./private/config/jj-config.toml'
+      if: "test -e ./private/config/jj-config.toml"
       path: private/config/jj-config.toml
       force: false
     ~/.config/mise/config.toml:
-      if: 'test -e ./private/config/mise/config.toml'
+      if: "test -e ./private/config/mise/config.toml"
       path: private/config/mise/config.toml
       force: true
     ~/.config/mise/mise.lock:
-      if: 'test -e ./private/config/mise/mise.lock'
+      if: "test -e ./private/config/mise/mise.lock"
       path: private/config/mise/mise.lock
       force: true
