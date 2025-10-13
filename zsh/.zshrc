@@ -48,6 +48,15 @@ fi
 ### LOAD ZSH FUNCTIONS
 autoload -Uz pathIf sourceIf
 
+### FIXES
+case "$(uname -s)" in
+  Darwin)
+    # fix macos tempdir permission issue
+    #   https://github.com/jesseduffield/lazygit/issues/4924
+    TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
+    ;;
+esac
+
 ### COMPLETIONS
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
