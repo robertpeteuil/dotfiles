@@ -222,4 +222,5 @@ final_space = true
     type = 'text'
     style = 'plain'
     foreground = 'p:blue'
-    template = "❯"
+    # template = "❯"
+    template = ""

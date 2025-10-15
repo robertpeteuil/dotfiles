@@ -61,6 +61,41 @@ return {
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          -- initial_mode = 'normal',
+          vimgrep_arguments = {
+            'rg',
+            '--hidden',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            -- '!**/.git/*',
+          },
+        },
+        pickers = {
+          buffers = {
+            initial_mode = 'normal', -- use NORMAL mode for buffer picker
+            show_all_buffers = true,
+            sort_lastused = true,
+            previewer = true,
+            -- enable closing selected buffer with d (Normal) and Control-d (Insert)
+            --   ref: https://github.com/nvim-telescope/telescope.nvim/pull/828
+            mappings = {
+              n = {
+                ['d'] = 'delete_buffer',
+              },
+              i = {
+                ['<c-d>'] = 'delete_buffer',
+              },
+            },
+          },
+          find_files = {
+            hidden = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -72,18 +107,35 @@ return {
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
+      -- procession seach integration
+      -- pcall(require('telescope').load_extension, 'prosession')
+
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      -- vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      -- adjust telescope search to leader S T
+      vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch select [T]elescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      -- procession seach integration
+      -- vim.keymap.set('n', '<Leader>sp', '<cmd>Telescope prosession<CR>', { desc = '[S]earch [P]rosessions' })
+
+      -- Custom find files that includes hidden, but excludes .git
+      --   source 1: https://old.reddit.com/r/neovim/comments/nspg8o/telescope_find_files_not_showing_hidden_files/
+      --   source 2: https://github.com/creativenull/dotfiles/blob/4fc5971029604ff1c338cfe0c6c2c333d9ee3ec4/.config/nvim-nightly/lua/creativenull/plugins/config/telescope.lua#L17
+      vim.keymap.set('n', '<leader>sf', function()
+        builtin.find_files {
+          find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
+        }
+      end, { desc = '[S]earch [F]iles' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()

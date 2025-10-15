@@ -30,6 +30,7 @@ alias tmux='EDITOR= VISUAL= tmux'
 alias tm='tmux '
 alias tma='tmux new -A -s' # attach to existing tmux session or create a new one
 alias tml='tmux ls'
+alias tmf='tmux capture-pane -epS - | less -r' # dump scrollback pane into less
 alias tmls='tmux ls'
 alias tmlw='tmux list-windows -a'
 alias tmlp='tmux list-panes -a'

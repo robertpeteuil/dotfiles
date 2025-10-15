@@ -12,9 +12,14 @@ font-thicken-strength = 50
 # Mouse
 mouse-hide-while-typing = true
 
+# Custom Shaders
+#  source: https://github.com/crisecheverria/dotfiles/blob/main/.config/ghostty/config
+custom-shader = shaders/cursor_smear_fade.glsl
+custom-shader = shaders/cursor_blaze_no_trail.glsl
+
 # Theme
-# theme = tokyonight_night
-theme = TokyoNight Night
+theme = tokyonight_night
+# theme = TokyoNight Night
 minimum-contrast = 4
 background-opacity = 0.9
 background-blur-radius = 20
@@ -26,12 +31,19 @@ cursor-style-blink = false
 # Window
 window-decoration = auto
 window-theme = dark
-window-width = 170
+# window-width = 170
+window-width = 155
 window-height = 45
 
 # Other
+macos-option-as-alt = true
 # shell-integration = zsh
 copy-on-select = clipboard
 # term = "xterm-256color"
-keybind = global:ctrl+grave_accent=toggle_quick_terminal
 auto-update-channel = tip
+
+# keybinds
+keybind = cmd+shift+f=write_scrollback_file:paste
+keybind = "cmd+.=text:\x03"
+# keybind = global:ctrl+grave_accent=toggle_quick_terminal
+

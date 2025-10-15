@@ -93,6 +93,18 @@ vim.api.nvim_create_autocmd('FileType', {
   desc = 'Prevent neo-tree from appearing in the buffer list',
 })
 
+-- auto-session options
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
+-- enable basedpyright lsp
+--   info: https://docs.basedpyright.com/latest/installation/ides/
+vim.lsp.enable 'basedpyright'
+
+-- gets surround working - but disable some which-key features
+-- vim.o.timeout = false
+-- vim.o.ttimeout = true
+-- vim.o.ttimeoutlen = 100
+
 -- END PERSONAL
 -- ------------------------------------------------
 

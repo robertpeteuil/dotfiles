@@ -9,10 +9,6 @@ require('lazy').setup({
 
   require 'kickstart.plugins.gitsigns',
 
-  require 'kickstart.plugins.which-key',
-
-  require 'kickstart.plugins.telescope',
-
   require 'kickstart.plugins.lspconfig',
 
   require 'kickstart.plugins.conform',
@@ -23,12 +19,16 @@ require('lazy').setup({
 
   require 'kickstart.plugins.todo-comments',
 
-  require 'kickstart.plugins.mini',
-
   require 'kickstart.plugins.treesitter',
 
-  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.mini',
 
+  -- Customized and moved to custom/plugins dir
+  -- require 'kickstart.plugins.which-key',
+  -- require 'kickstart.plugins.telescope',
+
+  -- Stopped using
+  -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.lint',
 
