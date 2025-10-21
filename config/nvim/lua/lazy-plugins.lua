@@ -21,11 +21,10 @@ require('lazy').setup({
 
   require 'kickstart.plugins.treesitter',
 
-  require 'kickstart.plugins.mini',
-
   -- Moved to custom/plugins dir for Customization
   -- require 'kickstart.plugins.which-key',
   -- require 'kickstart.plugins.telescope',
+  -- require 'kickstart.plugins.mini',
 
   -- Stopped using - moved to reference dir
   -- require 'kickstart.plugins.autopairs',
