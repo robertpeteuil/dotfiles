@@ -47,9 +47,14 @@ end, { desc = 'Update register timestamp' })
 -- leader key mappings
 -- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
 
--- Meta keybinds require setting iTerm profile key bindings to send Esc+ for left option key
+-- Meta keybinds require terminal settings
+--    iTerm - profile key bindings to send Esc+ for left option key
+--    ghostty - add `macos-option-as-alt = true` to config
+
 -- toggle transparency
+--   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
 vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency' })
+
 -- move lines up/down
 vim.keymap.set('n', '<M-j>', ':m .+1<CR>==')
 vim.keymap.set('n', '<M-k>', ':m .-2<CR>==')
