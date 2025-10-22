@@ -7,21 +7,17 @@ require('lazy').setup({
     opts = {},
   },
 
-  require 'kickstart.plugins.gitsigns',
-
-  require 'kickstart.plugins.lspconfig',
-
-  require 'kickstart.plugins.conform',
-
   require 'kickstart.plugins.blink-cmp',
-
-  require 'kickstart.plugins.tokyonight',
-
+  require 'kickstart.plugins.conform',
+  require 'kickstart.plugins.gitsigns',
+  require 'kickstart.plugins.lspconfig',
   require 'kickstart.plugins.todo-comments',
-
+  require 'kickstart.plugins.tokyonight',
   require 'kickstart.plugins.treesitter',
 
   -- Moved to custom/plugins dir for Customization
+  -- require 'kickstart.plugins.indent_line',
+  -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.which-key',
   -- require 'kickstart.plugins.telescope',
   -- require 'kickstart.plugins.mini',
