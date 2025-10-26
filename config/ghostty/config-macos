@@ -41,6 +41,7 @@ macos-option-as-alt = true
 copy-on-select = clipboard
 # term = "xterm-256color"
 auto-update-channel = tip
+auto-update = off
 
 # keybinds
 keybind = cmd+shift+f=write_scrollback_file:paste

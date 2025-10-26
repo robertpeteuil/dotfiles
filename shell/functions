@@ -119,5 +119,4 @@ update-all() {
   update-packages "$1"
   update-apps
   update-dotfiles
-  update-code
 }
