@@ -69,7 +69,7 @@ const vec4 TRAIL_COLOR = vec4(1., 1., 0., 1.0);
 // MAUVE TRAIL
 // const vec4 TRAIL_COLOR = vec4(0.796, 0.651, 0.969, 1.0);
 // DURATION (original 0.5)
-const float DURATION = 0.2; //IN SECONDS
+const float DURATION = 0.5; //IN SECONDS
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
