@@ -28,7 +28,7 @@ update-apps() {
     # Update Mac App Store Apps when NOT connected over SSH, may require UI action
     if [[ -z "$SSH_CLIENT" ]] && [[ -z "$SSH_TTY" ]] && [[ -z "$SSH_CONNECTION" ]]; then
       if mas &>/dev/null; then
-        echo -e "${GREEN}Updating Mac App Store apps${WHITE}..."
+        echo -e "${BLUE}Updating Mac App Store apps${WHITE}..."
         mas upgrade
       fi
     fi
@@ -42,9 +42,10 @@ update-packages() {
   if [[ "$OS" == 'Darwin' ]]; then
     # Update macos packages via brew
     if brew --prefix &>/dev/null; then
-      echo -e "${GREEN}Updating via brew${WHITE}..."
+      echo -e "${BLUE}Updating via brew${WHITE}..."
       brew update && brew upgrade
-      if [[ "$1" == "clean" ]]; then
+      # perform clean unless 'noclean' specific
+      if [[ "$1" != "noclean" ]]; then
         echo -e "${BLUE}Cleaning brew packages${WHITE}..."
         brew cleanup 2>/dev/null
       fi
@@ -61,20 +62,23 @@ update-packages() {
     fi
     # Update Linux packages
     if [[ "$pkg_cmd" == apt* ]]; then
-      echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
+      echo -e "${BLUE}Updating via ${pkg_cmd}${WHITE}..."
       sudo "${pkg_cmd}" update -qq -y
-      echo -e "${GREEN}Upgrading via ${pkg_cmd}${WHITE}..."
+      echo -e "${BLUE}Upgrading via ${pkg_cmd}${WHITE}..."
       sudo "${pkg_cmd}" upgrade -y
-      if [[ "$1" == "clean" ]]; then
+      # perform clean unless 'noclean' specific
+      if [[ "$1" != "noclean" ]]; then
         echo -e "${BLUE}Autoclean & Autoremove${WHITE}..."
         sudo apt-get autoclean -qq
         sudo apt-get autoremove -qq
       fi
     elif [[ "$pkg_cmd" == "yum" ]]; then
-      echo -e "${GREEN}Updating via ${pkg_cmd}${WHITE}..."
+      echo -e "${BLUE}Updating via ${pkg_cmd}${WHITE}..."
       sudo yum makecache fast
       sudo yum update -y
-      if [[ "$1" == "clean" ]]; then
+      # perform clean unless 'noclean' specific
+      if [[ "$1" != "noclean" ]]; then
+        echo -e "${BLUE}Clean & Expire Cache${WHITE}..."
         sudo yum clean packages expire-cache
       fi
     else
@@ -91,18 +95,16 @@ update-dotfiles() {
   # update dotfiles
   if [[ -e "$DOTFILES/.git" ]] && [[ -n $GIT_INST ]]; then
     prev_dir=$(pwd)
-    echo -e "${GREEN}Updating DOTFILES repo${WHITE}..."
+    echo -e "${BLUE}Updating DOTFILES repo${WHITE}..."
     cd "$DOTFILES" || return
     git up
     cd "$prev_dir" || return
-    # cd "$DOTFILES" || return; git pull; cd "$prev_dir" || return
     # check for private repo and update if found
     if [[ -e "$DOTFILES/private/.git" ]]; then
-      echo -e "${GREEN}Updating private DOTFILES repo${WHITE}..."
+      echo -e "${BLUE}Updating private DOTFILES repo${WHITE}..."
       cd "$DOTFILES/private" || return
       git up
       cd "$prev_dir" || return
-      # cd "$DOTFILES/private" || return; git pull; cd "$prev_dir" || return
     fi
   fi
 }
@@ -110,7 +112,7 @@ update-dotfiles() {
 update-code() {
   update-set-colors
   if which code &>/dev/null; then
-    echo -e "${GREEN}Updating VSCode Extensions${WHITE}..."
+    echo -e "${BLUE}Updating VSCode Extensions${WHITE}..."
     code --update-extensions 2>/dev/null
   fi
 }
