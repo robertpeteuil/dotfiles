@@ -73,8 +73,8 @@ alias ln='ln -v'
 alias p='ps -f'
 alias rm='rm -v'
 alias cp='cp -i'
-alias fd='find . -type d -name'
-alias ff='find . -type f -name'
+# alias fd='find . -type d -name'
+# alias ff='find . -type f -name'
 alias fgrep='grep -F'
 
 ## FILE OWNERSHIP

@@ -80,6 +80,10 @@
       if: "[ `uname` = Darwin ]"
       path: config/jqp/jqp.yaml
       force: false
+    ~/.config/television:
+      if: "[ `uname` = Darwin ]"
+      path: config/television
+      force: false
 
 # Private Config
 - link:
