@@ -1,0 +1,22 @@
+[metadata]
+name = "k8s-services"
+description = "List and preview Services in a Kubernetes Cluster.\n\nThe first source lists only from the current namespace, while the second lists from all.\n\nkeybindings\n\nPress `ctrl-d` to delete the selected Service.\n"
+requirements = [ "kubectl",]
+
+[source]
+command = [ "  kubectl get services -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}'\n  ", "  kubectl get services -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}' --all-namespaces\n  ",]
+output = "{1}"
+
+[preview]
+command = "kubectl describe -n {0} services/{1}"
+
+[keybindings]
+ctrl-d = "actions:delete"
+
+[ui.preview_panel]
+size = 60
+
+[actions.delete]
+description = "Delete the selected Service"
+command = "kubectl delete -n {0} services/{1}"
+mode = "execute"
