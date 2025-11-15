@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # cspell: disable
 # shellcheck shell=zsh
 
@@ -23,21 +23,18 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or po
 alias dh='dirs -v | tail -n 12'   # conflicted with docker alias (turned off dock alias)
 for index ({1..12}) alias "$index"="cd +${index}"; unset index
 
-## AUTOCD - change dir without having to type `cd`, just type its name
-# This can misfire if an alias, # function, builtin or command has the same name.
-# Only recommend using these without `cd`:
-#   ..  to go one dir up
-#   ~   to go to your home dir
-#   ~-2 to go to the 2nd mostly recently visited dir
-#   /   to go to the root dir
-# setopt AUTO_CD
-
 ## ZSH SPECIFIC ALIASES
 alias reload='exec zsh'   # alias reload='omz reload'
 alias zshrc='${=EDITOR} ${ZDOTDIR:-$HOME}/.zshrc'
 alias which-command=whence
 alias %= \$=   # Enable pasting text with prompt symbols
-alias showcolors='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done'
+# display terminal colors as table
+showcolorsfunc() {
+  for i in {0..255}; do
+    print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
+  done
+}
+alias showcolors='showcolorsfunc'
 
 ## ZMV
 #   batch rename/copy/link files with pattern matching.
