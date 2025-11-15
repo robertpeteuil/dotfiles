@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 # cspell: disable
 # shellcheck shell=zsh
 
@@ -19,4 +19,4 @@ if ! [[ -r $znapscript ]]; then
 fi
 
 # Load Znap
-. $znapscript                     
+. $znapscript
