@@ -1,0 +1,8 @@
+[metadata]
+name = "abbr"
+description = "A channel to display abbr aliases"
+requirements = [ "abbr",]
+
+[source]
+command = 'zsh -i -c abbr'
+interactive = true
