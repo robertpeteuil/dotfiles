@@ -42,6 +42,7 @@ update-packages() {
   if [[ "$OS" == 'Darwin' ]]; then
     # Update macos packages via brew
     if brew --prefix &>/dev/null; then
+      export HOMEBREW_NO_ENV_HINTS=1
       echo -e "${BLUE}Updating via brew${WHITE}..."
       brew update && brew upgrade
       # perform clean unless 'noclean' specific
@@ -52,7 +53,7 @@ update-packages() {
     fi
   # Update Packages - Linux
   elif [[ "$OS" == 'Linux' ]]; then
-    # Ddetermine linux package manager
+    # Determine linux package manager
     if apt-get &>/dev/null; then
       pkg_cmd="apt-get"
     elif apt -h &>/dev/null; then
@@ -119,6 +120,6 @@ update-code() {
 
 update-all() {
   update-packages "$1"
-  update-apps
+  # update-apps
   update-dotfiles
 }
