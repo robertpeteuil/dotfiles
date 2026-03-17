@@ -95,19 +95,19 @@ final_space = true
   type = 'prompt'
   alignment = 'right'
 
-  # KUBERNETES
-  [[blocks.segments]]
-    template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
-    background = 'p:magenta2'
-    type = 'kubectl'
-    style = 'powerline'
-    invert_powerline = true
-
-    [blocks.segments.options]
-      display_context = true
-      display_namespace = true
+  # # KUBERNETES
+  # [[blocks.segments]]
+  #   template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
+  #   foreground = 'p:purewhite'
+  #   powerline_symbol = ''
+  #   background = 'p:magenta2'
+  #   type = 'kubectl'
+  #   style = 'powerline'
+  #   invert_powerline = true
+  #
+  #   [blocks.segments.options]
+  #     display_context = true
+  #     display_namespace = true
 
   # NODE
   [[blocks.segments]]
