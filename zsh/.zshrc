@@ -57,6 +57,12 @@ case "$(uname -s)" in
     ;;
 esac
 
+
+### SOURCE FILES
+# cross-shell files
+[[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
+
+
 ### COMPLETIONS & INITS
 # jujutsu completion
 if command -v jj >/dev/null 2>&1; then
@@ -92,9 +98,6 @@ if command -v tv &>/dev/null; then
   eval "$(tv init zsh)"
 fi
 
-### SOURCE FILES
-# cross-shell files
-[[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
 
 ### ZSH PROMPT
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
