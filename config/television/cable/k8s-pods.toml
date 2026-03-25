@@ -1,0 +1,34 @@
+[metadata]
+name = "k8s-pods"
+description = "List and preview Pods in a Kubernetes Cluster.\n\nThe first source lists only from the current namespace, while the second lists from all.\n\nKeybindings\n\nPress `ctrl-e` to execute shell inside the selected Pod.\nPress `ctrl-d` to delete the selected Pod.\nPress `ctrl-l` to print and follow the logs of the selected Pod.\n"
+requirements = [ "kubectl",]
+
+[source]
+command = [ "  kubectl get pods -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}'\n  ", "  kubectl get pods -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}' --all-namespaces\n  ",]
+output = "{1}"
+
+[preview]
+command = "kubectl describe -n {0} pods/{1}"
+
+[keybindings]
+ctrl-d = "actions:delete"
+ctrl-e = "actions:exec"
+ctrl-l = "actions:logs"
+
+[ui.preview_panel]
+size = 60
+
+[actions.exec]
+description = "Execute shell inside the selected Pod"
+command = "kubectl exec -i -t -n {0} pods/{1} -- /bin/sh"
+mode = "execute"
+
+[actions.delete]
+description = "Delete the selected Pod"
+command = "kubectl delete -n {0} pods/{1}"
+mode = "execute"
+
+[actions.logs]
+description = "Follow logs of the selected Pod"
+command = "kubectl logs -f -n {0} pods/{1}"
+mode = "execute"

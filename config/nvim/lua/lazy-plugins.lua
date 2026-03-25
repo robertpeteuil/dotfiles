@@ -7,27 +7,13 @@ require('lazy').setup({
     opts = {},
   },
 
-  require 'kickstart.plugins.blink-cmp',
-  require 'kickstart.plugins.conform',
-  require 'kickstart.plugins.gitsigns',
-  require 'kickstart.plugins.lspconfig',
-  require 'kickstart.plugins.todo-comments',
-  require 'kickstart.plugins.treesitter',
+  require 'plugins.specified.blink-cmp',
+  require 'plugins.specified.conform',
+  require 'plugins.specified.gitsigns',
+  require 'plugins.specified.lspconfig',
+  require 'plugins.specified.todo-comments',
 
-  -- Moved to custom/plugins dir for Customization
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.which-key',
-  -- require 'kickstart.plugins.telescope',
-  -- require 'kickstart.plugins.mini',
-  -- require 'kickstart.plugins.tokyonight',
-
-  -- Stopped using - moved to reference dir
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.lint',
-
-  { import = 'custom.plugins' },
+  { import = 'plugins.auto' },
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {

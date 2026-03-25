@@ -44,6 +44,9 @@ vim.keymap.set('n', '<leader>d', function()
   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
 end, { desc = 'Update register timestamp' })
 
+-- keymap to copy full path of current buffer to clipboard
+vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
+
 -- leader key mappings
 -- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
 

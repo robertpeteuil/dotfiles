@@ -1,7 +1,7 @@
 colourful: true
 
 filekinds:
-  normal: { foreground: "#c0caf5" }
+  normal: { foreground: "#daeafa" }
   directory: { foreground: "#7aa2f7" }
   symlink: { foreground: "#2ac3de" }
   pipe: { foreground: "#414868" }
@@ -81,7 +81,7 @@ file_type:
   music: { foreground: "#73daca" }
   lossless: { foreground: "#41a6b5" }
   crypto: { foreground: "#db4b4b" }
-  document: { foreground: "#a9b1d6" }
+  document: { foreground: "#daeafa" }
   compressed: { foreground: "#ff9e64" }
   temp: { foreground: "#737aa2" }
   compiled: { foreground: "#737aa2" }

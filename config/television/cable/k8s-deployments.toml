@@ -1,0 +1,22 @@
+[metadata]
+name = "k8s-deployments"
+description = "List and preview Deployments in a Kubernetes Cluster.\n\nThe first source lists only from the current namespace, while the second lists from all.\n\nKeybindings\n\nPress `ctrl-d` to delete the selected Deployment.\n"
+requirements = [ "kubectl",]
+
+[source]
+command = [ "  kubectl get deployments -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}'\n  ", "  kubectl get deployments -o go-template --template '{{range .items}}{{.metadata.namespace}} {{.metadata.name}}{{\"\\n\"}}{{end}}' --all-namespaces\n  ",]
+output = "{1}"
+
+[preview]
+command = "kubectl describe -n {0} deployments/{1}"
+
+[keybindings]
+ctrl-d = "actions:delete"
+
+[ui.preview_panel]
+size = 60
+
+[actions.delete]
+description = "Delete the selected Deployment"
+command = "kubectl delete -n {0} deployments/{1}"
+mode = "execute"

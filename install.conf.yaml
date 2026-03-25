@@ -49,18 +49,6 @@
       if: "test -e ./config/nvim"
       path: config/nvim
       force: false
-    ~/.config/ghostty/config:
-      if: "[ `uname` = Darwin ]"
-      path: config/ghostty/config-macos
-      force: false
-    ~/.config/ghostty/shaders:
-      if: "[ `uname` = Darwin ]"
-      path: config/ghostty/shaders
-      force: false
-    ~/.config/ghostty/themes/tokyonight_night:
-      if: "[ `uname` = Darwin ]"
-      path: config/ghostty/tokyonight_night
-      force: false
     ~/.config/eza/theme.yml:
       path: config/eza/tokyonight.yml
       force: false
@@ -73,6 +61,24 @@
     ~/.config/atuin/themes:
       path: config/atuin/themes
       force: true
+    ~/.config/television:
+      path: config/television
+      force: false
+
+# macOS Only Config
+- link:
+    ~/.config/ghostty/config:
+      if: "[ `uname` = Darwin ]"
+      path: config/ghostty/config-macos
+      force: false
+    ~/.config/ghostty/shaders:
+      if: "[ `uname` = Darwin ]"
+      path: config/ghostty/shaders
+      force: false
+    ~/.config/ghostty/themes/tokyonight_night:
+      if: "[ `uname` = Darwin ]"
+      path: config/ghostty/tokyonight_night
+      force: false
     ~/.jqp.yaml:
       if: "[ `uname` = Darwin ]"
       path: config/jqp/jqp.yaml
@@ -95,8 +101,4 @@
     ~/.config/mise/config.toml:
       if: "test -e ./private/config/mise/config.toml"
       path: private/config/mise/config.toml
-      force: true
-    ~/.config/mise/mise.lock:
-      if: "test -e ./private/config/mise/mise.lock"
-      path: private/config/mise/mise.lock
       force: true
