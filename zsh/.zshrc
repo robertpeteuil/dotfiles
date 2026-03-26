@@ -109,3 +109,5 @@ else
   # run `p10k configure` to configure, or edit ~/.df/zsh/.p10k.zsh
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
+
+# vim: ft=zsh
