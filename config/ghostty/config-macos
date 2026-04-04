@@ -47,5 +47,6 @@ auto-update = off
 keybind = cmd+shift+f=write_scrollback_file:paste
 keybind = "cmd+.=text:\x03"
 # keybind = global:ctrl+grave_accent=toggle_quick_terminal
+keybind = cmd+u=toggle_background_opacity
 
 # vim: filetype=ini ts=2 sts=2 sw=2 et
