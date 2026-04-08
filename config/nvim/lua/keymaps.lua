@@ -45,7 +45,8 @@ vim.keymap.set('n', '<leader>d', function()
 end, { desc = 'Update register timestamp' })
 
 -- keymap to copy full path of current buffer to clipboard
-vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
+-- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
+vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = '[Y]ank [P]ath', silent = true })
 
 -- leader key mappings
 -- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
@@ -56,11 +57,11 @@ vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]o
 
 -- toggle transparency
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
-vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency' })
+vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency', silent = true })
 
 -- move lines up/down
-vim.keymap.set('n', '<M-j>', ':m .+1<CR>==')
-vim.keymap.set('n', '<M-k>', ':m .-2<CR>==')
+vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', { silent = true })
+vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', { silent = true })
 
 -- END PERSONAL
 -- ------------------------------------------------
