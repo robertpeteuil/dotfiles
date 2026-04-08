@@ -97,6 +97,8 @@ fi
 if command -v tv &>/dev/null; then
   eval "$(tv init zsh)"
 fi
+# Obsidian CLI path
+pathIf "/Applications/Obsidian.app/Contents/MacOS"
 
 
 ### ZSH PROMPT
