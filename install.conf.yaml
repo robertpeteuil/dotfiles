@@ -102,3 +102,7 @@
       if: "test -e ./private/config/mise/config.toml"
       path: private/config/mise/config.toml
       force: true
+    ~/.config/tmuxp:
+      if: "test -e ./private/config/tmuxp"
+      path: private/config/tmuxp
+      force: true
