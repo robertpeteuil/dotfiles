@@ -13,6 +13,12 @@ return {
   ---@module "auto-session"
   ---@type AutoSession.Config
   opts = {
+    enabled = true, -- Enables/disables auto creating, saving and restoring
+    auto_save = true, -- Enables/disables auto saving session on exit
+    auto_restore = true, -- Enables/disables auto restoring session on start
+    auto_create = false, -- Enables/disables auto creating new session files. Can be a function that returns true if a new session file should be allowed
+    auto_restore_last_session = false, -- On startup, loads the last saved session if session for cwd does not exist
+    cwd_change_handling = false, -- Automatically save/restore sessions when changing directories
     suppressed_dirs = { '~/', '~/Versioned', '~/Downloads', '/' },
     -- log_level = 'debug',
     ---@type SessionLens
