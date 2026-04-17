@@ -106,3 +106,7 @@
       if: "test -e ./private/config/tmuxp"
       path: private/config/tmuxp
       force: true
+    ~/.config/sesh/sesh.toml:
+      if: "test -e ./private/config/sesh/sesh.toml"
+      path: private/config/sesh/sesh.toml
+      force: false
