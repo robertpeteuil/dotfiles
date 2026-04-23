@@ -64,6 +64,9 @@
     ~/.config/television:
       path: config/television
       force: false
+    ~/.config/ranger:
+      path: config/ranger
+      force: false
 
 # macOS Only Config
 - link:
