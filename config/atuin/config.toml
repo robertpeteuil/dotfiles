@@ -115,6 +115,8 @@ history_filter = [
   "(^| )rm ",
 ]
 
+store_failed = true
+
 ## prevent commands run with cwd matching any of these regexes from being written
 ## to history. Note that these regular expressions are unanchored, i.e. if they don't
 ## start with ^ or end with $, they'll match anywhere in CWD.
