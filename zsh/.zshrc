@@ -17,7 +17,6 @@ function shellExit {
 }
 trap shellExit EXIT
 
-
 ### AUTOCOMPLETE ADJUSTMENTS
 # Delay autocomp display
 #   1 sec delay on ssh connecteions
@@ -44,17 +43,6 @@ fi
     . $file
   done
 } "$@"
-
-
-### FIXES
-case "$(uname -s)" in
-  Darwin)
-    # fix macos tempdir permission issue
-    #   https://github.com/jesseduffield/lazygit/issues/4924
-    TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
-    ;;
-esac
-
 
 ### ZSH PROMPT
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
