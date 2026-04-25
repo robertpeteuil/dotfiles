@@ -45,10 +45,6 @@ fi
   done
 } "$@"
 
-##### moved to rc.d
-# ###  ** must occur before INCLUDES file **
-# ### LOAD ZSH FUNCTIONS
-# autoload -Uz pathIf sourceIf
 
 ### FIXES
 case "$(uname -s)" in
@@ -60,55 +56,9 @@ case "$(uname -s)" in
 esac
 
 
-##### moved to rc.d
-### SOURCE FILES
-# cross-shell files
-# [[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
-
-
-##### moved to rc.d
-### COMPLETIONS & INITS
-# jujutsu completion
-# if command -v jj >/dev/null 2>&1; then
-#   source <(jj util completion zsh)
-#   # source <(COMPLETE=zsh jj)   # dynamic completions
-# fi
-# zoxide init
-# if command -v zoxide >/dev/null 2>&1; then
-#   eval "$(zoxide init --cmd cd zsh)"
-# fi
-# # fzf completion
-# if command -v fzf >/dev/null 2>&1; then
-#   eval "$(fzf --zsh)"
-# fi
-# compdef _gnu_generic fzf
-# # nvm init
-# # export NVM_DIR="$HOME/.nvm"
-# # [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-# # atuin init
-# if [[ -f "$HOME/.atuin/bin/env" ]]; then
-#   . "$HOME/.atuin/bin/env"
-# fi
-# # atuin completion
-# if command -v atuin &>/dev/null; then
-#   eval "$(atuin init zsh)"
-# fi
-# # mise init
-# if command -v mise &>/dev/null; then
-#   eval "$(mise activate zsh)"
-# fi
-# # television completion
-# if command -v tv &>/dev/null; then
-#   eval "$(tv init zsh)"
-# fi
-# # Obsidian CLI path
-# pathIf "/Applications/Obsidian.app/Contents/MacOS"
-
-
 ### ZSH PROMPT
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   ## OHMYPOSH
-  # eval "$(oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml)"
   znap eval omp "oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml"
 else
   ## POWERLEVEL10K
