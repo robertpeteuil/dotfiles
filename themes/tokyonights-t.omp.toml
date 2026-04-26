@@ -28,6 +28,8 @@ final_space = true
   auto = false
   notice = false
 
+
+## LEFT PROMPT
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
@@ -93,23 +95,28 @@ final_space = true
     [blocks.segments.options]
       fetch_status = true
 
+
   ## RIGHT-MOST PORTION OF LEFT PROMPT
+  # padding before time/error
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    template = '    '
+    force = true
+    foreground = 'p:white'
+    background = 'transparent'
 
   # EXECUTION TIME
   [[blocks.segments]]
     type = 'executiontime'
-    style = 'diamond'
-    # style = 'plain'
+    # style = 'diamond'
+    # leading_diamond = ' '
+    # trailing_diamond = ''
+    # leading_diamond = '   '
+    style = 'plain'
     template = '  {{ .FormattedMs }} '
     foreground = 'p:black'
     background_templates = ['{{ if gt .Code 0 }}p:white2{{ else }}p:green{{ end }}']
-    # background = 'p:grey'
-    leading_diamond = '   '
-    trailing_diamond = ''
-    # leading_diamond = ' '
-    # trailing_diamond = ''
-    # template = '  {{ .FormattedMs }} '
-    # invert_powerline = true
 
     [blocks.segments.options]
       style = 'austin'
@@ -121,6 +128,7 @@ final_space = true
     template = ' 󰂭 {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
     foreground = 'p:black'
     background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+
 
 # RIGHT PROMPT
 [[blocks]]
@@ -194,48 +202,6 @@ final_space = true
     [blocks.segments.options]
       display_default = false
 
-  # ROOT
-  # [[blocks.segments]]
-  #   template = '  '
-  #   foreground = 'p:black2'
-  #   powerline_symbol = ''
-  #   background = 'p:orange'
-  #   type = 'root'
-  #   style = 'powerline'
-  #   invert_powerline = true
-
-  # EXECUTION TIME
-  # [[blocks.segments]]
-  #   template = ' {{ .FormattedMs }}  '
-  #   foreground = 'p:black'
-  #   powerline_symbol = ''
-  #   background = 'p:yellow'
-  #   type = 'executiontime'
-  #   style = 'powerline'
-  #   invert_powerline = true
-  #
-  #   [blocks.segments.options]
-  #     style = 'austin'
-
-  # STATUS
-  # leading symbol - same color as status
-  # [[blocks.segments]]
-  #   template = ''
-  #   background = 'p:black'
-  #   type = 'text'
-  #   style = 'plain'
-  #   foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
-  #
-  # # status code
-  # [[blocks.segments]]
-  #   template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
-  #   type = 'status'
-  #   style = 'plain'
-  #   foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:black{{ end }}']
-  #   background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
-  #
-  #   [blocks.segments.options]
-  #     always_enabled = true
 
 # SECOND PROMPT LINE
 [[blocks]]
