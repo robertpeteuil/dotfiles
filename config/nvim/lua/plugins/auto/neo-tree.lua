@@ -8,7 +8,8 @@ return {
   },
   lazy = false,
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree action=show toggle reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '|', ':Neotree action=show source=git_status toggle reveal<CR>', desc = 'NeoTree git status', silent = true },
   },
   ---@module "neo-tree"
   ---@type neotree.Config?
