@@ -209,17 +209,6 @@ final_space = true
   alignment = 'left'
   newline = true
 
-  # root prefix
-  # [[blocks.segments]]
-  #   type = 'text'
-  #   style = 'diamond'
-  #   template = '{{ if .Root }}  {{ end }}'
-  #   foreground = 'p:black2'
-  #   background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:orange{{ end }}']
-  #   leading_diamond = ''
-  #   trailing_diamond = ''
-
-  # normal prefix
   [[blocks.segments]]
     template = ''
     foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:blue{{ end }}']
