@@ -48,6 +48,9 @@ end, { desc = 'Update register timestamp' })
 -- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
 vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = '[Y]ank [P]ath', silent = true })
 
+-- close current buffer and switch to last buffer
+vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[B]uffer [D]elete', silent = true })
+
 -- leader key mappings
 -- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
 
