@@ -92,6 +92,69 @@ final_space = true
     [blocks.segments.options]
       fetch_status = true
 
+  ## ENVIRONMENTS
+  # KUBERNETES
+  [[blocks.segments]]
+    type = 'kubectl'
+    template = ' {{ if .Context }}{{ .Context }}{{ end }}{{ if ne .Namespace "default" }} :: {{ .Namespace }}{{ end }}  '
+    style = 'powerline'
+    foreground = 'p:purewhite'
+    background = 'p:magenta2'
+    powerline_symbol = ''
+
+    [blocks.segments.options]
+      display_context = true
+      display_namespace = true
+
+  # NODE
+  [[blocks.segments]]
+    type = 'node'
+    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
+    style = 'powerline'
+    foreground = 'p:purewhite'
+    background = 'p:green'
+    powerline_symbol = ''
+
+    [blocks.segments.options]
+      fetch_version = true
+
+  # GO
+  [[blocks.segments]]
+    type = 'go'
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    style = 'powerline'
+    foreground = 'p:black2'
+    background = 'p:cyan'
+    powerline_symbol = ''
+
+    [blocks.segments.options]
+      fetch_version = true
+
+  # PYTHON
+  [[blocks.segments]]
+    type = 'python'
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
+    style = 'powerline'
+    foreground = 'p:black2'
+    background = 'p:green2'
+    powerline_symbol = ''
+
+    [blocks.segments.options]
+      display_mode = 'files'
+      fetch_virtual_env = true
+
+  # AWS
+  [[blocks.segments]]
+    type = 'aws'
+    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
+    style = 'powerline'
+    foreground = 'p:purewhite'
+    background_templates = ['{{if contains "default" .Profile}}p:orange{{end}}', '{{if contains "jan" .Profile}}p:red{{end}}']
+    powerline_symbol = ''
+
+    [blocks.segments.options]
+      display_default = false
+
 
   ## RIGHT-MOST PORTION OF LEFT PROMPT
   # padding before time/error
@@ -109,7 +172,7 @@ final_space = true
     template = '  {{ .FormattedMs }} '
     style = 'plain'
     foreground = 'p:black'
-    background_templates = ['{{ if gt .Code 0 }}p:white2{{ else }}p:green{{ end }}']
+    background_templates = ['{{ if gt .Code 0 }}p:white2{{ else }}p:white2{{ end }}']
 
     [blocks.segments.options]
       style = 'austin'
@@ -121,79 +184,6 @@ final_space = true
     style = 'plain'
     foreground = 'p:black'
     background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
-
-
-# RIGHT PROMPT
-[[blocks]]
-  type = 'prompt'
-  alignment = 'right'
-
-  # # KUBERNETES
-  # [[blocks.segments]]
-  #   template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
-  #   foreground = 'p:purewhite'
-  #   powerline_symbol = ''
-  #   background = 'p:magenta2'
-  #   type = 'kubectl'
-  #   style = 'powerline'
-  #   invert_powerline = true
-  #
-  #   [blocks.segments.options]
-  #     display_context = true
-  #     display_namespace = true
-
-  # NODE
-  [[blocks.segments]]
-    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
-    background = 'p:green'
-    type = 'node'
-    style = 'powerline'
-    invert_powerline = true
-
-    [blocks.segments.options]
-      fetch_version = true
-
-  # GO
-  [[blocks.segments]]
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
-    foreground = 'p:black2'
-    powerline_symbol = ''
-    background = 'p:cyan'
-    type = 'go'
-    style = 'powerline'
-    invert_powerline = true
-
-    [blocks.segments.options]
-      fetch_version = true
-
-  # PYTHON
-  [[blocks.segments]]
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
-    foreground = 'p:black2'
-    powerline_symbol = ''
-    background = 'p:green2'
-    type = 'python'
-    style = 'powerline'
-    invert_powerline = true
-
-    [blocks.segments.options]
-      display_mode = 'files'
-      fetch_virtual_env = true
-
-  # AWS
-  [[blocks.segments]]
-    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
-    type = 'aws'
-    style = 'powerline'
-    background_templates = ['{{if contains "default" .Profile}}p:orange{{end}}', '{{if contains "jan" .Profile}}p:red{{end}}']
-    invert_powerline = true
-
-    [blocks.segments.options]
-      display_default = false
 
 
 # SECOND PROMPT LINE
