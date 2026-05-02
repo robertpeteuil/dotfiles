@@ -51,6 +51,7 @@ return {
         },
       },
       window = {
+        width = 35,
         mappings = {
           ['\\'] = 'close_window',
           -- Sources:
