@@ -101,6 +101,8 @@ final_space = true
     foreground = 'p:purewhite'
     background = 'p:magenta2'
     powerline_symbol = ''
+    # hide segment by default (enable with 'oh-my-posh toggle kubectl')
+    toggled = true
 
     [blocks.segments.options]
       display_context = true
