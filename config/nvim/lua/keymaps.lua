@@ -39,6 +39,41 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ------------------------------------------------
 -- PERSONAL OPTIONS
 
+-- Special paste from yank buffer
+vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[P]aste from yank register' })
+
+-- keymap to toggle boolean value
+vim.keymap.set('n', '<leader>T', function()
+  local toggles = {
+    ['true'] = 'false',
+    ['always'] = 'never',
+    ['yes'] = 'no',
+    ['1'] = '0',
+    ['on'] = 'off',
+    ['&&'] = '||',
+    ['+'] = '-',
+    ['<'] = '>',
+    ['<='] = '>=',
+    ['let'] = 'const',
+  }
+
+  local cword = vim.fn.expand '<cword>'
+  local newWord
+  for word, opposite in pairs(toggles) do
+    if cword == word then
+      newWord = opposite
+    end
+    if cword == opposite then
+      newWord = word
+    end
+  end
+  if newWord then
+    local prevCursor = vim.api.nvim_win_get_cursor(0)
+    vim.cmd.normal { '"_ciw' .. newWord, bang = true }
+    vim.api.nvim_win_set_cursor(0, prevCursor)
+  end
+end, { desc = '[T]oggle Boolean Value', silent = true })
+
 -- keymap to insert date into register d
 vim.keymap.set('n', '<leader>d', function()
   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
