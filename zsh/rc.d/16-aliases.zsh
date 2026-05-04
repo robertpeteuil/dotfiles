@@ -29,14 +29,21 @@ fi
 alias tmux='EDITOR= VISUAL= tmux'
 alias tm='tmux '
 alias tma='tmux new -A -s' # attach to existing tmux session or create a new one
-alias tml='tmux ls'
-alias tmf='tmux capture-pane -epS - | less -r' # dump scrollback pane into less
+alias tmvs='tmux capture-pane -epS - | less -r' # view scrollback pane in less
+alias tmes='tmux capture-pane -pS - | nvim' # edit scrollback pane in nvim
 alias tmls='tmux ls'
 alias tmlw='tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
 alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
+tmux-load-session() {
+  local sel_session=$(tmuxp ls --json | jq -r '.workspaces[].name' | fzf --height 6 --layout reverse --highlight-line)
+  if [[ "$sel_session" ]]; then
+    tmuxp load "$sel_session" -y
+  fi
+}
+alias tmld='tmux-load-session'
 tmux-kill-server() {
   if read -q "choice?kill tmux server [Y/n]?"; then
     tmux kill-server
