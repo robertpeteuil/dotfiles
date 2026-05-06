@@ -77,7 +77,7 @@ return {
         },
         pickers = {
           buffers = {
-            initial_mode = 'normal', -- use NORMAL mode for buffer picker
+            -- initial_mode = 'normal', -- use NORMAL mode for buffer picker
             show_all_buffers = true,
             sort_lastused = true,
             previewer = true,
