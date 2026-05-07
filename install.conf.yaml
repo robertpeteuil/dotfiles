@@ -113,3 +113,7 @@
       if: "test -e ./private/config/sesh/sesh.toml"
       path: private/config/sesh/sesh.toml
       force: false
+    ~/.config/yazi:
+      if: "test -e ./private/config/yazi"
+      path: private/config/yazi
+      force: false
