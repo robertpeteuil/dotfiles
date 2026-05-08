@@ -28,34 +28,36 @@ final_space = true
   auto = false
   notice = false
 
+
+## LEFT PROMPT
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
 
-  # SSH SESSION
+  # SESSION
   [[blocks.segments]]
-    template = ' {{ if .SSHSession }} {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ end }}{{ .HostName }} '
-    foreground = 'p:black'
-    background = 'p:magenta'
     type = 'session'
+    template = ' {{ if .SSHSession }} {{ end }}{{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ .HostName }} '
     style = 'plain'
+    foreground = 'p:black'
+    background_templates = ['{{ if .Root }}p:orange{{ else }}p:magenta{{ end }}']
 
   # session trailing character
   [[blocks.segments]]
-    template = ''
-    foreground = 'p:magenta'
-    background = 'p:black'
     type = 'text'
+    template = ''
     style = 'plain'
+    foreground_templates = ['{{ if .Root }}p:orange{{ else }}p:magenta{{ end }}']
+    background = 'p:black'
 
   # PATH
   [[blocks.segments]]
-    template = '{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} '
-    foreground = 'p:black'
-    powerline_symbol = ''
-    background = 'p:blue'
     type = 'path'
+    template = '{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} '
     style = 'powerline'
+    foreground = 'p:black'
+    background = 'p:blue'
+    powerline_symbol = ''
 
     [blocks.segments.options]
       home_icon = '~'
@@ -64,13 +66,14 @@ final_space = true
 
   # GIT
   [[blocks.segments]]
-    template = ' {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} '
-    foreground = 'p:black'
-    powerline_symbol = ''
-    background = 'p:green'
     type = 'git'
+    template = ' {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} '
     style = 'powerline'
+    foreground = 'p:black'
+    background = 'p:green'
     background_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}', '{{ if gt .Ahead 0 }}p:cyan{{ end }}', '{{ if gt .Behind 0 }}p:green{{ end }}']
+    powerline_symbol = ''
+    min_width = 70
 
     [blocks.segments.options]
       branch_icon = ''
@@ -80,70 +83,70 @@ final_space = true
 
   # JJ
   [[blocks.segments]]
-    template = ' 󰜛 {{.ChangeID}}{{if .Working.Changed}}  {{ .Working.String }}{{ end }} '
-    foreground = 'p:black'
-    powerline_symbol = ''
-    background = 'p:green2'
     type = 'jujutsu'
+    template = ' 󰜛 {{.ChangeID}}{{if .Working.Changed}}  {{ .Working.String }}{{ end }} '
     style = 'powerline'
+    foreground = 'p:black'
+    background = 'p:green2'
+    powerline_symbol = ''
+    min_width = 100
 
     [blocks.segments.options]
       fetch_status = true
 
-# RIGHT PROMPT
-[[blocks]]
-  type = 'prompt'
-  alignment = 'right'
 
-  # # KUBERNETES
-  # [[blocks.segments]]
-  #   template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
-  #   foreground = 'p:purewhite'
-  #   powerline_symbol = ''
-  #   background = 'p:magenta2'
-  #   type = 'kubectl'
-  #   style = 'powerline'
-  #   invert_powerline = true
-  #
-  #   [blocks.segments.options]
-  #     display_context = true
-  #     display_namespace = true
+  ## ENVIRONMENTS
+  # KUBERNETES
+  [[blocks.segments]]
+    type = 'kubectl'
+    template = ' {{ if .Context }}{{ .Context }}{{ end }}{{ if ne .Namespace "default" }} :: {{ .Namespace }}{{ end }}  '
+    style = 'powerline'
+    foreground = 'p:purewhite'
+    background = 'p:magenta2'
+    powerline_symbol = ''
+    # hide segment by default (enable with 'oh-my-posh toggle kubectl')
+    toggled = true
+    min_width = 100
+
+    [blocks.segments.options]
+      display_context = true
+      display_namespace = true
 
   # NODE
   [[blocks.segments]]
-    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
-    background = 'p:green'
     type = 'node'
+    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
     style = 'powerline'
-    invert_powerline = true
+    foreground = 'p:purewhite'
+    background = 'p:green'
+    powerline_symbol = ''
+    min_width = 100
 
     [blocks.segments.options]
       fetch_version = true
 
   # GO
   [[blocks.segments]]
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
-    foreground = 'p:black2'
-    powerline_symbol = ''
-    background = 'p:cyan'
     type = 'go'
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
     style = 'powerline'
-    invert_powerline = true
+    foreground = 'p:black2'
+    background = 'p:cyan'
+    powerline_symbol = ''
+    min_width = 100
 
     [blocks.segments.options]
       fetch_version = true
 
   # PYTHON
   [[blocks.segments]]
-    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
-    foreground = 'p:black2'
-    powerline_symbol = ''
-    background = 'p:green2'
     type = 'python'
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
     style = 'powerline'
-    invert_powerline = true
+    foreground = 'p:black2'
+    background = 'p:green2'
+    powerline_symbol = ''
+    min_width = 100
 
     [blocks.segments.options]
       display_mode = 'files'
@@ -151,59 +154,49 @@ final_space = true
 
   # AWS
   [[blocks.segments]]
-    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
-    foreground = 'p:purewhite'
-    powerline_symbol = ''
     type = 'aws'
+    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
     style = 'powerline'
+    foreground = 'p:purewhite'
     background_templates = ['{{if contains "default" .Profile}}p:orange{{end}}', '{{if contains "jan" .Profile}}p:red{{end}}']
-    invert_powerline = true
+    powerline_symbol = ''
+    min_width = 100
 
     [blocks.segments.options]
       display_default = false
 
-  # ROOT
+
+  ## RIGHT-MOST PORTION OF LEFT PROMPT
+  # padding before time/error
   [[blocks.segments]]
-    template = '  '
-    foreground = 'p:black2'
-    powerline_symbol = ''
-    background = 'p:orange'
-    type = 'root'
-    style = 'powerline'
-    invert_powerline = true
+    type = 'text'
+    template = '    '
+    style = 'plain'
+    foreground = 'p:white'
+    background = 'transparent'
+    force = true
 
   # EXECUTION TIME
   [[blocks.segments]]
-    template = ' {{ .FormattedMs }}  '
-    foreground = 'p:black'
-    powerline_symbol = ''
-    background = 'p:yellow'
     type = 'executiontime'
-    style = 'powerline'
-    invert_powerline = true
+    template = '  {{ .FormattedMs }} '
+    style = 'plain'
+    foreground = 'p:black'
+    background_templates = ['{{ if gt .Code 0 }}p:white2{{ else }}p:white2{{ end }}']
+    min_width = 100
 
     [blocks.segments.options]
       style = 'austin'
 
-  # STATUS
-  # leading symbol - same color as status
+  # ERROR MESSAGE
   [[blocks.segments]]
-    template = ''
-    background = 'p:black'
-    type = 'text'
-    style = 'plain'
-    foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
-
-  # status code
-  [[blocks.segments]]
-    template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
     type = 'status'
+    template = ' 󰂭 {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
     style = 'plain'
-    foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:black{{ end }}']
+    foreground = 'p:black'
     background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+    min_width = 80
 
-    [blocks.segments.options]
-      always_enabled = true
 
 # SECOND PROMPT LINE
 [[blocks]]
@@ -212,7 +205,8 @@ final_space = true
   newline = true
 
   [[blocks.segments]]
-    template = ''
-    foreground = 'p:blue'
     type = 'text'
+    template = ''
     style = 'plain'
+    foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:blue{{ end }}']
+
