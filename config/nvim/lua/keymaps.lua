@@ -39,6 +39,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ------------------------------------------------
 -- PERSONAL OPTIONS
 
+-- Seatch through project TODOs with Telescope
+vim.keymap.set('n', '<leader>2', ':TodoTelescope<CR>', { desc = 'Search TODOs with Telescope', silent = true })
+
 -- Special paste from yank buffer
 vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[P]aste from yank register' })
 
