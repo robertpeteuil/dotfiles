@@ -48,6 +48,8 @@ fi
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   ## OHMYPOSH
   znap eval omp "oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml"
+  alias omp='oh-my-posh'
+  alias ompt='oh-my-posh toggle '
 else
   ## POWERLEVEL10K
   znap prompt romkatv/powerlevel10k
