@@ -39,13 +39,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ------------------------------------------------
 -- PERSONAL OPTIONS
 
--- Seatch through project TODOs with Telescope
+-- Search project TODOs with Telescope
 vim.keymap.set('n', '<leader>2', ':TodoTelescope<CR>', { desc = 'Search TODOs with Telescope', silent = true })
 
 -- Special paste from yank buffer
 vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[P]aste from yank register' })
 
--- keymap to toggle boolean value
+-- Toggle boolean value
 vim.keymap.set('n', '<leader>T', function()
   local toggles = {
     ['true'] = 'false',
@@ -77,16 +77,16 @@ vim.keymap.set('n', '<leader>T', function()
   end
 end, { desc = '[T]oggle Boolean Value', silent = true })
 
--- keymap to insert date into register d
+-- Insert date into register d
 vim.keymap.set('n', '<leader>d', function()
   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
 end, { desc = 'Update register timestamp' })
 
--- keymap to copy full path of current buffer to clipboard
+-- Copy full path of current buffer to clipboard
 -- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
 vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = '[Y]ank [P]ath', silent = true })
 
--- close current buffer and switch to last buffer
+-- Close current buffer and switch to last buffer
 vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[B]uffer [D]elete', silent = true })
 
 -- leader key mappings
