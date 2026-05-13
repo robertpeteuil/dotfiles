@@ -115,7 +115,7 @@ history_filter = [
   "(^| )rm ",
 ]
 
-store_failed = true
+store_failed = false
 
 ## prevent commands run with cwd matching any of these regexes from being written
 ## to history. Note that these regular expressions are unanchored, i.e. if they don't
@@ -167,7 +167,7 @@ command_chaining = true
 ## keybinding is defined.  If this is set to "emacs", "vim-insert", or
 ## "vim-normal", the startup keymap mode in the Atuin search is forced to be
 ## the specified one.
-keymap_mode = "vim-normal"
+keymap_mode = "vim-insert"
 
 ## Cursor style in each keymap mode.  If specified, the cursor style is changed
 ## in entering the cursor shape.  Available values are "default" and
@@ -292,4 +292,4 @@ name = "tokyo-night"
 ## The list of enabled filter modes, in order of priority.
 ## The "workspace" mode is skipped when not in a workspace or workspaces = false.
 ## Default filter mode can be overridden with the filter_mode setting.
-filters = [ "workspace", "directory", "session", "host", "global" ]
+filters = [ "workspace", "session", "directory", "host", "global" ]
