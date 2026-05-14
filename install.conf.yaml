@@ -64,6 +64,9 @@
     ~/.config/television:
       path: config/television
       force: false
+    ~/.config/ranger:
+      path: config/ranger
+      force: false
 
 # macOS Only Config
 - link:
@@ -102,3 +105,15 @@
       if: "test -e ./private/config/mise/config.toml"
       path: private/config/mise/config.toml
       force: true
+    ~/.config/tmuxp:
+      if: "test -e ./private/config/tmuxp"
+      path: private/config/tmuxp
+      force: true
+    ~/.config/sesh/sesh.toml:
+      if: "test -e ./private/config/sesh/sesh.toml"
+      path: private/config/sesh/sesh.toml
+      force: false
+    ~/.config/yazi:
+      if: "test -e ./private/config/yazi"
+      path: private/config/yazi
+      force: false

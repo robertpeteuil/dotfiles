@@ -2,8 +2,14 @@ return {
   'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   config = function()
+    local adjusted_auto = require 'lualine.themes.auto'
+
+    -- adjust auto theme for transparent background
+    adjusted_auto.normal.c.bg = 'None'
+
     require('lualine').setup {
       options = {
+        theme = adjusted_auto,
         extensions = { 'neo-tree', 'lazy', 'fzf' },
         globalstatus = true,
       },

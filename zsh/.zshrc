@@ -17,7 +17,6 @@ function shellExit {
 }
 trap shellExit EXIT
 
-
 ### AUTOCOMPLETE ADJUSTMENTS
 # Delay autocomp display
 #   1 sec delay on ssh connecteions
@@ -45,67 +44,17 @@ fi
   done
 } "$@"
 
-### LOAD ZSH FUNCTIONS
-autoload -Uz pathIf sourceIf
-
-### FIXES
-case "$(uname -s)" in
-  Darwin)
-    # fix macos tempdir permission issue
-    #   https://github.com/jesseduffield/lazygit/issues/4924
-    TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
-    ;;
-esac
-
-
-### SOURCE FILES
-# cross-shell files
-[[ ! -f $DOTFILES/shell/includes ]] || source $DOTFILES/shell/includes
-
-
-### COMPLETIONS & INITS
-# jujutsu completion
-if command -v jj >/dev/null 2>&1; then
-  source <(jj util completion zsh)
-  # source <(COMPLETE=zsh jj)   # dynamic completions
-fi
-# zoxide init
-if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init --cmd cd zsh)"
-fi
-# fzf completion
-if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --zsh)"
-fi
-compdef _gnu_generic fzf
-# nvm init
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-# atuin init
-if [[ -f "$HOME/.atuin/bin/env" ]]; then
-  . "$HOME/.atuin/bin/env"
-fi
-# atuin completion
-if command -v atuin &>/dev/null; then
-  eval "$(atuin init zsh)"
-fi
-# mise init
-if command -v mise &>/dev/null; then
-  eval "$(mise activate zsh)"
-fi
-# television completion
-if command -v tv &>/dev/null; then
-  eval "$(tv init zsh)"
-fi
-
-
 ### ZSH PROMPT
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   ## OHMYPOSH
-  eval "$(oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml)"
+  znap eval omp "oh-my-posh init zsh --config $DOTFILES/themes/tokyonights.omp.toml"
+  alias omp='oh-my-posh'
+  alias ompt='oh-my-posh toggle '
 else
   ## POWERLEVEL10K
   znap prompt romkatv/powerlevel10k
   # run `p10k configure` to configure, or edit ~/.df/zsh/.p10k.zsh
   [[ ! -f $ZDOTDIR/.p10k.zsh ]] || source $ZDOTDIR/.p10k.zsh
 fi
+
+# vim: ft=zsh

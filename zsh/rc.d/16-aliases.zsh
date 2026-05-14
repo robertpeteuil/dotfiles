@@ -1,0 +1,214 @@
+#!/usr/bin/env zsh
+# cspell: disable
+# shellcheck shell=zsh
+
+## ALIASES
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+
+## NAVIGATION
+alias -- -='cd -' # Type '-' to return to your previous dir.
+#   '--' is end of options. Else '-=...' would be interpreted as a flag.
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+## EDITOR
+if command -v nvim &>/dev/null; then
+  alias vim='nvim'
+  alias vi='nvim'
+  alias v='nvim'
+fi
+
+## TMUX ########################
+# fix for ctrl keys in tmux with EDITOR='nvim'
+# see - https://stackoverflow.com/questions/18240683/how-to-force-emacs-style-status-keys-in-tmux/39520371#39520371
+alias tmux='EDITOR= VISUAL= tmux'
+alias tm='tmux '
+alias tma='tmux new -A -s' # attach to existing tmux session or create a new one
+alias tmvs='tmux capture-pane -epS - | less -r' # view scrollback pane in less
+alias tmes='tmux capture-pane -pS - | nvim' # edit scrollback pane in nvim
+alias tmls='tmux ls'
+alias tmlw='tmux list-windows -a'
+alias tmlp='tmux list-panes -a'
+alias tmr='tmux rename-session -t'
+alias tmrw='tmux rename-window -t'
+alias tmK='tmux kill-session -t'
+tmux-load-session() {
+  local sel_session=$(tmuxp ls --json | jq -r '.workspaces[].name' | fzf --height 6 --layout reverse --highlight-line)
+  if [[ "$sel_session" ]]; then
+    tmuxp load "$sel_session" -y
+  fi
+}
+alias tmld='tmux-load-session'
+tmux-kill-server() {
+  if read -q "choice?kill tmux server [Y/n]?"; then
+    tmux kill-server
+  fi
+}
+alias tmKS='tmux-kill-server'
+
+## COLORIZATION
+#     colorize text using pygments - https://pygments.org
+#     shellcheck disable=SC2034,SC2139
+if command -v pygmentize &>/dev/null; then
+  alias ccat='pygmentize -g'
+  # on zsh remap extensions and '< FILE' to use pygmentize
+  if [[ -n "$ZSH_NAME" ]]; then
+    alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
+    READNULLCMD='pygmentize'
+  fi
+fi
+
+## PATHS
+alias dumppath='echo "$PATH" | tr ":" "\n"'
+# shellcheck disable=SC2154
+alias debugpath='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
+# only define for zsh
+[[ -n "$ZSH_NAME" ]] && alias dumpfpath='echo "$FPATH" | tr ":" "\n"'
+
+## OUTPUT CLARIFIERS
+alias mv='mv -v'
+alias rm='rm -v'
+alias ln='ln -v'
+alias mkdir='mkdir -p'
+alias df='df -h'
+alias ln='ln -v'
+alias p='ps -f'
+alias rm='rm -v'
+alias cp='cp -i'
+# alias fd='find . -type d -name'
+# alias ff='find . -type f -name'
+alias fgrep='grep -F'
+
+## FILE OWNERSHIP
+alias mychown='chown $(id -u):$(id -g)'
+alias chownasme='mychown'
+alias octal='stat -c "%a %n" ' # display octal file permissions
+alias getoctal='octal'
+
+## K8S
+alias k='kubectl '
+alias kaf='kubectl apply -f '
+alias kak='kubectl apply -k '
+alias kDf='kubectl delete -f '
+# shellcheck disable=SC2142
+alias kns='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
+# shellcheck disable=SC2142
+alias kctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+
+## GIT
+export GIT_MERGE_AUTOEDIT=no
+# If git installed, set up some aliases into a new config file: ~/.gitconfig_custom
+#   shellcheck disable=SC2086
+if command -v git >/dev/null 2>&1; then
+  # git clone shortcut 'ghweb' for https://github.com/
+  #   ex: "git clone ghweb:USER/REPO"
+  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/.insteadof ghweb:
+  # git clone shortcut 'gh' for git@github.com/
+  #   ex: "git clone gh:USER/REPO"
+  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:.insteadof gh:
+  # git clone shortcut 'myweb' for https://github.com/$USER/
+  #   ex: "git clone myweb:REPONAME"
+  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/$USER/.insteadof myweb:
+  # git clone shortcut 'my' for git@github.com/$USER/
+  #   ex: "git clone my:REPONAME"
+  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:$USER/.insteadof my:
+fi
+alias g="git"
+alias ga="git add"
+alias gaa='git add --all'
+alias gs="git status"
+alias gp="git pull"
+alias gup="git up"
+alias gcm="git commit -m"
+alias gpush="git push"
+alias gd='git diff'
+alias gdup='git diff @{upstream}'
+alias gco="git checkout --"
+alias gcomb="git checkout main"
+alias gcodb="git checkout develop"
+alias gacmpush='git add .;git commit -m "updates";git push'
+alias gremote='git remote -v'
+alias gundocm='git reset --soft HEAD~'
+alias gignored='git ls-files -o -i --exclude-standard'
+alias gignored2='git ls-files -v | grep "^[[:lower:]]"'
+alias glog='git log --graph --decorate'
+alias gloga='git log --graph --decorate --all'
+alias glogs='git log --stat'
+alias gfixlog='git config --global core.pager "less -R"'
+
+## DOCKER
+alias d='docker'
+alias d-c='docker-compose'
+alias drmsc='docker rm $(docker ps -q -f 'status=exited') 2> /dev/null'
+alias drmsi='docker rmi $(docker images -q -f "dangling=true") 2> /dev/null'
+alias drmsv='docker volume prune -f'
+alias drmsall='drmsc; drmsi; drmsv'
+alias dim='docker images'
+alias dima='docker images -a'
+alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dpsa="docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dpss="docker ps --format 'table {{.Names}}\t{{.Status}}'"
+alias dpsi="docker ps --format 'table {{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dstat="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}'"
+alias dstatn="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}'"
+alias dstatp="docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}'"
+alias dstat-s="docker stats --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}'"
+
+## TERRAFORM
+alias tf='terraform'
+alias tfapplyaa='terraform apply -auto-approve'
+alias tfdestroyaa='terraform destroy -auto-approve'
+tfsaveplan() {
+  [[ -z "$1" ]] && echo "specify name for plan output as \$1" && return 1
+  terraform plan -no-color -out="${1}.plan" >"${1}.txt"
+}
+alias tfplansave='tfsaveplan'
+
+## LS ALIASES ########################################
+if command -v eza >/dev/null 2>&1; then
+  # use cross-platform eza, if available
+  alias ls="eza -bGF --header --git --color=always --group-directories-first --icons"
+  alias ll="eza -la --icons --octal-permissions --group-directories-first --icons"
+  alias lsh="eza --color -lad --icons --octal-permissions --group-directories-first .*"
+  alias ldot="eza --color -lad --icons --octal-permissions --group-directories-first .*"
+  alias lsd="eza -la --icons --octal-permissions --group-directories-first --icons -D"
+  alias lsl="eza -la --group-directories-first | grep '^l'"
+  alias lsg="eza -la --icons --octal-permissions --group-directories-first --icons --git"
+  alias lsgr="eza -la --icons --octal-permissions --group-directories-first --icons --git-repos"
+else
+  case "$(uname -s)" in
+  Darwin)
+    ## Use gls from coreutils if installed
+    if command -v gls >/dev/null 2>&1; then
+      alias ls="gls --color=always --group-directories-first"
+      alias ll="gls --color -laFhv --group-directories-first"
+      alias lsh="gls --color -laFhdv --group-directories-first .*"
+      alias ldot='gls --color -ldv --group-directories-first .*'
+      alias lsd="gls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
+      alias lsl="gls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
+    else
+      alias ll="ls --color -laFhv"
+      alias lsh="ls --color -laFhdv .*"
+      alias ldot='ls --color -ldv .*'
+      alias lsd="ls --color=never -laFhv | grep --color=never '^d'"
+      alias lsl="ls --color=never -laFhv | grep --color=never '^l'"
+    fi
+    ;;
+  Linux)
+    ## LS with dir sort
+    alias ls="ls --color=always --group-directories-first"
+    alias ll="ls --color -lahv --group-directories-first"
+    alias lsh="ls --color -lahdv --group-directories-first .*"
+    alias ldot='ls --color -ldv --group-directories-first .*'
+    alias lsd="ls -laFhv --color=never --group-directories-first | grep --color=never '^d'"
+    alias lsl="ls -laFhv --color=never --group-directories-first | grep --color=never '^l'"
+    ;;
+  esac
+fi
+
+# vim: ft=zsh

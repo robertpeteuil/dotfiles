@@ -39,13 +39,55 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ------------------------------------------------
 -- PERSONAL OPTIONS
 
--- keymap to insert date into register d
+-- Search project TODOs with Telescope
+vim.keymap.set('n', '<leader>2', ':TodoTelescope<CR>', { desc = 'Search TODOs with Telescope', silent = true })
+
+-- Special paste from yank buffer
+vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[P]aste from yank register' })
+
+-- Toggle boolean value
+vim.keymap.set('n', '<leader>T', function()
+  local toggles = {
+    ['true'] = 'false',
+    ['always'] = 'never',
+    ['yes'] = 'no',
+    ['1'] = '0',
+    ['on'] = 'off',
+    ['&&'] = '||',
+    ['+'] = '-',
+    ['<'] = '>',
+    ['<='] = '>=',
+    ['let'] = 'const',
+  }
+
+  local cword = vim.fn.expand '<cword>'
+  local newWord
+  for word, opposite in pairs(toggles) do
+    if cword == word then
+      newWord = opposite
+    end
+    if cword == opposite then
+      newWord = word
+    end
+  end
+  if newWord then
+    local prevCursor = vim.api.nvim_win_get_cursor(0)
+    vim.cmd.normal { '"_ciw' .. newWord, bang = true }
+    vim.api.nvim_win_set_cursor(0, prevCursor)
+  end
+end, { desc = '[T]oggle Boolean Value', silent = true })
+
+-- Insert date into register d
 vim.keymap.set('n', '<leader>d', function()
   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
 end, { desc = 'Update register timestamp' })
 
--- keymap to copy full path of current buffer to clipboard
-vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
+-- Copy full path of current buffer to clipboard
+-- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
+vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = '[Y]ank [P]ath', silent = true })
+
+-- Close current buffer and switch to last buffer
+vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[B]uffer [D]elete', silent = true })
 
 -- leader key mappings
 -- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
@@ -56,11 +98,11 @@ vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]o
 
 -- toggle transparency
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
-vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency' })
+vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency', silent = true })
 
 -- move lines up/down
-vim.keymap.set('n', '<M-j>', ':m .+1<CR>==')
-vim.keymap.set('n', '<M-k>', ':m .-2<CR>==')
+vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', { silent = true })
+vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', { silent = true })
 
 -- END PERSONAL
 -- ------------------------------------------------

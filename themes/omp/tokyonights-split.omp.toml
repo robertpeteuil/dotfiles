@@ -1,0 +1,218 @@
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+console_title_template = '{{.PWD}}'
+version = 4
+final_space = true
+
+[palette]
+  black = '#000000'
+  black2 = '#111111'
+  blue = '#7aa2f7'
+  cyan = '#7dcfff'
+  green = '#9ece6a'
+  green2 = '#41a6b5'
+  grey = '#565f89'
+  grey2 = '#283457'
+  magenta = '#bb9af7'
+  magenta2 = '#9d7cd8'
+  orange = '#ff9e64'
+  purewhite = '#ffffff'
+  red = '#f7768e'
+  white = '#e4e4e4'
+  white2 = '#c0caf5'
+  yellow = '#e0af68'
+  yellow2 = '#c4a000'
+
+[upgrade]
+  source = 'cdn'
+  interval = '168h'
+  auto = false
+  notice = false
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+
+  # SSH SESSION
+  [[blocks.segments]]
+    template = ' {{ if .SSHSession }} {{ if ne .UserName "robertpeteuil" }}{{ .UserName }}@{{ end }}{{ end }}{{ .HostName }} '
+    foreground = 'p:black'
+    background = 'p:magenta'
+    type = 'session'
+    style = 'plain'
+
+  # session trailing character
+  [[blocks.segments]]
+    template = ''
+    foreground = 'p:magenta'
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+
+  # PATH
+  [[blocks.segments]]
+    template = '{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} '
+    foreground = 'p:black'
+    powerline_symbol = ''
+    background = 'p:blue'
+    type = 'path'
+    style = 'powerline'
+
+    [blocks.segments.options]
+      home_icon = '~'
+      mixed_threshold = 20
+      style = 'mixed'
+
+  # GIT
+  [[blocks.segments]]
+    template = ' {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} '
+    foreground = 'p:black'
+    powerline_symbol = ''
+    background = 'p:green'
+    type = 'git'
+    style = 'powerline'
+    background_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}', '{{ if gt .Ahead 0 }}p:cyan{{ end }}', '{{ if gt .Behind 0 }}p:green{{ end }}']
+
+    [blocks.segments.options]
+      branch_icon = ''
+      fetch_stash_count = false
+      fetch_status = true
+      fetch_upstream_icon = false
+
+  # JJ
+  [[blocks.segments]]
+    template = ' 󰜛 {{.ChangeID}}{{if .Working.Changed}}  {{ .Working.String }}{{ end }} '
+    foreground = 'p:black'
+    powerline_symbol = ''
+    background = 'p:green2'
+    type = 'jujutsu'
+    style = 'powerline'
+
+    [blocks.segments.options]
+      fetch_status = true
+
+# RIGHT PROMPT
+[[blocks]]
+  type = 'prompt'
+  alignment = 'right'
+
+  # # KUBERNETES
+  # [[blocks.segments]]
+  #   template = ' {{ if .Context }}{{ .Context }}{{ end }} {{ if .Namespace }}{{ .Namespace }}{{ end }}  '
+  #   foreground = 'p:purewhite'
+  #   powerline_symbol = ''
+  #   background = 'p:magenta2'
+  #   type = 'kubectl'
+  #   style = 'powerline'
+  #   invert_powerline = true
+  #
+  #   [blocks.segments.options]
+  #     display_context = true
+  #     display_namespace = true
+
+  # NODE
+  [[blocks.segments]]
+    template = ' {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  '
+    foreground = 'p:purewhite'
+    powerline_symbol = ''
+    background = 'p:green'
+    type = 'node'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.options]
+      fetch_version = true
+
+  # GO
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  '
+    foreground = 'p:black2'
+    powerline_symbol = ''
+    background = 'p:cyan'
+    type = 'go'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.options]
+      fetch_version = true
+
+  # PYTHON
+  [[blocks.segments]]
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  '
+    foreground = 'p:black2'
+    powerline_symbol = ''
+    background = 'p:green2'
+    type = 'python'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.options]
+      display_mode = 'files'
+      fetch_virtual_env = true
+
+  # AWS
+  [[blocks.segments]]
+    template = ' {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  '
+    foreground = 'p:purewhite'
+    powerline_symbol = ''
+    type = 'aws'
+    style = 'powerline'
+    background_templates = ['{{if contains "default" .Profile}}p:orange{{end}}', '{{if contains "jan" .Profile}}p:red{{end}}']
+    invert_powerline = true
+
+    [blocks.segments.options]
+      display_default = false
+
+  # ROOT
+  [[blocks.segments]]
+    template = '  '
+    foreground = 'p:black2'
+    powerline_symbol = ''
+    background = 'p:orange'
+    type = 'root'
+    style = 'powerline'
+    invert_powerline = true
+
+  # EXECUTION TIME
+  [[blocks.segments]]
+    template = ' {{ .FormattedMs }}  '
+    foreground = 'p:black'
+    powerline_symbol = ''
+    background = 'p:yellow'
+    type = 'executiontime'
+    style = 'powerline'
+    invert_powerline = true
+
+    [blocks.segments.options]
+      style = 'austin'
+
+  # STATUS
+  # leading symbol - same color as status
+  [[blocks.segments]]
+    template = ''
+    background = 'p:black'
+    type = 'text'
+    style = 'plain'
+    foreground_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+
+  # status code
+  [[blocks.segments]]
+    template = ' {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}{{ end }} '
+    type = 'status'
+    style = 'plain'
+    foreground_templates = ['{{ if gt .Code 0 }}p:black{{ else }}p:black{{ end }}']
+    background_templates = ['{{ if gt .Code 0 }}p:red{{ else }}p:green{{ end }}']
+
+    [blocks.segments.options]
+      always_enabled = true
+
+# SECOND PROMPT LINE
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    template = ''
+    foreground = 'p:blue'
+    type = 'text'
+    style = 'plain'
