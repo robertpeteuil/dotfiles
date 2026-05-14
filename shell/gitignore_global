@@ -198,3 +198,5 @@ Session.vim
 # projectile.cache
 # auto-save-list
 # backups
+
+# vim: ft=gitignore
