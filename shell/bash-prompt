@@ -77,3 +77,4 @@ else
   export SUDO_PS1="${PRED}${P_HOSTNAME}${PWHITE}:${PYELLOW}${P_DIR_SM}${COLOR_RESET}${P_SYMBOL}"
 fi
 
+# vim: ft=bash

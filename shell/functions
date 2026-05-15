@@ -123,3 +123,5 @@ update-all() {
   # update-apps
   update-dotfiles
 }
+
+# vim: ft=bash

@@ -152,3 +152,5 @@ sourceIf "$DOTFILES/shell/includes" # includes file    - zsh & bash
 
 ## EXTERNAL FILES
 sourceIf "$DOTFILES/private/shell/bashrc-private" # private bashrc   - bash
+
+# vim: ft=bash

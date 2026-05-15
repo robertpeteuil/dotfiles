@@ -107,4 +107,4 @@
 [init]
   defaultBranch = main
 
-# vim: ft=ini
+# vim: ft=gitconfig

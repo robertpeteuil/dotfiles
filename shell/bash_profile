@@ -32,3 +32,5 @@ pathIfPre() {
 if [ -z "$BASH_RC_LOADED" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi
+
+# vim: ft=bash

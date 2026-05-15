@@ -203,3 +203,5 @@ else
     ;;
   esac
 fi
+
+# vim: ft=bash

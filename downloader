@@ -10,11 +10,10 @@ set -e
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-
 DOTFILES_REPO="robertpeteuil/dotfiles"
 DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
 # must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
-DOTFILES_TARGET_DIR="$HOME/.dotfiles"  
+DOTFILES_TARGET_DIR="$HOME/.dotfiles"
 
 PRIVATE="private"
 PRIVATEDIR="${DOTFILES_TARGET_DIR}/${PRIVATE}"
@@ -48,13 +47,15 @@ git clone --quiet --recursive --depth 1 "https://github.com/${DOTFILES_REPO}".gi
 if [[ -d "${PRIVATEDIR}/.git" ]]; then
   echo "private repo present - updating"
   cd "${PRIVATEDIR}"
-  git remote update -p > /dev/null 2>&1
-  git merge --ff-only @{u} > /dev/null 2>&1
-elif git clone --quiet --depth 1 "git@github.com:${DOTFILES_PRIVATE_REPO}.git" "${PRIVATEDIR}" 2> /dev/null; then
+  git remote update -p >/dev/null 2>&1
+  git merge --ff-only @{u} >/dev/null 2>&1
+elif git clone --quiet --depth 1 "git@github.com:${DOTFILES_PRIVATE_REPO}.git" "${PRIVATEDIR}" 2>/dev/null; then
   echo "private repo cloned"
 fi
 
 ## RUN DOTBOT INSTALLER
 cd "$DOTFILES_TARGET_DIR" || exit 1
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >>~/.ssh/known_hosts
 ./install
+
+# vim: ft=bash
