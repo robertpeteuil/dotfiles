@@ -65,6 +65,7 @@ return {
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>b', group = '[B]uffer' },
         { '<leader>o', group = '[O]pencode' },
+        { '<leader>x', group = 'Trouble' },
       },
     },
   },
