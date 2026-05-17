@@ -39,6 +39,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ------------------------------------------------
 -- PERSONAL OPTIONS
 
+-- show diagnostic for current line as float
+vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(0, {scope="line"})<CR>', { desc = 'show [D]iagnotic as float', silent = true })
+
 -- Search project TODOs with Telescope
 vim.keymap.set('n', '<leader>2', ':TodoTelescope<CR>', { desc = 'Search TODOs with Telescope', silent = true })
 
@@ -77,10 +80,10 @@ vim.keymap.set('n', '<leader>T', function()
   end
 end, { desc = '[T]oggle Boolean Value', silent = true })
 
--- Insert date into register d
-vim.keymap.set('n', '<leader>d', function()
-  vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
-end, { desc = 'Update register timestamp' })
+-- Insert date into register d -- disabled 20260517
+-- vim.keymap.set('n', '<leader>d', function()
+--   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
+-- end, { desc = 'Update register timestamp' })
 
 -- Copy full path of current buffer to clipboard
 -- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
