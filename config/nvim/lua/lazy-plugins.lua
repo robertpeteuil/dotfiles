@@ -7,10 +7,10 @@ require('lazy').setup({
     opts = {},
   },
 
-  require 'plugins.specified.blink-cmp',
-  require 'plugins.specified.conform',
-  require 'plugins.specified.lspconfig',
-  require 'plugins.specified.todo-comments',
+  -- require 'plugins.specified.blink-cmp',
+  -- require 'plugins.specified.conform',
+  -- require 'plugins.specified.lspconfig',
+  -- require 'plugins.specified.todo-comments',
 
   { import = 'plugins.auto' },
 }, {
