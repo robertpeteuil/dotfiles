@@ -12,6 +12,13 @@ return {
     dependencies = {
       'nvim-lua/plenary.nvim',
       'ThePrimeagen/git-worktree.nvim',
+      {
+        'isak102/telescope-git-file-history.nvim',
+        dependencies = {
+          'nvim-lua/plenary.nvim',
+          'tpope/vim-fugitive',
+        },
+      },
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -52,6 +59,8 @@ return {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local extensions = require('telescope').extensions
+
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -108,9 +117,12 @@ return {
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
+      -- Enable git-file-history extension and keymaps
+      pcall(require('telescope').load_extension, 'git_file_history')
+      vim.keymap.set('n', '<leader>gf', extensions.git_file_history.git_file_history, { desc = 'show [f]ile history' })
+
       -- Enable git-worktree extension and keymaps
       pcall(require('telescope').load_extension, 'git_worktree')
-      local extensions = require('telescope').extensions
       vim.keymap.set('n', '<leader>gw', extensions.git_worktree.git_worktrees, { desc = 'switch [w]orktree' })
       vim.keymap.set('n', '<leader>gW', extensions.git_worktree.create_git_worktree, { desc = 'create [W]orktrees' })
 
