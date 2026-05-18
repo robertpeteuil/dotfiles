@@ -9,7 +9,6 @@ require('lazy').setup({
 
   require 'plugins.specified.blink-cmp',
   require 'plugins.specified.conform',
-  require 'plugins.specified.gitsigns',
   require 'plugins.specified.lspconfig',
   require 'plugins.specified.todo-comments',
 

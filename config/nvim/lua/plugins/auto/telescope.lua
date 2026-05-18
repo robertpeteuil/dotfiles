@@ -11,6 +11,7 @@ return {
     event = 'VimEnter',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'ThePrimeagen/git-worktree.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -106,6 +107,12 @@ return {
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+
+      -- Enable git-worktree extension and keymaps
+      pcall(require('telescope').load_extension, 'git_worktree')
+      local extensions = require('telescope').extensions
+      vim.keymap.set('n', '<leader>gw', extensions.git_worktree.git_worktrees, { desc = 'switch [w]orktree' })
+      vim.keymap.set('n', '<leader>gW', extensions.git_worktree.create_git_worktree, { desc = 'create [W]orktrees' })
 
       -- procession seach integration
       -- pcall(require('telescope').load_extension, 'prosession')
