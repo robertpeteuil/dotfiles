@@ -1,6 +1,47 @@
 return {
   'folke/trouble.nvim',
-  opts = {}, -- for default options, refer to the configuration section for custom setup.
+  ---@class trouble.Config
+  ---@field mode? string
+  ---@field config? fun(opts:trouble.Config)
+  opts = {
+    warn_no_results = false,
+    -- more advanced example that extends the lsp_document_symbols
+    modes = {
+      symbols = {
+        desc = 'document symbols',
+        mode = 'lsp_document_symbols',
+        focus = false,
+        win = {
+          position = 'right',
+          size = 0.3,
+        },
+        filter = {
+          -- remove Package since luals uses it for control flow structures
+          ['not'] = { ft = 'lua', kind = 'Package' },
+          any = {
+            -- all symbol kinds for help / markdown files
+            ft = { 'help', 'markdown' },
+            -- default set of symbol kinds
+            kind = {
+              'Class',
+              'Constructor',
+              'Enum',
+              'Field',
+              'Function',
+              'Interface',
+              'Method',
+              'Module',
+              'Namespace',
+              'Package',
+              'Property',
+              'Struct',
+              'Trait',
+            },
+          },
+        },
+      },
+    },
+  },
   cmd = 'Trouble',
   keys = {
     {
@@ -34,4 +75,5 @@ return {
       desc = 'Quickfix List (Trouble)',
     },
   },
+  --
 }
