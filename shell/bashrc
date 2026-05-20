@@ -130,6 +130,9 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
   sourceIf "$HOME/.grc/grc.bashrc"
 fi
 
+### set LESS options
+export LESS="-F -E -R $LESS"
+
 ### setup NVM
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"                                       # This loads nvm
