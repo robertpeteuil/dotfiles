@@ -140,6 +140,8 @@ alias glog='git log --graph --decorate'
 alias gloga='git log --graph --decorate --all'
 alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
+alias gbl='git branch -l'
+alias gblr='git branch -lr'
 
 ## DOCKER
 alias d='docker'
