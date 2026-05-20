@@ -13,7 +13,7 @@
   excludesfile = ~/.gitignore_global
   editor = vim
   autocrlf = input
-  pager = less -R
+  pager = less -FER
 [diff]
   tool = nvimdiff
 [difftool]
