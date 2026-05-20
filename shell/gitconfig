@@ -11,7 +11,7 @@
   pretty = %Cblue%h%Creset %Cgreen[%ar]%Creset (%an) %s
 [core]
   excludesfile = ~/.gitignore_global
-  editor = nano
+  editor = vim
   autocrlf = input
   pager = less -R
 [diff]
