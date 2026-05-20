@@ -25,6 +25,7 @@ return {
         changedelete = { text = '~' },
       },
       numhl = true,
+      trouble = true,
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
 
@@ -66,7 +67,8 @@ return {
         map('n', '<leader>gu', gitsigns.stage_hunk, { desc = '[u]ndo stage hunk' })
         map('n', '<leader>gR', gitsigns.reset_buffer, { desc = '[R]eset buffer' })
         map('n', '<leader>gp', gitsigns.preview_hunk, { desc = '[p]review hunk' })
-        map('n', '<leader>gb', gitsigns.blame_line, { desc = '[b]lame line' })
+        map('n', '<leader>gb', gitsigns.blame_line, { desc = '[b]lame (line)' })
+        map('n', '<leader>gB', '<cmd>Gitsigns blame<cr>', { desc = '[B]lame (pane)' })
         map('n', '<leader>gd', gitsigns.diffthis, { desc = '[d]iff against index' })
         map('n', '<leader>gD', function()
           gitsigns.diffthis '@'
