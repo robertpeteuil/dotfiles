@@ -59,13 +59,21 @@ return {
 
       -- Document existing key chains
       spec = {
-        { '<leader>a', group = '[A]utoSession' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
-        { '<leader>b', group = '[B]uffer' },
-        { '<leader>o', group = '[O]pencode' },
+        { '<leader>S', group = '[S]ession' },
+        { '<leader>s', group = '[s]earch' },
+        { '<leader>t', group = '[t]oggle' },
+        { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
+        { '<leader>b', group = '[b]uffer' },
+        { '<leader>o', group = '[o]pencode' },
+        { '<leader>y', group = '[y]ank' },
         { '<leader>x', group = 'Trouble' },
+      },
+    },
+    keys = {
+      {
+        '<leader>?',
+        ':WhichKey<cr>',
+        desc = 'buffer local keymaps (whichkey)',
       },
     },
   },

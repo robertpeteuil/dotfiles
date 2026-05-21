@@ -1,28 +1,6 @@
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  See `:help wincmd` for a list of all window commands
---  configured in `custom/plugins/tmux-navigator.lua`
-
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -36,20 +14,38 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- ------------------------------------------------
--- PERSONAL OPTIONS
+-- ######## Misc --------------------------------------------------------------------------------
+--
+-- Clear highlights on search
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- show diagnostic for current line as float
-vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(0, {scope="line"})<CR>', { desc = 'show [D]iagnotic as float', silent = true })
+-- Diagnostic current line (float)
+vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(0, {scope="line"})<CR>', { desc = '[d]iagnotic (float)', silent = true })
 
--- Search project TODOs with Telescope
-vim.keymap.set('n', '<leader>2', ':TodoTelescope<CR>', { desc = 'Search TODOs with Telescope', silent = true })
+-- Diagnostics (kickstart default)
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Special paste from yank buffer
-vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[P]aste from yank register' })
+-- Exit terminal mode in builtin terminal
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+-- -- Buffer Local Keymaps (WhichKey)
+-- vim.keymap.set('n', '<leader>?', function()
+--   require('which-key').show { global = false }
+-- end, { desc = 'buffer local keymaps (whichkey)' })
+
+-- ######## Search --------------------------------------------------------------------------------
+--
+-- Search TODOs with Telescope
+vim.keymap.set('n', '<leader>sT', ':TodoTelescope<CR>', { desc = 'search [T]ODO comments', silent = true })
+
+-- ######## Toggles --------------------------------------------------------------------------------
+--
+-- toggle transparency
+--   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
+vim.keymap.set('n', '<leader>tt', ':TransparentToggle<CR>==', { desc = 'toggle [t]ransparency', silent = true })
 
 -- Toggle boolean value
-vim.keymap.set('n', '<leader>T', function()
+vim.keymap.set('n', '<leader>tv', function()
   local toggles = {
     ['true'] = 'false',
     ['always'] = 'never',
@@ -78,36 +74,31 @@ vim.keymap.set('n', '<leader>T', function()
     vim.cmd.normal { '"_ciw' .. newWord, bang = true }
     vim.api.nvim_win_set_cursor(0, prevCursor)
   end
-end, { desc = '[T]oggle Boolean Value', silent = true })
+end, { desc = 'toggle boolean [v]alue', silent = true })
 
--- Insert date into register d -- disabled 20260517
--- vim.keymap.set('n', '<leader>d', function()
---   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
--- end, { desc = 'Update register timestamp' })
-
--- Copy full path of current buffer to clipboard
--- vim.keymap.set('n', '<leader>c', ':let @+ = expand("%:p")<CR>==', { desc = '[C]opy Buffer Full Path' })
-vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = '[Y]ank [P]ath', silent = true })
-
+-- ######## Buffer Related --------------------------------------------------------------------------------
+--
 -- Close current buffer and switch to last buffer
-vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[B]uffer [D]elete', silent = true })
+vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
 
--- leader key mappings
--- vim.keymap.set('n', '<leader>b', ':Neotree buffers<CR>', { desc = 'Explore [B]uffers' })
+-- ######## Editing --------------------------------------------------------------------------------
+--
+-- Yank date into register d -- disabled 20260517
+vim.keymap.set('n', '<leader>yd', function()
+  vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
+end, { desc = 'yank [d]ate to register d' })
 
--- Meta keybinds require terminal settings
---    iTerm - profile key bindings to send Esc+ for left option key
---    ghostty - add `macos-option-as-alt = true` to config
+-- Yank full path of current buffer to clipboard
+vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = 'yank [p]ath', silent = true })
 
--- toggle transparency
---   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
-vim.keymap.set('n', '<M-t>', ':TransparentToggle<CR>==', { desc = 'Toggle [T]ransparency', silent = true })
+-- Paste from yank-specific buffer
+vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank register' })
 
--- move lines up/down
+-- Move lines up/down
+--    note: meta-key requires terminal config
+--      iTerm - profile key-bindings: left option key sends Esc+
+--      ghostty - `macos-option-as-alt = true` in config
 vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', { silent = true })
 vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', { silent = true })
-
--- END PERSONAL
--- ------------------------------------------------
 
 -- vim: ts=2 sts=2 sw=2 et
