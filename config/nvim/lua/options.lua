@@ -67,9 +67,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- ------------------------------------------------
--- PERSONAL OPTIONS
-
 -- set indent = 2 spaces
 vim.o.tabstop = 2 -- A TAB character looks like 4 spaces
 vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
@@ -87,8 +84,5 @@ vim.lsp.enable 'basedpyright'
 -- vim.o.timeout = false
 -- vim.o.ttimeout = true
 -- vim.o.ttimeoutlen = 100
-
--- END PERSONAL
--- ------------------------------------------------
 
 -- vim: ts=2 sts=2 sw=2 et

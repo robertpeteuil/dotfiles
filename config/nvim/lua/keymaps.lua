@@ -10,7 +10,7 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic current line (float)
-vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(0, {scope="line"})<CR>', { desc = '[d]iagnotic (float)', silent = true })
+vim.keymap.set('n', '<leader>d', '<cmd>lua vim.diagnostic.open_float(0, {scope="line"})<CR>', { desc = '[d]iagnotic (float)', silent = true })
 
 -- Diagnostics (kickstart default)
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -26,13 +26,13 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- ######## Search --------------------------------------------------------------------------------
 --
 -- Search TODOs with Telescope
-vim.keymap.set('n', '<leader>sT', ':TodoTelescope<CR>', { desc = 'search [T]ODO comments', silent = true })
+vim.keymap.set('n', '<leader>sT', '<cmd>TodoTelescope<CR>', { desc = 'search [T]ODO comments', silent = true })
 
 -- ######## Toggles --------------------------------------------------------------------------------
 --
 -- toggle transparency
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
-vim.keymap.set('n', '<leader>tt', ':TransparentToggle<CR>==', { desc = 'toggle [t]ransparency', silent = true })
+vim.keymap.set('n', '<leader>tt', '<cmd>TransparentToggle<CR>==', { desc = 'toggle [t]ransparency', silent = true })
 
 -- Toggle boolean value
 vim.keymap.set('n', '<leader>tv', function()
@@ -69,7 +69,7 @@ end, { desc = 'toggle boolean [v]alue', silent = true })
 -- ######## Buffer Related --------------------------------------------------------------------------------
 --
 -- Close current buffer and switch to last buffer
-vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
+vim.keymap.set('n', '<leader>bd', '<cmd><C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
 
 -- ######## Editing --------------------------------------------------------------------------------
 --
@@ -79,7 +79,7 @@ vim.keymap.set('n', '<leader>yd', function()
 end, { desc = 'yank [d]ate to register d' })
 
 -- Yank full path of current buffer to clipboard
-vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:p")<CR>==', { desc = 'yank [p]ath', silent = true })
+vim.keymap.set('n', '<leader>yp', '<cmd>let @+ = expand("%:p")<CR>==', { desc = 'yank [p]ath', silent = true })
 
 -- Paste from yank-specific buffer
 vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank register' })
@@ -88,7 +88,7 @@ vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank regist
 --    note: meta-key requires terminal config
 --      iTerm - profile key-bindings: left option key sends Esc+
 --      ghostty - `macos-option-as-alt = true` in config
-vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', { silent = true })
-vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', { silent = true })
+vim.keymap.set('n', '<M-j>', '<cmd>m .+1<CR>==', { silent = true })
+vim.keymap.set('n', '<M-k>', '<cmd>m .-2<CR>==', { silent = true })
 
 -- vim: ts=2 sts=2 sw=2 et
