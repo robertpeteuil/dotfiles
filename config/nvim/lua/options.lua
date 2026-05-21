@@ -76,54 +76,12 @@ vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a T
 vim.o.softtabstop = 2 -- Number of spaces inserted instead of a TAB character
 vim.o.shiftwidth = 2 -- Number of spaces inserted when indenting
 
--- refresh neo-tree for lazygit changes
-vim.api.nvim_create_autocmd({ 'BufLeave' }, {
-  pattern = { '*lazygit*' },
-  group = vim.api.nvim_create_augroup('git_refresh_neotree', { clear = true }),
-  callback = function()
-    require('neo-tree.sources.filesystem.commands').refresh(require('neo-tree.sources.manager').get_state 'filesystem')
-  end,
-})
-
--- source: https://github.com/nvim-lualine/lualine.nvim/issues/1372
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'neo-tree',
-  callback = function()
-    -- Set the buffer to be unlisted
-    vim.opt_local.buflisted = false
-  end,
-  desc = 'Prevent neo-tree from appearing in the buffer list',
-})
-
 -- auto-session options
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
 -- enable basedpyright lsp
 --   info: https://docs.basedpyright.com/latest/installation/ides/
 vim.lsp.enable 'basedpyright'
-
--- enable terminal progress bar for LSP progress
--- source: https://old.reddit.com/r/neovim/comments/1rcvliq/ghostty_lsp_progress_bar/o73wdkc/
-vim.api.nvim_create_autocmd('LspProgress', {
-  callback = function(ev)
-    local value = ev.data.params.value or {}
-    if not value.kind then
-      return
-    end
-
-    local status = value.kind == 'end' and 0 or 1
-    local percent = value.percentage or 0
-
-    local osc_seq = string.format('\27]9;4;%d;%d\a', status, percent)
-
-    if os.getenv 'TMUX' then
-      osc_seq = string.format('\27Ptmux;\27%s\27\\', osc_seq)
-    end
-
-    io.stdout:write(osc_seq)
-    io.stdout:flush()
-  end,
-})
 
 -- gets surround working - but disable some which-key features
 -- vim.o.timeout = false
