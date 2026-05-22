@@ -67,6 +67,7 @@ return {
         { '<leader>o', group = '[o]pencode' },
         { '<leader>y', group = '[y]ank' },
         { '<leader>x', group = 'Trouble' },
+        { '<leader>a', group = 'AI' },
       },
     },
     keys = {

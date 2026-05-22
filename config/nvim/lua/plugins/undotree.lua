@@ -1,14 +1,11 @@
 return {
   'mbbill/undotree',
   config = function()
-    vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = '[U]ndotree', silent = true })
+    vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = '[u]ndotree', silent = true })
     -- TODO: create custom function
-    --        toggle on undotree
-    --          get neotree status - save
-    --          neotree hide if needed
-    --          show undotree
-    --        toggle off undotree
-    --          hide undotree
-    --          restore neotree if necesary
+    --        hide neo-tree '<cmd>Neotree action=close<CR>'
+    --        toggle undotree: vim.cmd.UndotreeToggle
+    --        show undotree - <cmd>UndotreeShow<cr>
+    --        hide undotree - <cmd>UndotreeHide<cr>
   end,
 }

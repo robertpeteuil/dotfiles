@@ -69,7 +69,8 @@ end, { desc = 'toggle boolean [v]alue', silent = true })
 -- ######## Buffer Related --------------------------------------------------------------------------------
 --
 -- Close current buffer and switch to last buffer
-vim.keymap.set('n', '<leader>bd', '<cmd><C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
+--    note: <cmd> specification breaks functionality
+vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
 
 -- ######## Editing --------------------------------------------------------------------------------
 --
