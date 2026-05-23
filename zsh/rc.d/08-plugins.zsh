@@ -11,9 +11,10 @@
 local -a plugins=(
   zsh-users/zsh-autosuggestions               # Inline suggestions
   zdharma-continuum/fast-syntax-highlighting  # Fast syntax highlighting
-  zsh-users/zsh-completions                   # 
+  zsh-users/zsh-completions
   marlonrichert/zsh-autocomplete              # Real-time type-ahead completion
   marlonrichert/zcolors                       # Colors for completions and Git
+  jeffreytse/zsh-vi-mode
 )
 # Other plugins:
 #  jeffreytse/zsh-vi-mode                    # https://github.com/jeffreytse/zsh-vi-mode
@@ -29,6 +30,10 @@ local p=
 for p in $plugins; do
   znap source $p
 done
+
+# Set zsh-vi-mode settings
+export ZVM_VI_SURROUND_BINDKEY="s-prefix"   # use s prefix for surround
+export ZVM_KEYTIMEOUT="0.6"                 # default 0.4
 
 # Load zcolors
 znap eval zcolors zcolors   # Extra init code needed for zcolors.
