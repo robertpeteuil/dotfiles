@@ -25,6 +25,12 @@ return {
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
+      'fang2hou/blink-copilot',
+      -- 'rafamadriz/friendly-snippets',
+      { -- Colorful Menu (highlight in completions)
+        'xzbdmw/colorful-menu.nvim',
+        opts = {},
+      },
       { -- Snippet Engine
         'L3MON4D3/LuaSnip',
         version = '2.*',
@@ -38,6 +44,7 @@ return {
           return 'make install_jsregexp'
         end)(),
         dependencies = {
+          'rafamadriz/friendly-snippets',
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
@@ -77,6 +84,7 @@ return {
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        -- preset = 'enter',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -91,21 +99,78 @@ return {
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 500,
+          -- add border around documentation window
+          window = { border = 'single' },
+        },
+        accept = {
+          -- experimental auto-brackets support
+          auto_brackets = {
+            enabled = false,
+          },
+        },
+        keyword = { range = 'full' },
+        list = {
+          selection = {
+            -- auto_insert = true
+            preselect = false,
+          },
+        },
+        menu = {
+          -- add border around completion window
+          border = 'single',
+          draw = {
+            -- We don't need label_description now because label and label_description are already
+            -- conbined together in label by colorful-menu.nvim.
+            columns = { { 'kind_icon' }, { 'label', gap = 1 } },
+            components = {
+              label = {
+                width = { fill = true, max = 60 },
+                text = function(ctx)
+                  return require('colorful-menu').blink_components_text(ctx)
+                end,
+                highlight = function(ctx)
+                  return require('colorful-menu').blink_components_highlight(ctx)
+                end,
+              },
+            },
+          },
+        },
+        trigger = {
+          show_in_snippet = false,
+        },
+      },
+
+      -- Shows a signature help window while you type arguments for a function
+      signature = {
+        enabled = true,
+        window = { border = 'single' },
       },
 
       sources = {
-        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot', 'lazydev' },
         providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            score_offset = 100,
+            async = true,
+            opts = {
+              max_completions = 3,
+              max_attempts = 3,
+            },
+          },
           lazydev = {
             name = 'LazyDev',
             module = 'lazydev.integrations.blink',
-            score_offset = 100,
+            score_offset = 90,
           },
         },
       },
 
-      snippets = { preset = 'luasnip' },
+      -- snippets = { preset = 'luasnip' },
 
       -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
       -- which automatically downloads a prebuilt binary when enabled.
@@ -116,8 +181,9 @@ return {
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = { implementation = 'prefer_rust_with_warning' },
 
-      -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      -- allows extending the providers array elsewhere in your config
+      -- without having to redefine it
+      opts_extend = { 'sources.default' },
     },
   },
 }

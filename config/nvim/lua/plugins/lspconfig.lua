@@ -196,6 +196,8 @@ return {
         -- ts_ls = {},
         --
 
+        copilot = {},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
