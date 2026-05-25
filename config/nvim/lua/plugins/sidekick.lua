@@ -1,5 +1,9 @@
 return {
   'folke/sidekick.nvim',
+  lazy = false,
+  -- pin commit to ensure NES works
+  --   source: https://github.com/folke/sidekick.nvim/issues/300
+  commit = '6b69c42',
   -- dev = true,
   opts = {
     cli = {
@@ -7,16 +11,8 @@ return {
         backend = 'tmux',
         enabled = true,
         create = 'split',
-        split = { size = 0.33 },
+        split = { size = 0.4 },
       },
-      -- tools = {
-      --   opencode = {
-      --     cmd = 'opencode',
-      --   },
-      --   claude = {
-      --     cmd = 'claude',
-      --   },
-      -- },
     },
   },
   keys = {

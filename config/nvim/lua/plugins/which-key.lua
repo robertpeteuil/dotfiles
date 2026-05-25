@@ -68,6 +68,7 @@ return {
         { '<leader>x', group = 'Trouble' },
         { '<leader>a', group = 'AI', icon = '' },
         { '<leader>an', group = 'Next Edit Suggestions', icon = '⭾' },
+        { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
     },
     keys = {
