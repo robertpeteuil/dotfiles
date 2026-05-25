@@ -6,6 +6,8 @@ return {
       -- `snacks.nvim` integration is recommended, but optional
       ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
       'folke/snacks.nvim',
+      lazy = false,
+      priority = 1000, -- Load early to ensure keymaps are registered
       -- optional = true,
       opts = {
         input = {}, -- Enhances `ask()`

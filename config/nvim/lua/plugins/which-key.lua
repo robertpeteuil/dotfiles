@@ -64,10 +64,10 @@ return {
         { '<leader>t', group = '[t]oggle' },
         { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
         { '<leader>b', group = '[b]uffer' },
-        { '<leader>o', group = '[o]pencode' },
         { '<leader>y', group = '[y]ank' },
         { '<leader>x', group = 'Trouble' },
-        { '<leader>a', group = 'AI' },
+        { '<leader>a', group = 'AI', icon = '' },
+        { '<leader>an', group = 'Next Edit Suggestions', icon = '⭾' },
       },
     },
     keys = {
