@@ -170,7 +170,7 @@ return {
         },
       },
 
-      -- snippets = { preset = 'luasnip' },
+      snippets = { preset = 'luasnip' },
 
       -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
       -- which automatically downloads a prebuilt binary when enabled.
@@ -180,11 +180,10 @@ return {
       --
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = { implementation = 'prefer_rust_with_warning' },
-
-      -- allows extending the providers array elsewhere in your config
-      -- without having to redefine it
-      opts_extend = { 'sources.default' },
     },
+    -- allows extending the providers array elsewhere in your config
+    -- without having to redefine it
+    opts_extend = { 'sources.default' },
   },
 }
 -- vim: ts=2 sts=2 sw=2 et
