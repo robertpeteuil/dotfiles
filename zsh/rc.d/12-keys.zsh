@@ -79,3 +79,19 @@ bindkey "$terminfo[kcbt]" menu-select
 #
 # ENTER - always submit the command line, even when you are in the menu
 # bindkey -M menuselect '^M' .accept-line
+
+# MENU Completion - set keys for VI mode
+#   source: https://unix.stackexchange.com/questions/313093/can-i-navigate-zshs-tab-completion-menu-with-vi-like-hjkl-keys
+zstyle ':completion:*' menu select
+# use the vi navigation keys in menu completion
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect "${terminfo[kcub1]}" vi-backward-char
+
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect "${terminfo[kcuu1]}" vi-up-line-or-history
+
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect "${terminfo[kcuf1]}" vi-forward-char
+
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect "${terminfo[kcud1]}" vi-down-line-or-history

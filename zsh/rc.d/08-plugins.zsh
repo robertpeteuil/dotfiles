@@ -14,7 +14,7 @@ local -a plugins=(
   zsh-users/zsh-completions
   marlonrichert/zsh-autocomplete              # Real-time type-ahead completion
   marlonrichert/zcolors                       # Colors for completions and Git
-  jeffreytse/zsh-vi-mode
+  # jeffreytse/zsh-vi-mode
 )
 # Other plugins:
 #  jeffreytse/zsh-vi-mode                    # https://github.com/jeffreytse/zsh-vi-mode
@@ -32,8 +32,12 @@ for p in $plugins; do
 done
 
 # Set zsh-vi-mode settings
-export ZVM_VI_SURROUND_BINDKEY="s-prefix"   # use s prefix for surround
-export ZVM_KEYTIMEOUT="0.6"                 # default 0.4
+# zvm_after_init_commands+=('znap source zsh-users/zsh-completions')
+# export ZVM_VI_SURROUND_BINDKEY="s-prefix"   # use s prefix for surround
+# export ZVM_KEYTIMEOUT="0.6"                 # default 0.4
+# export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+# export ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT         # Always starting with insert mode
+# export ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_ZLE   # Zsh default readkey engine
 
 # Load zcolors
 znap eval zcolors zcolors   # Extra init code needed for zcolors.

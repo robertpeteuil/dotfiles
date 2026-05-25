@@ -55,12 +55,18 @@ alias tmKS='tmux-kill-server'
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
 if command -v pygmentize &>/dev/null; then
-  alias ccat='pygmentize -g'
-  # on zsh remap extensions and '< FILE' to use pygmentize
-  if [[ -n "$ZSH_NAME" ]]; then
-    alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
-    READNULLCMD='pygmentize'
-  fi
+  alias ccat='pygmentize -f terminal -g'
+  function _readnullcmd() {
+    if [[ -t 0 ]]; then
+      less
+    else
+      pygmentize -f terminal -g
+    fi
+  }
+  alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml,yaml}='pygmentize -f terminal -g'
+  READNULLCMD='_readnullcmd'
+else
+  READNULLCMD=$PAGER
 fi
 
 ## PATHS
