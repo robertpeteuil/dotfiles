@@ -148,6 +148,15 @@ alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
 alias gbl='git branch -l'
 alias gblr='git branch -lr'
+git_worktree_create() {
+ git worktree add "../${PWD##*/}-$1" -b "$1"
+ cd "../${PWD##*/}-$1"
+}
+alias gwtc='git_worktree_create'
+alias gwl='git worktree list'
+alias gwa='git worktree add'
+alias gwr='git worktree remove'
+
 
 ## DOCKER
 alias d='docker'
