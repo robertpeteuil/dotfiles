@@ -71,6 +71,9 @@
     ~/.config/television:
       path: config/television
       force: false
+    ~/.config/tombi/config.toml:
+      path: config/tombi/config.toml
+      force: true
 
 # macOS Only Config
 - link:
