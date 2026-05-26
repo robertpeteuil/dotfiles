@@ -7,10 +7,15 @@ return {
   -- dev = true,
   opts = {
     cli = {
+      win = {
+        -- size if mux.create = 'terminal'
+        split = { width = 60 },
+      },
       mux = {
         backend = 'tmux',
         enabled = true,
         create = 'split',
+        -- size if mux.create = 'split'
         split = { size = 0.4 },
       },
     },
