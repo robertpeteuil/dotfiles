@@ -127,3 +127,7 @@
       if: "test -e ./private/config/yazi"
       path: private/config/yazi
       force: false
+    ~/.config/opencode/opencode.jsonc:
+      if: "test -e ./private/config/opencode/opencode.jsonc"
+      path: private/config/opencode/opencode.jsonc
+      force: true
