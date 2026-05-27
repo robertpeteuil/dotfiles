@@ -21,24 +21,75 @@ return {
     },
   },
   keys = {
+    -- sidekick cli commands
     {
-      '<tab>',
+      '<leader>aa',
       function()
-        -- if there is a next edit, jump to it, otherwise apply it if any
-        if require('sidekick').nes_jump_or_apply() then
-          return -- jumped or applied
-        end
-        -- if you are using Neovim's native inline completions
-        if vim.lsp.inline_completion.get() then
-          return
-        end
-        -- fall back to normal tab
-        return '<tab>'
+        require('sidekick.cli').toggle { name = 'opencode', focus = true }
       end,
-      mode = { 'i', 'n' },
-      expr = true,
-      desc = 'Goto/Apply Next Edit Suggestion',
+      desc = '[a]ttach opencode',
     },
+    {
+      '<leader>ac',
+      function()
+        require('sidekick.cli').select { filter = { installed = true } }
+      end,
+      desc = 'attach [C]LI',
+    },
+    {
+      '<leader>ad',
+      function()
+        require('sidekick.cli').close()
+      end,
+      desc = '[d]etach CLI',
+    },
+    {
+      '<leader>ap',
+      function()
+        require('sidekick.cli').prompt()
+      end,
+      desc = 'Sidekick Prompt',
+      mode = { 'n', 'x' },
+    },
+    -- sidekick send commands
+    {
+      '<leader>at',
+      function()
+        require('sidekick.cli').send { msg = '{this}', focus = true }
+      end,
+      mode = { 'x', 'n' },
+      desc = 'Send This',
+    },
+    {
+      '<leader>af',
+      function()
+        require('sidekick.cli').send { msg = '{file}', focus = true }
+      end,
+      desc = 'Send File',
+    },
+    {
+      '<leader>av',
+      function()
+        require('sidekick.cli').send { msg = '{selection}' }
+      end,
+      mode = { 'x' },
+      desc = 'Send Visual Selection',
+    },
+    -- sidekick Next Edit Commands (NES) commands
+    -- {
+    --   '<tab>',
+    --   function()
+    --     -- if there is a next edit, jump to it, otherwise apply it if any
+    --     if require('sidekick').nes_jump_or_apply() then
+    --       return -- jumped or applied
+    --     end
+    --     -- fall back to normal tab
+    --     return '<tab>'
+    --   end,
+    --   mode = { 'i', 'n' },
+    --   expr = true,
+    --   desc = 'Goto/Apply Next Edit Suggestion',
+    -- },
     {
       '<leader>anx',
       function()
@@ -60,65 +111,29 @@ return {
       end,
       desc = 'Request new edits from LSP server (if any)',
     },
-    {
-      '<c-.>',
-      function()
-        require('sidekick.cli').focus()
-      end,
-      mode = { 'n', 'x', 'i', 't' },
-      desc = 'Sidekick Switch Focus',
-    },
-    {
-      '<leader>as',
-      function()
-        require('sidekick.cli').select { filter = { installed = true } }
-      end,
-      desc = 'Select CLI',
-    },
-    {
-      '<leader>aa',
-      function()
-        require('sidekick.cli').toggle { focus = true }
-      end,
-      desc = 'Sidekick Toggle CLI',
-      mode = { 'n', 'v' },
-    },
-    {
-      '<leader>ao',
-      function()
-        require('sidekick.cli').toggle { name = 'opencode', focus = true }
-      end,
-      desc = 'OpenCode Toggle',
-    },
-    {
-      '<leader>ac',
-      function()
-        require('sidekick.cli').toggle { name = 'claude', focus = true }
-      end,
-      desc = 'Claude Code Toggle',
-    },
-    {
-      '<leader>at',
-      function()
-        require('sidekick.cli').send { msg = '{this}', focus = true }
-      end,
-      mode = { 'x', 'n' },
-      desc = 'Send This',
-    },
-    {
-      '<leader>af',
-      function()
-        require('sidekick.cli').send { msg = '{file}', focus = true }
-      end,
-      desc = 'Send File',
-    },
-    {
-      '<leader>ap',
-      function()
-        require('sidekick.cli').prompt()
-      end,
-      desc = 'Sidekick Ask Prompt',
-      mode = { 'n', 'x' },
-    },
+    -- sidekick commands when mux.create is set to 'terminal'
+    -- {
+    --   '<c-.>',
+    --   function()
+    --     require('sidekick.cli').focus()
+    --   end,
+    --   mode = { 'n', 'x', 'i', 't' },
+    --   desc = 'Sidekick Switch Focus',
+    -- },
+    -- {
+    --   '<leader>ac',
+    --   function()
+    --     require('sidekick.cli').toggle { name = 'claude', focus = true }
+    --   end,
+    --   desc = 'Claude Code Toggle',
+    -- },
+    -- {
+    --   '<leader>aa',
+    --   function()
+    --     require('sidekick.cli').toggle { focus = true }
+    --   end,
+    --   desc = 'Sidekick Toggle CLI',
+    --   mode = { 'n', 'v' },
+    -- },
   },
 }

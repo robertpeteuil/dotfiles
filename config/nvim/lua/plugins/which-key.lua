@@ -66,7 +66,7 @@ return {
         { '<leader>b', group = '[b]uffer' },
         { '<leader>y', group = '[y]ank' },
         { '<leader>x', group = 'Trouble' },
-        { '<leader>a', group = 'AI', icon = '' },
+        { '<leader>a', group = 'AI', icon = '', mode = { 'n', 'x' } },
         { '<leader>an', group = 'Next Edit Suggestions', icon = '⭾' },
         { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
