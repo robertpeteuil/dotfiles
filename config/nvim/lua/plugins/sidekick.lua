@@ -76,20 +76,20 @@ return {
       desc = 'Send Visual Selection',
     },
     -- sidekick Next Edit Commands (NES) commands
-    -- {
-    --   '<tab>',
-    --   function()
-    --     -- if there is a next edit, jump to it, otherwise apply it if any
-    --     if require('sidekick').nes_jump_or_apply() then
-    --       return -- jumped or applied
-    --     end
-    --     -- fall back to normal tab
-    --     return '<tab>'
-    --   end,
-    --   mode = { 'i', 'n' },
-    --   expr = true,
-    --   desc = 'Goto/Apply Next Edit Suggestion',
-    -- },
+    {
+      '<tab>',
+      function()
+        -- if there is a next edit, jump to it, otherwise apply it if any
+        if require('sidekick').nes_jump_or_apply() then
+          return -- jumped or applied
+        end
+        -- fall back to normal tab
+        return '<tab>'
+      end,
+      mode = { 'i', 'n' },
+      expr = true,
+      desc = 'Goto/Apply Next Edit Suggestion',
+    },
     {
       '<leader>anx',
       function()
