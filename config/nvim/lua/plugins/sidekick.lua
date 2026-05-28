@@ -34,7 +34,14 @@ return {
       function()
         require('sidekick.cli').select { filter = { installed = true } }
       end,
-      desc = 'attach [C]LI',
+      desc = 'attach [C]LI (installed)',
+    },
+    {
+      '<leader>aC',
+      function()
+        require('sidekick.cli').toggle { focus = true }
+      end,
+      desc = 'attach [C]LI (all)',
     },
     {
       '<leader>ad',
@@ -83,6 +90,10 @@ return {
         if require('sidekick').nes_jump_or_apply() then
           return -- jumped or applied
         end
+        -- if you are using Neovim's native inline completions
+        if vim.lsp.inline_completion.get() then
+          return
+        end
         -- fall back to normal tab
         return '<tab>'
       end,
@@ -126,14 +137,6 @@ return {
     --     require('sidekick.cli').toggle { name = 'claude', focus = true }
     --   end,
     --   desc = 'Claude Code Toggle',
-    -- },
-    -- {
-    --   '<leader>aa',
-    --   function()
-    --     require('sidekick.cli').toggle { focus = true }
-    --   end,
-    --   desc = 'Sidekick Toggle CLI',
-    --   mode = { 'n', 'v' },
     -- },
   },
 }
