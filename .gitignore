@@ -15,6 +15,11 @@ zsh/.zcompdump*
 # pi-crew
 /.crew/
 AGENTS.md
+/.crew
+!.crew/artifacts/
+!.crew/graphs/
+!.crew/artifacts/.gitkeep
+!.crew/graphs/.gitkeep
 
 # Ignore macOS system files
 .DS_Store
