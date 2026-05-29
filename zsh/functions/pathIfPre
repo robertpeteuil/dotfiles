@@ -1,13 +1,13 @@
 #!/usr/bin/env zsh
 # cspell: disable
 
-# Add directory to PATH if it exists and isn't already in PATH
-pathIf() {
+# Add directory to beginning of PATH if it exists and isn't already in PATH
+pathIfPre() {
   local dir="${1:-}"
   [[ -n "$dir" && -d "$dir" ]] || return 0
   if (( ${path[(Ie)$dir]} == 0 )); then
-    path+=("$dir")
+    path=("$dir" $path)
   fi
 }
 
-pathIf "$@"
+pathIfPre "$@"

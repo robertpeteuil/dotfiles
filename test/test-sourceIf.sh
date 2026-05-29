@@ -1,33 +1,42 @@
 #!/usr/bin/env bash
 # cspell: disable
 
-echo "Testing sourceIf in $SHELL"
+set -u
 
-# Source the functions
-if [[ -n $BASH_VERSION ]]; then
-  source ~/.bash_profile
-else
-  source ~/.zshrc
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [[ -n ${BASH_VERSION:-} ]]; then
+  BASH_RC_LOADED=1 source "$repo_root/shell/bash_profile"
+elif [[ -n ${ZSH_VERSION:-} ]]; then
+  source "$repo_root/zsh/functions/sourceIf"
 fi
 
-# Test sourceIf
-echo -e "\nTesting sourceIf:"
-echo "1. Testing with non-existent file:"
-echo "Before sourceIf call:"
-set | grep TEST_VAR || echo "TEST_VAR not set"
-sourceIf "/tmp/nonexistent_file"
-echo "After sourceIf call:"
-set | grep TEST_VAR || echo "TEST_VAR not set"
+failures=0
+assert_eq() {
+  if [[ "$1" == "$2" ]]; then
+    echo "GOOD: $3"
+  else
+    echo "FAIL: $3"
+    echo "  expected: $2"
+    echo "  actual:   $1"
+    failures=$((failures + 1))
+  fi
+}
 
-echo -e "\n2. Testing with existing file:"
-echo 'export TEST_VAR="test successful"' > /tmp/test_file
-echo "Before sourceIf call:"
-set | grep TEST_VAR || echo "TEST_VAR not set"
-sourceIf "/tmp/test_file"
-echo "After sourceIf call:"
-set | grep TEST_VAR || echo "TEST_VAR not set"
-rm /tmp/test_file
+workdir="$(mktemp -d "${TMPDIR:-/tmp}/sourceIf.XXXXXX")"
+trap 'rm -rf "$workdir"' EXIT
 
-# Print function definition for debugging
-echo -e "\nFunction definition:"
-declare -f sourceIf 
+TEST_VAR="unset"
+sourceIf "$workdir/missing"
+assert_eq "$TEST_VAR" "unset" "non-existent file is ignored"
+
+sourceIf "$workdir"
+assert_eq "$TEST_VAR" "unset" "directory is ignored"
+
+printf '%s\n' 'TEST_VAR="test successful"' > "$workdir/test_file"
+sourceIf "$workdir/test_file"
+assert_eq "$TEST_VAR" "test successful" "readable regular file is sourced"
+
+if (( failures > 0 )); then
+  exit 1
+fi

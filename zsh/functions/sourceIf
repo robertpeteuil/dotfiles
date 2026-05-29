@@ -1,11 +1,10 @@
 #!/usr/bin/env zsh
 # cspell: disable
 
-# Source a file if it exists
+# Source a readable regular file if it exists
 sourceIf() {
-  if [[ -e "$1" ]]; then
-    source "$1"
-  fi
+  local file="${1:-}"
+  [[ -n "$file" && -f "$file" && -r "$file" ]] && source "$file"
 }
 
-sourceIf "$@" 
+sourceIf "$@"

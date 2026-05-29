@@ -1,36 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# cspell: disable
 
-# Source the necessary files
-source ~/.bash_profile
+set -u
 
-echo "--- Testing pathIfPre ---"
-echo "Testing pathIfPre in $SHELL"
-echo
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "Testing pathIfPre:"
-echo "1. Testing with non-existent directory:"
-original_path="$PATH"
-pathIfPre "/tmp/non-existent-dir"
-if [ "$PATH" = "$original_path" ]; then
-    echo "GOOD: PATH unchanged"
-else
-    echo "FAIL: PATH was modified"
+if [[ -n ${BASH_VERSION:-} ]]; then
+  BASH_RC_LOADED=1 source "$repo_root/shell/bash_profile"
+elif [[ -n ${ZSH_VERSION:-} ]]; then
+  source "$repo_root/zsh/functions/pathIfPre"
 fi
-echo
 
-echo "2. Testing with existing directory:"
+failures=0
+assert_eq() {
+  if [[ "$1" == "$2" ]]; then
+    echo "GOOD: $3"
+  else
+    echo "FAIL: $3"
+    echo "  expected: $2"
+    echo "  actual:   $1"
+    failures=$((failures + 1))
+  fi
+}
+
+workdir="$(mktemp -d "${TMPDIR:-/tmp}/pathIfPre.XXXXXX")"
+trap 'rm -rf "$workdir"' EXIT
+
 original_path="$PATH"
-test_dir="/tmp/test_path_dir"
-mkdir -p "$test_dir"
-echo "Original PATH: $PATH"
-pathIfPre "$test_dir"
-if [[ "$PATH" == "$test_dir:"* ]]; then
-    echo "GOOD: Directory was added to beginning of PATH"
-else
-    echo "FAIL: Directory was not added to beginning of PATH"
-fi
-rmdir "$test_dir"
-echo
+pathIfPre "$workdir/missing"
+assert_eq "$PATH" "$original_path" "non-existent directory leaves PATH unchanged"
 
-echo "Function definition:"
-type pathIfPre 
+pathIfPre ""
+assert_eq "$PATH" "$original_path" "empty argument leaves PATH unchanged"
+
+mkdir -p "$workdir/bin" "$workdir/bin-extra"
+PATH="$workdir/bin-extra:$original_path"
+pathIfPre "$workdir/bin"
+case "$PATH" in
+  "$workdir/bin:"*) echo "GOOD: existing directory is prepended" ;;
+  *) echo "FAIL: existing directory was not prepended"; failures=$((failures + 1)) ;;
+esac
+
+case ":$PATH:" in
+  *":$workdir/bin:"*) echo "GOOD: partial substring match does not block insertion" ;;
+  *) echo "FAIL: partial substring match blocked insertion"; failures=$((failures + 1)) ;;
+esac
+
+path_before_duplicate="$PATH"
+pathIfPre "$workdir/bin"
+assert_eq "$PATH" "$path_before_duplicate" "exact duplicate is not added twice"
+
+if (( failures > 0 )); then
+  exit 1
+fi
