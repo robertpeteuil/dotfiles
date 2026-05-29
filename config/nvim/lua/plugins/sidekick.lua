@@ -25,9 +25,9 @@ return {
     {
       '<leader>aa',
       function()
-        require('sidekick.cli').toggle { name = 'opencode', focus = true }
+        require('sidekick.cli').toggle { name = 'pi', focus = true }
       end,
-      desc = '[a]ttach opencode',
+      desc = '[a]ttach pi',
     },
     {
       '<leader>ac',
@@ -35,13 +35,6 @@ return {
         require('sidekick.cli').select { filter = { installed = true } }
       end,
       desc = 'attach [C]LI (installed)',
-    },
-    {
-      '<leader>aC',
-      function()
-        require('sidekick.cli').toggle { focus = true }
-      end,
-      desc = 'attach [C]LI (all)',
     },
     {
       '<leader>ad',
