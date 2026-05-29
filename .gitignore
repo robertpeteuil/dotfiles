@@ -10,6 +10,12 @@ private
 zsh/.zsh_sessions
 zsh/.zcompdump*
 
+# pi
+/.pi/
+# pi-crew
+/.crew/
+AGENTS.md
+
 # Ignore macOS system files
 .DS_Store
 
