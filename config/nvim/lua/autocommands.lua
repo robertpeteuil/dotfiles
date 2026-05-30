@@ -54,4 +54,38 @@ vim.api.nvim_create_autocmd('LspProgress', {
   end,
 })
 
+-- Add a JSONL-only keymap to pretty-view the current buffer using jq
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  desc = 'Register JSONL pretty-view keymap',
+  group = vim.api.nvim_create_augroup('jsonl_pretty_view_keymap', { clear = true }),
+  pattern = '*.jsonl',
+  callback = function(ev)
+    vim.keymap.set('n', '<leader>bj', function()
+      local lines = vim.api.nvim_buf_get_lines(ev.buf, 0, -1, false)
+      local input = table.concat(lines, '\n')
+
+      local out = vim.fn.systemlist({ 'jq', '.' }, input)
+
+      if vim.v.shell_error ~= 0 then
+        vim.notify(table.concat(out, '\n'), vim.log.levels.ERROR)
+        return
+      end
+
+      vim.cmd 'tabnew'
+      local buf = vim.api.nvim_get_current_buf()
+
+      vim.bo[buf].buftype = 'nofile'
+      vim.bo[buf].bufhidden = 'wipe'
+      vim.bo[buf].swapfile = false
+      vim.bo[buf].filetype = 'json'
+
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, out)
+      vim.bo[buf].modifiable = false
+    end, {
+      buffer = ev.buf,
+      desc = 'Pretty view JSONL buffer',
+    })
+  end,
+})
+
 -- vim: ts=2 sts=2 sw=2 et

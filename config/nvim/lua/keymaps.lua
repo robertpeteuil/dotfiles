@@ -72,6 +72,10 @@ end, { desc = 'toggle boolean [v]alue', silent = true })
 --    note: <cmd> specification breaks functionality
 vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
 
+-- Pretty view JSONL buffer (only available in JSONL buffers, see autocommands.lua)
+--   equivalent to:
+--    vim.keymap.set(('n', '<leader>bj', function() at autocommands.lua:58, desc = 'Pretty view JSONL buffer')
+
 -- ######## Editing --------------------------------------------------------------------------------
 --
 -- Yank date into register d -- disabled 20260517
@@ -81,6 +85,13 @@ end, { desc = 'yank [d]ate to register d' })
 
 -- Yank full path of current buffer to clipboard
 vim.keymap.set('n', '<leader>yp', '<cmd>let @+ = expand("%:p")<CR>==', { desc = 'yank [p]ath', silent = true })
+
+-- Yank file reference (relative path + line + column) to clipboard
+vim.keymap.set('n', '<leader>yf', function()
+  local ref = vim.fn.expand '%:.' .. ':' .. vim.fn.line '.' .. ':' .. vim.fn.col '.'
+  vim.fn.setreg('+', ref)
+  vim.notify('Copied: ' .. ref)
+end, { desc = 'Copy file reference' })
 
 -- Paste from yank-specific buffer
 vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank register' })
