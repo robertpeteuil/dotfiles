@@ -182,7 +182,15 @@ return {
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        yamlls = {},
+        tombi = {},
         jsonls = {},
+
+        bashls = {},
+
+        basedpyright = {},
+
+        terraformls = {},
 
         copilot = {
           settings = {
@@ -191,6 +199,8 @@ return {
             },
           },
         },
+
+        ts_ls = {},
 
         lua_ls = {
           -- cmd = { ... },
@@ -201,8 +211,8 @@ return {
               completion = {
                 callSnippet = 'Replace',
               },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              -- ignore Lua_LS `missing-fields` warnings
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
