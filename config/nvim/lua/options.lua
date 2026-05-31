@@ -40,14 +40,7 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
+-- Sets whitespace character display
 vim.o.list = true
 -- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }  -- original
 -- vim.opt.listchars = { tab = '· ', trail = '·', nbsp = '␣' }  -- gen 1 - dot
@@ -62,27 +55,19 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
--- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
--- instead raise a dialog asking if you wish to save the current file(s)
--- See `:help 'confirm'`
+-- Confirmation dialog
 vim.o.confirm = true
 
 -- set indent = 2 spaces
-vim.o.tabstop = 2 -- A TAB character looks like 4 spaces
+vim.o.tabstop = 2 -- A TAB character looks like 2 spaces
 vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
 vim.o.softtabstop = 2 -- Number of spaces inserted instead of a TAB character
 vim.o.shiftwidth = 2 -- Number of spaces inserted when indenting
 
+-- hide ~ at end of buffer
+vim.opt.fillchars:append { eob = ' ' }
+
 -- auto-session options
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
-
--- enable basedpyright lsp
---   info: https://docs.basedpyright.com/latest/installation/ides/
-vim.lsp.enable 'basedpyright'
-
--- gets surround working - but disable some which-key features
--- vim.o.timeout = false
--- vim.o.ttimeout = true
--- vim.o.ttimeoutlen = 100
 
 -- vim: ts=2 sts=2 sw=2 et
