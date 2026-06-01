@@ -44,6 +44,10 @@
       path: shell/gitignore_global
       force: true
 
+- shell:
+    - description: Configure ~/.gitconfig_custom URL shortcuts
+      command: ./shell/setup-gitconfig-custom
+
 # Config
 - link:
     ~/.tmux.conf:

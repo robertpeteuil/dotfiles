@@ -108,22 +108,6 @@ alias kctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config cu
 
 ## GIT
 export GIT_MERGE_AUTOEDIT=no
-# If git installed, set up some aliases into a new config file: ~/.gitconfig_custom
-#   shellcheck disable=SC2086
-if command -v git >/dev/null 2>&1; then
-  # git clone shortcut 'ghweb' for https://github.com/
-  #   ex: "git clone ghweb:USER/REPO"
-  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/.insteadof ghweb:
-  # git clone shortcut 'gh' for git@github.com/
-  #   ex: "git clone gh:USER/REPO"
-  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:.insteadof gh:
-  # git clone shortcut 'myweb' for https://github.com/$USER/
-  #   ex: "git clone myweb:REPONAME"
-  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/$USER/.insteadof myweb:
-  # git clone shortcut 'my' for git@github.com/$USER/
-  #   ex: "git clone my:REPONAME"
-  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:$USER/.insteadof my:
-fi
 alias g="git"
 alias ga="git add"
 alias gaa='git add --all'
