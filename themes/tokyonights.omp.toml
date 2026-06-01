@@ -124,8 +124,8 @@ final_space = true
     type = "node"
     template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  "
     style = "powerline"
-    foreground = "p:purewhite"
-    background = "p:green"
+    foreground = "p:black"
+    background = "p:white"
     powerline_symbol = ""
     min_width = 100
 
