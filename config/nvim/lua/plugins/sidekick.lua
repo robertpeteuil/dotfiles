@@ -18,6 +18,11 @@ return {
         -- size if mux.create = 'split'
         split = { size = 0.4 },
       },
+      tools = {
+        pi = { -- start pi using a login shell
+          cmd = { '/bin/zsh', '-lic', 'exec pi' },
+        },
+      },
     },
   },
   keys = {
