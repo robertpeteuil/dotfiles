@@ -17,6 +17,7 @@ vim.keymap.set('n', '<leader>d', '<cmd>lua vim.diagnostic.open_float(0, {scope="
 
 -- Exit terminal mode in builtin terminal
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<C-n>', [[<C-\><C-n>]], { noremap = true, silent = true, desc = 'Exit terminal mode' })
 
 -- -- Buffer Local Keymaps (WhichKey)
 -- vim.keymap.set('n', '<leader>?', function()

@@ -25,7 +25,8 @@ return {
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
-      'fang2hou/blink-copilot',
+      -- 'fang2hou/blink-copilot',
+      'huijiro/blink-cmp-supermaven',
       -- 'rafamadriz/friendly-snippets',
       { -- Colorful Menu (highlight in completions)
         'xzbdmw/colorful-menu.nvim',
@@ -163,17 +164,30 @@ return {
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'supermaven', 'lazydev' },
         providers = {
-          copilot = {
-            name = 'copilot',
-            module = 'blink-copilot',
-            score_offset = 100,
+          -- copilot = {
+          --   name = 'copilot',
+          --   module = 'blink-copilot',
+          --   score_offset = 100,
+          --   async = true,
+          --   opts = {
+          --     max_completions = 3,
+          --     max_attempts = 3,
+          --   },
+          -- },
+          supermaven = {
+            name = 'supermaven',
+            module = 'blink-cmp-supermaven',
             async = true,
-            opts = {
-              max_completions = 3,
-              max_attempts = 3,
-            },
+            max_items = 3,
+            score_offset = 95,
+            transform_items = function(_, items)
+              for _, item in ipairs(items) do
+                item.kind_icon = ''
+              end
+              return items
+            end,
           },
           lazydev = {
             name = 'LazyDev',

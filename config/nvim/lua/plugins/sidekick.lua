@@ -7,14 +7,26 @@ return {
   -- dev = true,
   opts = {
     cli = {
+      nes = {
+        ---@type boolean|fun(buf:integer):boolean?
+        -- enabled - manually disables 20250605
+        enabled = false,
+        -- enabled - default setting
+        -- enabled = function(buf)
+        --   return vim.g.sidekick_nes ~= false and vim.b.sidekick_nes ~= false
+        -- end,
+      },
       win = {
         -- size if mux.create = 'terminal'
-        split = { width = 60 },
+        split = { width = 80 },
       },
       mux = {
         backend = 'tmux',
         enabled = true,
-        create = 'split',
+        -- launch in tmux split pane
+        -- create = 'split',
+        -- launch in nvim terminal split
+        create = 'terminal',
         -- size if mux.create = 'split'
         split = { size = 0.4 },
       },
@@ -22,6 +34,11 @@ return {
         pi = { -- start pi using a login shell
           cmd = { '/bin/zsh', '-lic', 'exec pi' },
         },
+      },
+    },
+    copilot = {
+      status = {
+        level = vim.log.levels.OFF,
       },
     },
   },
@@ -80,55 +97,62 @@ return {
       mode = { 'x' },
       desc = 'Send Visual Selection',
     },
+    {
+      '<leader>al',
+      function()
+        require('sidekick.cli').send { msg = '{line}', focus = true }
+      end,
+      desc = 'Send Line',
+    },
     -- sidekick Next Edit Commands (NES) commands
-    {
-      '<tab>',
-      function()
-        -- if there is a next edit, jump to it, otherwise apply it if any
-        if require('sidekick').nes_jump_or_apply() then
-          return -- jumped or applied
-        end
-        -- if you are using Neovim's native inline completions
-        if vim.lsp.inline_completion.get() then
-          return
-        end
-        -- fall back to normal tab
-        return '<tab>'
-      end,
-      mode = { 'i', 'n' },
-      expr = true,
-      desc = 'Goto/Apply Next Edit Suggestion',
-    },
-    {
-      '<leader>anx',
-      function()
-        require('sidekick.nes').clear()
-      end,
-      desc = 'Clear Next Edit Suggestions',
-    },
-    {
-      '<leader>ant',
-      function()
-        require('sidekick.nes').toggle()
-      end,
-      desc = 'Toggle Next Edit Suggestions',
-    },
-    {
-      '<leader>ann',
-      function()
-        require('sidekick.nes').update()
-      end,
-      desc = 'Request new edits from LSP server (if any)',
-    },
-    -- sidekick commands when mux.create is set to 'terminal'
     -- {
-    --   '<c-.>',
+    --   '<tab>',
     --   function()
-    --     require('sidekick.cli').focus()
+    --     -- if there is a next edit, jump to it, otherwise apply it if any
+    --     if require('sidekick').nes_jump_or_apply() then
+    --       return -- jumped or applied
+    --     end
+    --     -- if you are using Neovim's native inline completions
+    --     if vim.lsp.inline_completion.get() then
+    --       return
+    --     end
+    --     -- fall back to normal tab
+    --     return '<tab>'
     --   end,
-    --   mode = { 'n', 'x', 'i', 't' },
-    --   desc = 'Sidekick Switch Focus',
+    --   mode = { 'i', 'n' },
+    --   expr = true,
+    --   desc = 'Goto/Apply Next Edit Suggestion',
     -- },
+    -- {
+    --   '<leader>anx',
+    --   function()
+    --     require('sidekick.nes').clear()
+    --   end,
+    --   desc = 'Clear Next Edit Suggestions',
+    -- },
+    -- {
+    --   '<leader>ant',
+    --   function()
+    --     require('sidekick.nes').toggle()
+    --   end,
+    --   desc = 'Toggle Next Edit Suggestions',
+    -- },
+    -- {
+    --   '<leader>ann',
+    --   function()
+    --     require('sidekick.nes').update()
+    --   end,
+    --   desc = 'Request new edits from LSP server (if any)',
+    -- },
+    -- sidekick commands when mux.create is set to 'terminal'
+    {
+      '<c-.>',
+      function()
+        require('sidekick.cli').focus()
+      end,
+      mode = { 'n', 'x', 'i', 't' },
+      desc = 'Sidekick Switch Focus',
+    },
     -- {
     --   '<leader>ac',
     --   function()
