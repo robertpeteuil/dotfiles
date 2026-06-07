@@ -19,6 +19,21 @@ return {
       win = {
         -- size if mux.create = 'terminal'
         split = { width = 80 },
+        keys = {
+          -- send explit CSI-u escape secquences
+          -- so that programs runnign in NVIM see them
+          --   source: https://github.com/folke/sidekick.nvim/discussions/295
+          shift_cr = {
+            '<S-CR>',
+            function(self)
+              if self:is_running() then
+                vim.api.nvim_chan_send(self.job, '\x1b[13;2u')
+              end
+            end,
+            mode = 't',
+            desc = 'CSI-u Shift+Enter',
+          },
+        },
       },
       mux = {
         backend = 'tmux',
