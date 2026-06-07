@@ -71,7 +71,9 @@ end, { desc = 'toggle boolean [v]alue', silent = true })
 --
 -- Close current buffer and switch to last buffer
 --    note: <cmd> specification breaks functionality
-vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = '[b]uffer [d]elete', silent = true })
+vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = 'buffer [d]elete', silent = true })
+
+vim.keymap.set('n', '<leader>bm', '<cmd>RenderMarkdown toggle<cr>', { desc = 'buffer [m]arkdown toggle', silent = true })
 
 -- Pretty view JSONL buffer (only available in JSONL buffers, see autocommands.lua)
 --   equivalent to:
