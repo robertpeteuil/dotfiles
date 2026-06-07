@@ -106,4 +106,44 @@ vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank regist
 vim.keymap.set('n', '<M-j>', '<cmd>m .+1<CR>==', { silent = true })
 vim.keymap.set('n', '<M-k>', '<cmd>m .-2<CR>==', { silent = true })
 
+-- ######## Terminal --------------------------------------------------------------------------------
+
+-- Toggle terminal width
+local term_wide = false
+local term_original_width = nil
+local EXTRA_COLS = 40
+
+local function find_term_win()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    if vim.bo[buf].buftype == 'terminal' then
+      return win
+    end
+  end
+end
+
+local function toggle_terminal_width()
+  local term_win = find_term_win()
+  if not term_win then
+    return
+  end
+
+  if not term_wide then
+    term_original_width = vim.api.nvim_win_get_width(term_win)
+    vim.api.nvim_win_call(term_win, function()
+      vim.cmd(EXTRA_COLS .. 'wincmd >')
+    end)
+    term_wide = true
+  else
+    if term_original_width then
+      vim.api.nvim_win_set_width(term_win, term_original_width)
+    end
+    term_wide = false
+  end
+end
+
+vim.keymap.set('n', '<leader>tw', toggle_terminal_width, { desc = 'toggle [t]erminal width' })
+-- note: terminal-mode hotkey is Ctrl-/ but defined as <C-_>
+vim.keymap.set('t', '<C-_>', toggle_terminal_width, { desc = 'toggle [t]erminal width' })
+
 -- vim: ts=2 sts=2 sw=2 et
