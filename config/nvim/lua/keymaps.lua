@@ -35,6 +35,9 @@ vim.keymap.set('n', '<leader>sT', '<cmd>TodoTelescope<CR>', { desc = 'search [T]
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
 vim.keymap.set('n', '<leader>tt', '<cmd>TransparentToggle<CR>==', { desc = 'toggle [t]ransparency', silent = true })
 
+-- toggle markdown rendering
+vim.keymap.set('n', '<leader>tm', '<cmd>RenderMarkdown toggle<cr>', { desc = 'toggle [m]arkdown render', silent = true })
+
 -- Toggle boolean value
 vim.keymap.set('n', '<leader>tv', function()
   local toggles = {
@@ -72,8 +75,6 @@ end, { desc = 'toggle boolean [v]alue', silent = true })
 -- Close current buffer and switch to last buffer
 --    note: <cmd> specification breaks functionality
 vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = 'buffer [d]elete', silent = true })
-
-vim.keymap.set('n', '<leader>bm', '<cmd>RenderMarkdown toggle<cr>', { desc = 'buffer [m]arkdown toggle', silent = true })
 
 -- Pretty view JSONL buffer (only available in JSONL buffers, see autocommands.lua)
 --   equivalent to:
