@@ -44,12 +44,6 @@ fi
   done
 } "$@"
 
-### PI CONFIG (temp location)
-# add to pi-mcp alias once cert has been moved to permanent location
-#   NODE_EXTRA_CA_CERTS="$HOME/Downloads/obsidian-local-rest-api.crt"
-alias pi-mcp='pi --append-system-prompt '\''<active_agent name="mcp-enabled"/>'\'''
-alias pi-config='cd ~/.pi/agent && pi --append-system-prompt ~/.pi/agent/PI_CONFIG_INSTRUCTIONS.md'
-
 ### ZSH PROMPT
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   ## OHMYPOSH
