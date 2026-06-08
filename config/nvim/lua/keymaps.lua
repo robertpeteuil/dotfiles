@@ -4,7 +4,7 @@
 --    See `:help vim.keymap.set()`
 --
 
--- ######## Misc --------------------------------------------------------------------------------
+-- ######## Misc -------------------------------------------
 --
 -- Clear highlights on search
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -24,12 +24,12 @@ vim.keymap.set('t', '<C-n>', [[<C-\><C-n>]], { noremap = true, silent = true, de
 --   require('which-key').show { global = false }
 -- end, { desc = 'buffer local keymaps (whichkey)' })
 
--- ######## Search --------------------------------------------------------------------------------
+-- ######## Search -----------------------------------------
 --
 -- Search TODOs with Telescope
 vim.keymap.set('n', '<leader>sT', '<cmd>TodoTelescope<CR>', { desc = 'search [T]ODO comments', silent = true })
 
--- ######## Toggles --------------------------------------------------------------------------------
+-- ######## Toggles ----------------------------------------
 --
 -- toggle transparency
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
@@ -70,17 +70,16 @@ vim.keymap.set('n', '<leader>tv', function()
   end
 end, { desc = 'toggle boolean [v]alue', silent = true })
 
--- ######## Buffer Related --------------------------------------------------------------------------------
+-- ######## Buffer Related ---------------------------------
 --
 -- Close current buffer and switch to last buffer
 --    note: <cmd> specification breaks functionality
 vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = 'buffer [d]elete', silent = true })
 
--- Pretty view JSONL buffer (only available in JSONL buffers, see autocommands.lua)
---   equivalent to:
---    vim.keymap.set(('n', '<leader>bj', function() at autocommands.lua:58, desc = 'Pretty view JSONL buffer')
+-- Pretty view JSONL (only available in JSONL buffers
+--   <leader>bj keymap mapped in `nvim/lua/autocommands.lua:57:1`
 
--- ######## Editing --------------------------------------------------------------------------------
+-- ######## Editing ----------------------------------------
 --
 -- Yank date into register d -- disabled 20260517
 vim.keymap.set('n', '<leader>yd', function()
@@ -107,7 +106,7 @@ vim.keymap.set({ 'n', 'x' }, '<leader>p', [["0p]], { desc = '[p]aste yank regist
 vim.keymap.set('n', '<M-j>', '<cmd>m .+1<CR>==', { silent = true })
 vim.keymap.set('n', '<M-k>', '<cmd>m .-2<CR>==', { silent = true })
 
--- ######## Terminal --------------------------------------------------------------------------------
+-- ######## Terminal ---------------------------------------
 
 -- Toggle terminal width
 local term_wide = false
