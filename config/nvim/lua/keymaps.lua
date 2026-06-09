@@ -5,7 +5,10 @@
 --
 
 -- ######## Misc -------------------------------------------
---
+
+-- remap ZZ to confirm quit
+vim.keymap.set('n', 'ZZ', '<Cmd>confirm qall<CR>', { desc = 'Quit all, prompting to save changes', silent = true })
+
 -- Clear highlights on search
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
