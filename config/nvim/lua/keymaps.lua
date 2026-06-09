@@ -2,7 +2,6 @@
 --
 --    additional keymaps defined in plugin definitions in plugins/
 --    See `:help vim.keymap.set()`
---
 
 -- ######## Misc -------------------------------------------
 
@@ -18,22 +17,13 @@ vim.keymap.set('n', '<leader>d', '<cmd>lua vim.diagnostic.open_float(0, {scope="
 -- Diagnostics (kickstart default)
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Exit terminal mode in builtin terminal
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-vim.keymap.set('t', '<C-n>', [[<C-\><C-n>]], { noremap = true, silent = true, desc = 'Exit terminal mode' })
-
--- -- Buffer Local Keymaps (WhichKey)
--- vim.keymap.set('n', '<leader>?', function()
---   require('which-key').show { global = false }
--- end, { desc = 'buffer local keymaps (whichkey)' })
-
 -- ######## Search -----------------------------------------
---
+
 -- Search TODOs with Telescope
 vim.keymap.set('n', '<leader>sT', '<cmd>TodoTelescope<CR>', { desc = 'search [T]ODO comments', silent = true })
 
 -- ######## Toggles ----------------------------------------
---
+
 -- toggle transparency
 --   required loading 'xiyaowong/transparent.nvim' from "custom/plugins/init.lue"
 vim.keymap.set('n', '<leader>tt', '<cmd>TransparentToggle<CR>==', { desc = 'toggle [t]ransparency', silent = true })
@@ -74,7 +64,7 @@ vim.keymap.set('n', '<leader>tv', function()
 end, { desc = 'toggle boolean [v]alue', silent = true })
 
 -- ######## Buffer Related ---------------------------------
---
+
 -- Close current buffer and switch to last buffer
 --    note: <cmd> specification breaks functionality
 vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { desc = 'buffer [d]elete', silent = true })
@@ -83,7 +73,7 @@ vim.keymap.set('n', '<leader>bd', ':<C-U>bprevious <bar> bdelete #<CR>==', { des
 --   <leader>bj keymap mapped in `nvim/lua/autocommands.lua:57:1`
 
 -- ######## Editing ----------------------------------------
---
+
 -- Yank date into register d -- disabled 20260517
 vim.keymap.set('n', '<leader>yd', function()
   vim.fn.setreg('d', os.date '%Y-%m-%d', 'c')
@@ -110,6 +100,10 @@ vim.keymap.set('n', '<M-j>', '<cmd>m .+1<CR>==', { silent = true })
 vim.keymap.set('n', '<M-k>', '<cmd>m .-2<CR>==', { silent = true })
 
 -- ######## Terminal ---------------------------------------
+
+-- Exit terminal mode in builtin terminal
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<C-n>', [[<C-\><C-n>]], { noremap = true, silent = true, desc = 'Exit terminal mode' })
 
 -- Toggle terminal width
 local term_wide = false
