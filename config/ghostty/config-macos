@@ -4,10 +4,27 @@
 #     $XDG_CONFIG_HOME/ghostty/config (default: $HOME/.config/ghostty/config)
 
 # Fonts
+font-family = "JetBrainsMono Nerd Font"
 font-size = 12
-font-family = "JetBrainsMono Nerd Font Mono"
-font-thicken = true
-font-thicken-strength = 50
+font-thicken = false
+font-thicken-strength = 25
+# set opentype features
+#   info: https://github.com/JetBrains/JetBrainsMono#opentype-features
+#   cv02 = t with curly tail
+#   cv03 = g alternate
+#   cv04 = j with curly descender
+#   cv06 = m with shorter leg
+#   cv07 = W w with lower middle connection
+#   cv08 = Kk
+#   cv09 = f with lower connection
+#   cv10 = r
+#   cv11 = y with different descender
+#   cv12 = u
+#   cv16 = Q
+#   cv18 = alternate 2, 6 and 9
+#   cv20 = old constructor 5
+#   ss19 = broken equals ligatures == !=
+font-feature = "cv02,cv03,cv04,cv06,cv07,cv08,cv09,cv10,cv11,cv12,cv16,cv18,cv20,ss19,zero"
 
 # Mouse
 mouse-hide-while-typing = true
@@ -22,7 +39,7 @@ custom-shader-animation = false
 # note: local theme (built-in 'TokyoNight Night' has differences)
 theme = tokyonight_night
 minimum-contrast = 4
-background-opacity = 0.9
+background-opacity = 0.8
 faint-opacity = 0.95
 background-image-opacity = 1
 background-blur = 20
@@ -46,7 +63,7 @@ auto-update-channel = tip
 auto-update = off
 
 # keybinds
-keybind = cmd+shift+f=write_scrollback_file:paste
+# keybind = cmd+shift+f=write_scrollback_file:paste
 # keybind = "cmd+.=text:\x03"
 # keybind = global:ctrl+grave_accent=toggle_quick_terminal
 keybind = cmd+u=toggle_background_opacity
