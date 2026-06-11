@@ -8,9 +8,18 @@
 return {
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
+    version = '*',
     event = 'VimEnter',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'ThePrimeagen/git-worktree.nvim',
+      {
+        'isak102/telescope-git-file-history.nvim',
+        dependencies = {
+          'nvim-lua/plenary.nvim',
+          'tpope/vim-fugitive',
+        },
+      },
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -51,6 +60,8 @@ return {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local extensions = require('telescope').extensions
+
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -107,26 +118,31 @@ return {
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
+      -- Enable git-file-history extension and keymaps
+      pcall(require('telescope').load_extension, 'git_file_history')
+      vim.keymap.set('n', '<leader>gf', extensions.git_file_history.git_file_history, { desc = 'show [f]ile history' })
+
+      -- Enable git-worktree extension and keymaps
+      pcall(require('telescope').load_extension, 'git_worktree')
+      vim.keymap.set('n', '<leader>gw', extensions.git_worktree.git_worktrees, { desc = 'switch [w]orktree' })
+      vim.keymap.set('n', '<leader>gW', extensions.git_worktree.create_git_worktree, { desc = 'create [W]orktrees' })
+
       -- procession seach integration
       -- pcall(require('telescope').load_extension, 'prosession')
+      -- vim.keymap.set('n', '<Leader>sp', '<cmd>Telescope prosession<CR>', { desc = 'search [P]rosessions' })
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      -- vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      -- vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'search [h]elp' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = 'search [k]eymaps' })
       -- adjust telescope search to leader S T
-      vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch select [T]elescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
-      -- procession seach integration
-      -- vim.keymap.set('n', '<Leader>sp', '<cmd>Telescope prosession<CR>', { desc = '[S]earch [P]rosessions' })
+      vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = 'search select [t]elescope' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'search current [w]ord' })
+      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'search by [g]rep' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'search [d]iagnostics' })
+      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'search [r]esume' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'search recent files ("." for repeat)' })
+      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] find open buffers' })
 
       -- Custom find files that includes hidden, but excludes .git
       --   source 1: https://old.reddit.com/r/neovim/comments/nspg8o/telescope_find_files_not_showing_hidden_files/
@@ -135,16 +151,16 @@ return {
         builtin.find_files {
           find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
         }
-      end, { desc = '[S]earch [F]iles' })
+      end, { desc = 'search [f]iles' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
+          -- winblend = 10,
           previewer = false,
         })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      end, { desc = '[/] search buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -153,12 +169,12 @@ return {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = 'search [/] in open files' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = 'search [n]eovim files' })
     end,
   },
 }

@@ -3,9 +3,9 @@ return {
   lazy = false,
   keys = {
     -- Will use Telescope if installed or a vim.ui.select picker otherwise
-    { '<leader>ap', '<cmd>AutoSession search<CR>', desc = 'AutoSession [P]icker' },
-    { '<leader>as', '<cmd>AutoSession save<CR>', desc = 'AutoSession [S]ave' },
-    { '<leader>at', '<cmd>AutoSession toggle<CR>', desc = 'AutoSession [T]oggle' },
+    { '<leader>Sp', '<cmd>AutoSession search<CR>', desc = 'Session [P]icker' },
+    { '<leader>Ss', '<cmd>AutoSession save<CR>', desc = 'Session [S]ave' },
+    { '<leader>St', '<cmd>AutoSession toggle<CR>', desc = 'Session [T]oggle' },
     -- { '<leader>g', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
   },
 

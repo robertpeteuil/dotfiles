@@ -16,7 +16,7 @@ return {
   opts = {
     auto_clean_after_session_restore = true, -- Automatically clean up broken neo-tree buffers saved in sessions
     close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
-    -- enable_cursor_hijack = true, -- If enabled neotree will keep the cursor on the first letter of the filename when moving in the tree.
+    enable_cursor_hijack = true, -- If enabled neotree will keep the cursor on the first letter of the filename when moving in the tree.
     filesystem = {
       -- hijack_netrw_behavior = 'open_current',
       follow_current_file = {

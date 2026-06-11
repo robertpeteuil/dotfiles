@@ -40,14 +40,7 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
+-- Sets whitespace character display
 vim.o.list = true
 -- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }  -- original
 -- vim.opt.listchars = { tab = '· ', trail = '·', nbsp = '␣' }  -- gen 1 - dot
@@ -62,75 +55,20 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
--- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
--- instead raise a dialog asking if you wish to save the current file(s)
--- See `:help 'confirm'`
+-- Confirmation dialog
 vim.o.confirm = true
 
--- ------------------------------------------------
--- PERSONAL OPTIONS
-
 -- set indent = 2 spaces
-vim.o.tabstop = 2 -- A TAB character looks like 4 spaces
+vim.o.tabstop = 2 -- A TAB character looks like 2 spaces
 vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
 vim.o.softtabstop = 2 -- Number of spaces inserted instead of a TAB character
 vim.o.shiftwidth = 2 -- Number of spaces inserted when indenting
 
--- refresh neo-tree for lazygit changes
-vim.api.nvim_create_autocmd({ 'BufLeave' }, {
-  pattern = { '*lazygit*' },
-  group = vim.api.nvim_create_augroup('git_refresh_neotree', { clear = true }),
-  callback = function()
-    require('neo-tree.sources.filesystem.commands').refresh(require('neo-tree.sources.manager').get_state 'filesystem')
-  end,
-})
-
--- source: https://github.com/nvim-lualine/lualine.nvim/issues/1372
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'neo-tree',
-  callback = function()
-    -- Set the buffer to be unlisted
-    vim.opt_local.buflisted = false
-  end,
-  desc = 'Prevent neo-tree from appearing in the buffer list',
-})
+-- hide ~ at end of buffer
+vim.opt.fillchars:append { eob = ' ' }
 
 -- auto-session options
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
-
--- enable basedpyright lsp
---   info: https://docs.basedpyright.com/latest/installation/ides/
-vim.lsp.enable 'basedpyright'
-
--- enable terminal progress bar for LSP progress
--- source: https://old.reddit.com/r/neovim/comments/1rcvliq/ghostty_lsp_progress_bar/o73wdkc/
-vim.api.nvim_create_autocmd('LspProgress', {
-  callback = function(ev)
-    local value = ev.data.params.value or {}
-    if not value.kind then
-      return
-    end
-
-    local status = value.kind == 'end' and 0 or 1
-    local percent = value.percentage or 0
-
-    local osc_seq = string.format('\27]9;4;%d;%d\a', status, percent)
-
-    if os.getenv 'TMUX' then
-      osc_seq = string.format('\27Ptmux;\27%s\27\\', osc_seq)
-    end
-
-    io.stdout:write(osc_seq)
-    io.stdout:flush()
-  end,
-})
-
--- gets surround working - but disable some which-key features
--- vim.o.timeout = false
--- vim.o.ttimeout = true
--- vim.o.ttimeoutlen = 100
-
--- END PERSONAL
--- ------------------------------------------------
+--   removed localoptions, winsize to eliminate issues related to pi terminal pane 20250606
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winpos,terminal'
 
 -- vim: ts=2 sts=2 sw=2 et

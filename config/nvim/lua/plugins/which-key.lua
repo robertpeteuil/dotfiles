@@ -59,10 +59,23 @@ return {
 
       -- Document existing key chains
       spec = {
-        { '<leader>a', group = '[A]utoSession' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>S', group = '[S]ession' },
+        { '<leader>s', group = '[s]earch' },
+        { '<leader>t', group = '[t]oggle' },
+        { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
+        { '<leader>b', group = '[b]uffer' },
+        { '<leader>y', group = '[y]ank' },
+        { '<leader>x', group = 'Trouble' },
+        { '<leader>a', group = 'AI', icon = '', mode = { 'n', 'x' } },
+        { '<leader>an', group = 'Next Edit Suggestions', icon = '⭾' },
+        { 'gr', group = 'LSP Actions', mode = { 'n' } },
+      },
+    },
+    keys = {
+      {
+        '<leader>?',
+        ':WhichKey<cr>',
+        desc = 'buffer local keymaps (whichkey)',
       },
     },
   },

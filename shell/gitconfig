@@ -11,9 +11,9 @@
   pretty = %Cblue%h%Creset %Cgreen[%ar]%Creset (%an) %s
 [core]
   excludesfile = ~/.gitignore_global
-  editor = nano
+  editor = vim
   autocrlf = input
-  pager = less -R
+  pager = less -FER
 [diff]
   tool = nvimdiff
 [difftool]
@@ -107,4 +107,4 @@
 [init]
   defaultBranch = main
 
-# vim: ft=git_config
+# vim: ft=gitconfig

@@ -3,9 +3,11 @@
 
 # Add directory to PATH if it exists and isn't already in PATH
 pathIf() {
-  if [[ -d "$1" && $PATH != *"$1"* ]]; then
-    PATH="$PATH:$1"
+  local dir="${1:-}"
+  [[ -n "$dir" && -d "$dir" ]] || return 0
+  if (( ${path[(Ie)$dir]} == 0 )); then
+    path+=("$dir")
   fi
 }
 
-pathIf "$@" 
+pathIf "$@"

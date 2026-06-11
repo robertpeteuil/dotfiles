@@ -1,0 +1,52 @@
+#!/bin/bash
+# cspell: disable
+
+set -euo pipefail
+
+##  GITCONFIG CUSTOM SETUP
+#
+#   A component of https://github.com/robertpeteuil/dotfiles
+#
+# Configures ~/.gitconfig_custom with URL shortcuts used by shell/gitconfig.
+# This is intentionally run by install/update instead of shell startup.
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git not found; skipping ~/.gitconfig_custom setup"
+  exit 0
+fi
+
+gitconfig_custom="${HOME}/.gitconfig_custom"
+
+github_user="${GITHUB_USER:-}"
+if [ -z "$github_user" ]; then
+  github_user="$(git config --global --get github.user || true)"
+fi
+if [ -z "$github_user" ]; then
+  github_user="${USER:-}"
+fi
+if [ -z "$github_user" ]; then
+  github_user="$(id -un)"
+fi
+
+# Generic GitHub clone shortcuts.
+git config -f "$gitconfig_custom" --replace-all url.https://github.com/.insteadof ghweb:
+git config -f "$gitconfig_custom" --replace-all url.git@github.com:.insteadof gh:
+
+# Remove stale personal mappings before adding the current user's mappings.
+# This prevents entries created under a different USER, such as root, from lingering.
+git config -f "$gitconfig_custom" --get-regexp '^url\..*\.insteadof$' 2>/dev/null |
+  while IFS= read -r line; do
+    key=${line%% *}
+    value=${line#* }
+    case "$value" in
+      myweb:|my:)
+        git config -f "$gitconfig_custom" --unset-all "$key" || true
+        ;;
+    esac
+  done
+
+# Personal GitHub clone shortcuts.
+git config -f "$gitconfig_custom" --add "url.https://github.com/${github_user}/.insteadof" myweb:
+git config -f "$gitconfig_custom" --add "url.git@github.com:${github_user}/.insteadof" my:
+
+# vim: ft=bash

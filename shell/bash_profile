@@ -11,24 +11,31 @@
 export BASH_PROFILE_LOADED=1
 
 sourceIf() {
-  if [ -e "$1" ]; then
-    . "$1"
-  fi
+  local file="${1:-}"
+  [ -n "$file" ] && [ -f "$file" ] && [ -r "$file" ] && . "$file"
 }
 
 pathIf() {
-  if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
-    PATH="$PATH:$1"
-  fi
+  local dir="${1:-}"
+  [ -n "$dir" ] && [ -d "$dir" ] || return 0
+  case ":$PATH:" in
+    *":$dir:"*) ;;
+    *) PATH="${PATH:+$PATH:}$dir" ;;
+  esac
 }
 
 pathIfPre() {
-  if [ -d "$1" ] && [ "${PATH#*$1}" = "$PATH" ]; then
-    PATH="$1:$PATH"
-  fi
+  local dir="${1:-}"
+  [ -n "$dir" ] && [ -d "$dir" ] || return 0
+  case ":$PATH:" in
+    *":$dir:"*) ;;
+    *) PATH="$dir${PATH:+:$PATH}" ;;
+  esac
 }
 
 # source bashrc, unless sh shell
 if [ -z "$BASH_RC_LOADED" ] && [ -f "$HOME/.bashrc" ]; then
   . ~/.bashrc
 fi
+
+# vim: ft=bash

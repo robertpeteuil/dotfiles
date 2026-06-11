@@ -1,10 +1,15 @@
+# Dotbot Config File for dotbot versions > 1.24.0
+
 - defaults:
     link:
       create: true
       relink: true
       force: false
 
-- clean: ["~"]
+- clean:
+    ~/:
+    ~/.config:
+      recursive: true
 
 # Zsh Settings
 - link:
@@ -39,16 +44,22 @@
       path: shell/gitignore_global
       force: true
 
+- shell:
+    - description: Configure ~/.gitconfig_custom URL shortcuts
+      command: ./shell/setup-gitconfig-custom
+
 # Config
 - link:
     ~/.tmux.conf:
       if: "test -e ./config/tmux/tmux.conf"
       path: config/tmux/tmux.conf
       force: true
+      backup: true
     ~/.config/nvim:
       if: "test -e ./config/nvim"
       path: config/nvim
       force: false
+      backup: true
     ~/.config/eza/theme.yml:
       path: config/eza/tokyonight.yml
       force: false
@@ -64,9 +75,9 @@
     ~/.config/television:
       path: config/television
       force: false
-    ~/.config/ranger:
-      path: config/ranger
-      force: false
+    ~/.config/tombi/config.toml:
+      path: config/tombi/config.toml
+      force: true
 
 # macOS Only Config
 - link:
@@ -97,6 +108,7 @@
       if: "test -e ./private/config/ssh/config"
       path: private/config/ssh/config
       force: false
+      backup: true
     ~/.config/jj/config.toml:
       if: "test -e ./private/config/jj-config.toml"
       path: private/config/jj-config.toml
@@ -105,10 +117,12 @@
       if: "test -e ./private/config/mise/config.toml"
       path: private/config/mise/config.toml
       force: true
+      backup: true
     ~/.config/tmuxp:
       if: "test -e ./private/config/tmuxp"
       path: private/config/tmuxp
       force: true
+      backup: true
     ~/.config/sesh/sesh.toml:
       if: "test -e ./private/config/sesh/sesh.toml"
       path: private/config/sesh/sesh.toml
@@ -117,3 +131,7 @@
       if: "test -e ./private/config/yazi"
       path: private/config/yazi
       force: false
+    ~/.config/opencode/opencode.jsonc:
+      if: "test -e ./private/config/opencode/opencode.jsonc"
+      path: private/config/opencode/opencode.jsonc
+      force: true

@@ -6,7 +6,9 @@ return {
       -- `snacks.nvim` integration is recommended, but optional
       ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
       'folke/snacks.nvim',
-      optional = true,
+      lazy = false,
+      priority = 1000, -- Load early to ensure keymaps are registered
+      -- optional = true,
       opts = {
         input = {}, -- Enhances `ask()`
         picker = { -- Enhances `select()`
@@ -39,19 +41,19 @@ return {
       require('opencode').ask('@this: ', { submit = true })
     end
     vim.keymap.set({ 'n', 'x' }, '<C-a>', ask_opencode, { desc = 'Ask opencode…' })
-    vim.keymap.set({ 'n', 'x' }, '<leader>oa', ask_opencode, { desc = 'Ask opencode…' })
+    vim.keymap.set({ 'n', 'x' }, '<leader>aa', ask_opencode, { desc = 'Ask opencode…' })
     vim.keymap.set({ 'n', 'x' }, '<C-x>', function()
       require('opencode').select()
     end, { desc = 'Execute opencode action…' })
     -- vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-    vim.keymap.set({ 'n', 't' }, '<leader>ot', function()
+    vim.keymap.set({ 'n', 't' }, '<leader>at', function()
       require('opencode').toggle()
     end, { desc = 'Toggle opencode' })
 
-    vim.keymap.set({ 'n', 'x' }, 'go', function()
+    vim.keymap.set({ 'n', 'x' }, 'ao', function()
       return require('opencode').operator '@this '
     end, { desc = 'Add range to opencode', expr = true })
-    vim.keymap.set('n', 'goo', function()
+    vim.keymap.set('n', 'aoo', function()
       return require('opencode').operator '@this ' .. '_'
     end, { desc = 'Add line to opencode', expr = true })
 

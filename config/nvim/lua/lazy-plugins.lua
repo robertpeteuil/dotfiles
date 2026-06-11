@@ -2,18 +2,15 @@
 
 require('lazy').setup({
 
+  'ThePrimeagen/vim-be-good',
+  'sindrets/diffview.nvim',
+  'xiyaowong/transparent.nvim',
   {
     'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
     opts = {},
   },
 
-  require 'plugins.specified.blink-cmp',
-  require 'plugins.specified.conform',
-  require 'plugins.specified.gitsigns',
-  require 'plugins.specified.lspconfig',
-  require 'plugins.specified.todo-comments',
-
-  { import = 'plugins.auto' },
+  { import = 'plugins' },
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {

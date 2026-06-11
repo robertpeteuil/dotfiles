@@ -55,12 +55,18 @@ alias tmKS='tmux-kill-server'
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
 if command -v pygmentize &>/dev/null; then
-  alias ccat='pygmentize -g'
-  # on zsh remap extensions and '< FILE' to use pygmentize
-  if [[ -n "$ZSH_NAME" ]]; then
-    alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
-    READNULLCMD='pygmentize'
-  fi
+  alias ccat='pygmentize -f terminal -g'
+  function _readnullcmd() {
+    if [[ -t 0 ]]; then
+      less
+    else
+      pygmentize -f terminal -g
+    fi
+  }
+  alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml,yaml}='pygmentize -f terminal -g'
+  READNULLCMD='_readnullcmd'
+else
+  READNULLCMD=$PAGER
 fi
 
 ## PATHS
@@ -102,22 +108,6 @@ alias kctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config cu
 
 ## GIT
 export GIT_MERGE_AUTOEDIT=no
-# If git installed, set up some aliases into a new config file: ~/.gitconfig_custom
-#   shellcheck disable=SC2086
-if command -v git >/dev/null 2>&1; then
-  # git clone shortcut 'ghweb' for https://github.com/
-  #   ex: "git clone ghweb:USER/REPO"
-  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/.insteadof ghweb:
-  # git clone shortcut 'gh' for git@github.com/
-  #   ex: "git clone gh:USER/REPO"
-  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:.insteadof gh:
-  # git clone shortcut 'myweb' for https://github.com/$USER/
-  #   ex: "git clone myweb:REPONAME"
-  git config -f ~/.gitconfig_custom --replace-all url.https://github.com/$USER/.insteadof myweb:
-  # git clone shortcut 'my' for git@github.com/$USER/
-  #   ex: "git clone my:REPONAME"
-  git config -f ~/.gitconfig_custom --replace-all url.git@github.com:$USER/.insteadof my:
-fi
 alias g="git"
 alias ga="git add"
 alias gaa='git add --all'
@@ -140,6 +130,17 @@ alias glog='git log --graph --decorate'
 alias gloga='git log --graph --decorate --all'
 alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
+alias gbl='git branch -l'
+alias gblr='git branch -lr'
+git_worktree_add() {
+ git worktree add "../${PWD##*/}-wt/$1" -b "$1"
+ cd "../${PWD##*/}-wt/$1"
+}
+alias gwta='git_worktree_add'
+alias gwl='git worktree list'
+alias gwa='git worktree add'
+alias gwr='git worktree remove'
+
 
 ## DOCKER
 alias d='docker'

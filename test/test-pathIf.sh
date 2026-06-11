@@ -1,37 +1,50 @@
 #!/usr/bin/env bash
 # cspell: disable
 
-echo "Testing pathIf in $SHELL"
+set -u
 
-# Source the functions
-if [[ -n $BASH_VERSION ]]; then
-  source ~/.bash_profile
-else
-  source ~/.zshrc
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [[ -n ${BASH_VERSION:-} ]]; then
+  BASH_RC_LOADED=1 source "$repo_root/shell/bash_profile"
+elif [[ -n ${ZSH_VERSION:-} ]]; then
+  source "$repo_root/zsh/functions/pathIf"
 fi
 
-# Test pathIf
-echo -e "\nTesting pathIf:"
-echo "1. Testing with non-existent directory:"
-original_path=$PATH
-pathIf "/tmp/nonexistent_dir"
-if [[ "$PATH" == "$original_path" ]]; then
-    echo "GOOD: PATH unchanged"
-else
-    echo "BAD: PATH was modified"
-fi
+failures=0
+assert_eq() {
+  if [[ "$1" == "$2" ]]; then
+    echo "GOOD: $3"
+  else
+    echo "FAIL: $3"
+    echo "  expected: $2"
+    echo "  actual:   $1"
+    failures=$((failures + 1))
+  fi
+}
 
-echo -e "\n2. Testing with existing directory:"
-echo "Original PATH: $PATH"
-mkdir -p /tmp/test_path_dir
-pathIf "/tmp/test_path_dir"
-if [[ "$PATH" == *"/tmp/test_path_dir"* ]]; then
-    echo "GOOD: Directory was added to PATH"
-else
-    echo "BAD: Directory was not added to PATH"
-fi
-rm -r /tmp/test_path_dir
+workdir="$(mktemp -d "${TMPDIR:-/tmp}/pathIf.XXXXXX")"
+trap 'rm -rf "$workdir"' EXIT
 
-# Print function definition for debugging
-echo -e "\nFunction definition:"
-declare -f pathIf 
+original_path="$PATH"
+pathIf "$workdir/missing"
+assert_eq "$PATH" "$original_path" "non-existent directory leaves PATH unchanged"
+
+pathIf ""
+assert_eq "$PATH" "$original_path" "empty argument leaves PATH unchanged"
+
+mkdir -p "$workdir/bin" "$workdir/bin-extra"
+PATH="$workdir/bin-extra:$original_path"
+pathIf "$workdir/bin"
+case ":$PATH:" in
+  *":$workdir/bin:"*) echo "GOOD: partial substring match does not block insertion" ;;
+  *) echo "FAIL: partial substring match blocked insertion"; failures=$((failures + 1)) ;;
+esac
+
+path_before_duplicate="$PATH"
+pathIf "$workdir/bin"
+assert_eq "$PATH" "$path_before_duplicate" "exact duplicate is not added twice"
+
+if (( failures > 0 )); then
+  exit 1
+fi
