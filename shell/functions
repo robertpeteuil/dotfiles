@@ -44,7 +44,7 @@ update-packages() {
     if brew --prefix &>/dev/null; then
       export HOMEBREW_NO_ENV_HINTS=1
       echo -e "${BLUE}Updating via brew${WHITE}..."
-      brew update && brew upgrade
+      brew update && brew upgrade --no-ask
       # perform clean unless 'noclean' specific
       if [[ "$1" != "noclean" ]]; then
         echo -e "${BLUE}Cleaning brew packages${WHITE}..."
