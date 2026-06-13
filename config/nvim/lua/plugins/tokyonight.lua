@@ -5,6 +5,7 @@ return {
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
+    lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
@@ -17,6 +18,19 @@ return {
           sidebars = 'transparent',
           floats = 'transparent',
         },
+        on_highlights = function(hl, c)
+          -- Set window separator to medium grey
+          hl.WinSeparator = {
+            fg = c.dark3,
+            bg = 'NONE',
+          }
+
+          -- Optional compatibility for older configs/plugins
+          hl.VertSplit = {
+            fg = c.dark3,
+            bg = 'NONE',
+          }
+        end,
       }
 
       -- Load the colorscheme here.

@@ -56,12 +56,12 @@ return {
     },
     {
       '<leader>xs',
-      '<cmd>Trouble symbols toggle focus=false<cr>',
+      '<cmd>Trouble symbols toggle focus=false win.position=right win.size=50<cr>',
       desc = 'Symbols (Trouble)',
     },
     {
       '<leader>xl',
-      '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+      '<cmd>Trouble lsp toggle focus=false win.position=right win.size=50<cr>',
       desc = 'LSP Definitions / references / ... (Trouble)',
     },
     {
