@@ -2,11 +2,12 @@
 # cspell: disable
 # shellcheck shell=zsh
 
-### INITS & COMPLETIONS 
+### INITS & COMPLETIONS
 #
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 #   requires: pathIf(fn)
+
 
 # jujutsu completion
 if command -v jj >/dev/null 2>&1; then
