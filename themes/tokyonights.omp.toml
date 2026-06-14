@@ -51,16 +51,17 @@ final_space = true
     foreground_templates = [
       "{{ if .Root }}p:orange{{ else }}p:magenta{{ end }}"
     ]
-    background = "p:black"
+    # background = "p:black"  # removed for transparency interop
 
   # PATH
   [[blocks.segments]]
     type = "path"
     template = "{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} "
     style = "powerline"
-    foreground = "p:black"
+    # foreground = "p:black"  # removed for transparency interop
     background = "p:blue"
     powerline_symbol = ""
+    leading_powerline_symbol = ""
 
     [blocks.segments.options]
       home_icon = "~"
