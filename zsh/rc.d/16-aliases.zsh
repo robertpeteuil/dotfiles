@@ -140,6 +140,8 @@ alias gwta='git_worktree_add'
 alias gwl='git worktree list'
 alias gwa='git worktree add'
 alias gwr='git worktree remove'
+alias gdopr='gh pr create --fill --draft'
+alias gdorel='git-do-release'  # create signed tag and release (local function)
 
 
 ## DOCKER

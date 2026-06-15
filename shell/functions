@@ -124,4 +124,50 @@ update-all() {
   update-dotfiles
 }
 
+## GIT FUNCTIONS
+
+git-do-release() {
+  local base_tag tag suffix remote branch
+
+  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "git-do-release: not inside a git work tree" >&2
+    return 1
+  fi
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "git-do-release: gh is not installed or not in PATH" >&2
+    return 1
+  fi
+
+  branch=$(git branch --show-current 2>/dev/null)
+  remote=$(git config --get "branch.${branch}.remote" 2>/dev/null)
+  remote=${remote:-origin}
+  if ! git remote get-url "$remote" >/dev/null 2>&1; then
+    remote=$(git remote | head -n 1)
+  fi
+  if [[ -z "$remote" ]]; then
+    echo "git-do-release: no git remote found" >&2
+    return 1
+  fi
+
+  echo "Fetching tags from ${remote}..."
+  git fetch --tags "$remote" || return 1
+
+  base_tag=$(date +%Y%m%d)
+  tag=$base_tag
+  suffix=0
+  while git rev-parse -q --verify "refs/tags/${tag}" >/dev/null 2>&1; do
+    suffix=$((suffix + 1))
+    tag="${base_tag}-${suffix}"
+  done
+
+  echo "Creating signed tag ${tag}..."
+  git tag -s "$tag" -m "$tag" || return 1
+
+  echo "Pushing tag ${tag} to ${remote}..."
+  git push "$remote" "refs/tags/${tag}" || return 1
+
+  echo "Creating GitHub release ${tag}..."
+  gh release create "$tag" --verify-tag --generate-notes "$@"
+}
+
 # vim: ft=bash
