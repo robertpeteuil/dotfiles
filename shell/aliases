@@ -119,6 +119,8 @@ alias glogs='git log --stat'
 alias gfixlog='git config --global core.pager "less -R"'
 alias gbl='git branch -l'
 alias gblr='git branch -lr'
+alias gdopr='gh pr create --fill --draft'
+alias gdorel='git-do-release'  # create signed tag and release (local function)
 
 ## DOCKER
 alias d='docker'
