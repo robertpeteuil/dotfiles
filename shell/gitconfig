@@ -11,7 +11,7 @@
   pretty = %Cblue%h%Creset %Cgreen[%ar]%Creset (%an) %s
 [core]
   excludesfile = ~/.gitignore_global
-  editor = vim
+  editor = nvim
   autocrlf = input
   pager = less -FER
 [diff]
@@ -43,10 +43,6 @@
   assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 [pull]
   ff = only
-[includeIf "gitdir:~/Versioned/"]
-  path = ~/.gitconfig_ssh
-[includeIf "gitdir:~/go/"]
-  path = ~/.gitconfig_ssh
 [color "status"]
   branch = 12 normal
   added = 10 normal
