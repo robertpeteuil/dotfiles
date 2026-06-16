@@ -12,11 +12,14 @@ set -e
 
 DOTFILES_REPO="robertpeteuil/dotfiles"
 DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
+DOTFILES_NVIM_REPO="robertpeteuil/dotfiles-nvim"
 # must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
 DOTFILES_TARGET_DIR="$HOME/.dotfiles"
 
 PRIVATE="private"
 PRIVATEDIR="${DOTFILES_TARGET_DIR}/${PRIVATE}"
+EXTERNALDIR="${DOTFILES_TARGET_DIR}/external"
+NVIMDIR="${EXTERNALDIR}/nvim"
 OS=$(uname -s)
 
 if [ -d "$DOTFILES_TARGET_DIR" ]; then
@@ -51,6 +54,26 @@ if [[ -d "${PRIVATEDIR}/.git" ]]; then
   git merge --ff-only @{u} >/dev/null 2>&1
 elif git clone --quiet --depth 1 "git@github.com:${DOTFILES_PRIVATE_REPO}.git" "${PRIVATEDIR}" 2>/dev/null; then
   echo "private repo cloned"
+fi
+
+## CLONE PUBLIC NVIM DOTFILES REPO IF AVAILABLE
+# This optional split repo backs the conditional ~/.config/nvim Dotbot link.
+# Warn and continue on clone/update failure so the rest of Dotbot can still run.
+if [[ -d "${NVIMDIR}/.git" ]]; then
+  echo "nvim repo present - updating"
+  cd "${NVIMDIR}"
+  if ! git remote update -p >/dev/null 2>&1 || ! git merge --ff-only @{u} >/dev/null 2>&1; then
+    echo "WARNING: dotfiles-nvim update failed; continuing without updating nvim config" >&2
+  fi
+elif [[ ! -e "${NVIMDIR}" ]] || [[ -z "$(ls -A "${NVIMDIR}" 2>/dev/null)" ]]; then
+  mkdir -p "${EXTERNALDIR}"
+  if git clone --quiet --depth 1 "https://github.com/${DOTFILES_NVIM_REPO}.git" "${NVIMDIR}" 2>/dev/null; then
+    echo "nvim repo cloned"
+  else
+    echo "WARNING: dotfiles-nvim clone failed; continuing without nvim config" >&2
+  fi
+else
+  echo "WARNING: ${NVIMDIR} exists but is not a Git clone; skipping dotfiles-nvim" >&2
 fi
 
 ## RUN DOTBOT INSTALLER

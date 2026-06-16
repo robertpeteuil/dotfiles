@@ -13,6 +13,7 @@ The following configs are installed:
 - zsh - configures zsh znap plugin manager, prompt, plugins, aliases
 - bash - configured bash settings, bash git prompt
 - git - general configuration, aliases, colorization, user settings
+- nvim - linked from the external `dotfiles-nvim` clone when present
 
 ## Installation
 
@@ -32,7 +33,12 @@ The downloader script performs the following tasks:
 - Install `git` if not installed (required to clone the `dotfiles` repo)
 - Clones `dotfiles` repo into the `~/.dotfiles` directory (configurable)
 - Clones `dotfiles-private` repo into the `~/.dotfiles/private` directory (configurable)
+- Clones public `dotfiles-nvim` into `~/.dotfiles/external/nvim` when available
 - executes included `install` script
+
+External split repositories live under the ignored repo-root `external/` directory. The first split repo is `external/nvim`, and future split repos can use sibling directories there.
+
+The `private/` directory remains reserved for `dotfiles-private` and private `.dotfiles` project documentation.
 
 Install script performs actions from `install.conf.yaml`
 
