@@ -56,8 +56,8 @@
       force: true
       backup: true
     ~/.config/nvim:
-      if: "test -e ./config/nvim"
-      path: config/nvim
+      if: "test -e ./external/nvim"
+      path: external/nvim
       force: false
       backup: true
     ~/.config/eza/theme.yml:
