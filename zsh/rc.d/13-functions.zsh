@@ -106,6 +106,13 @@ update-dotfiles() {
       git up
       cd "$prev_dir" || return
     fi
+    # check for split nvim repo and update if found
+    if [[ -e "$DOTFILES/external/nvim/.git" ]]; then
+      echo -e "${BLUE}Updating nvim DOTFILES repo${WHITE}..."
+      cd "$DOTFILES/external/nvim" || return
+      git up
+      cd "$prev_dir" || return
+    fi
   fi
 }
 

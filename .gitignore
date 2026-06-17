@@ -5,6 +5,7 @@
 **/.zsh_history
 **/repos*
 private
+/external/
 .vscode
 **/archive
 zsh/.zsh_sessions
