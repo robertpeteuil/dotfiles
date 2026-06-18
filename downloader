@@ -13,6 +13,7 @@ set -e
 DOTFILES_REPO="robertpeteuil/dotfiles"
 DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
 DOTFILES_NVIM_REPO="robertpeteuil/dotfiles-nvim"
+DOTFILES_PI_REPO="robertpeteuil/dotfiles-pi"
 # must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
 DOTFILES_TARGET_DIR="$HOME/.dotfiles"
 
@@ -20,6 +21,7 @@ PRIVATE="private"
 PRIVATEDIR="${DOTFILES_TARGET_DIR}/${PRIVATE}"
 EXTERNALDIR="${DOTFILES_TARGET_DIR}/external"
 NVIMDIR="${EXTERNALDIR}/nvim"
+PIDIR="${EXTERNALDIR}/pi"
 OS=$(uname -s)
 
 if [ -d "$DOTFILES_TARGET_DIR" ]; then
@@ -74,6 +76,24 @@ elif [[ ! -e "${NVIMDIR}" ]] || [[ -z "$(ls -A "${NVIMDIR}" 2>/dev/null)" ]]; th
   fi
 else
   echo "WARNING: ${NVIMDIR} exists but is not a Git clone; skipping dotfiles-nvim" >&2
+fi
+
+## CLONE OPTIONAL PRIVATE CONFIG IF AVAILABLE
+if [[ -d "${PIDIR}/.git" ]]; then
+  echo "optional config repo present - updating"
+  cd "${PIDIR}"
+  if ! git remote update -p >/dev/null 2>&1 || ! git merge --ff-only @{u} >/dev/null 2>&1; then
+    echo "WARNING: optional config update failed; continuing" >&2
+  fi
+elif [[ ! -e "${PIDIR}" ]] || [[ -z "$(ls -A "${PIDIR}" 2>/dev/null)" ]]; then
+  mkdir -p "${EXTERNALDIR}"
+  if git clone --quiet "git@github.com:${DOTFILES_PI_REPO}.git" "${PIDIR}" 2>/dev/null; then
+    echo "optional config repo cloned"
+  else
+    echo "WARNING: optional config clone failed; continuing" >&2
+  fi
+else
+  echo "WARNING: ${PIDIR} exists but is not a Git clone; skipping optional config" >&2
 fi
 
 ## RUN DOTBOT INSTALLER

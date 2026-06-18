@@ -11,13 +11,13 @@
     ~/.config:
       recursive: true
 
-# Zsh Settings
+# Settings - Zsh
 - link:
     ~/.zshenv:
       path: zsh/.zshenv
       force: true
 
-# Bash Settings
+# Settings - Bash
 - link:
     ~/.bash-git-prompt:
       path: shell/bash-git-prompt
@@ -32,7 +32,7 @@
       path: shell/bashrc
       force: true
 
-# GitConfig Settings
+# Config - Git
 - link:
     ~/.gitconfig:
       path: shell/gitconfig
@@ -43,22 +43,16 @@
     ~/.gitignore_global:
       path: shell/gitignore_global
       force: true
-
 - shell:
     - description: Configure ~/.gitconfig_custom URL shortcuts
       command: ./shell/setup-gitconfig-custom
 
-# Config
+# Config - Dotfiles Core
 - link:
     ~/.tmux.conf:
       if: "test -e ./config/tmux/tmux.conf"
       path: config/tmux/tmux.conf
       force: true
-      backup: true
-    ~/.config/nvim:
-      if: "test -e ./external/nvim"
-      path: external/nvim
-      force: false
       backup: true
     ~/.config/eza/theme.yml:
       path: config/eza/tokyonight.yml
@@ -79,7 +73,20 @@
       path: config/tombi/config.toml
       force: true
 
-# macOS Only Config
+# Config - External Dotfiles
+- link:
+    ~/.config/nvim:
+      if: "test -e ./external/nvim"
+      path: external/nvim
+      force: false
+      backup: true
+    ~/.pi:
+      if: "test -e ./external/pi"
+      path: external/pi
+      force: false
+      backup: true
+
+# Config - macOS Specific
 - link:
     ~/.config/ghostty/config:
       if: "[ `uname` = Darwin ]"
@@ -98,7 +105,7 @@
       path: config/jqp/jqp.yaml
       force: false
 
-# Private Config
+# Config - Private
 - link:
     ~/.gitconfig_private:
       if: "test -e ./private/config/gitconfig_private"

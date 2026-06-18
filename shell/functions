@@ -114,6 +114,13 @@ update-dotfiles() {
       git up
       cd "$prev_dir" || return
     fi
+    # check for optional config repo and update if found
+    if [[ -e "$DOTFILES/external/pi/.git" ]]; then
+      echo -e "${BLUE}Updating optional config repo${WHITE}..."
+      cd "$DOTFILES/external/pi" || return
+      git up
+      cd "$prev_dir" || return
+    fi
   fi
 }
 
