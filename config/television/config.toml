@@ -1,3 +1,5 @@
+#:tombi format.disabled = true
+
 # CONFIGURATION FILE LOCATION ON YOUR SYSTEM:
 # -------------------------------------------
 # Defaults:
@@ -48,6 +50,16 @@ orientation = "landscape"
 # directory in your configuration directory (see the `config.toml` location above).
 theme = "tokyonight"
 
+[ui.theme_overrides]
+border_fg = "#27a1b9"
+background = "#222228"
+input_text_fg = "#c0caf5"
+result_count_fg = "#faba4a"
+match_fg = "#27a1b9"
+# text_fg = "#ffffff"
+# selection_bg = "#444444"
+# match_fg = "#ff0000"
+
 # Feature-specific configurations
 # Each feature can have its own configuration section
 [ui.input_bar]
@@ -93,21 +105,6 @@ show_channel_descriptions = true
 # Whether to sort channels alphabetically
 sort_alphabetically = true
 # disabled = false
-
-# Theme color overrides
-# ---------------------
-# You can override specific colors from the selected theme by adding them here.
-# This allows you to customize the appearance without creating a full theme file.
-# Colors can be specified as ANSI color names (e.g., "red", "bright-blue") or
-# as hex values (e.g., "#ff0000", "#1e1e2e").
-#
-# Example overrides:
-# [ui.theme_overrides]
-# background = "#000000"
-# text_fg = "#ffffff"
-# selection_bg = "#444444"
-# match_fg = "#ff0000"
-# The default size of the preview panel (in percentage of the screen)
 
 # Keybindings and Events
 # ----------------------------------------------------------------------------
@@ -242,6 +239,7 @@ fallback_channel = "files"
 "git-branch" = [
   "git checkout",
   "git branch",
+  "git switch",
   "git merge",
   "git rebase",
   "git pull",
