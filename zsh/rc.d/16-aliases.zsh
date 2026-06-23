@@ -73,8 +73,7 @@ fi
 alias dumppath='echo "$PATH" | tr ":" "\n"'
 # shellcheck disable=SC2154
 alias debugpath='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
-# only define for zsh
-[[ -n "$ZSH_NAME" ]] && alias dumpfpath='echo "$FPATH" | tr ":" "\n"'
+alias dumpfpath='echo "$FPATH" | tr ":" "\n"'
 
 ## OUTPUT CLARIFIERS
 alias mv='mv -v'
@@ -86,8 +85,6 @@ alias ln='ln -v'
 alias p='ps -f'
 alias rm='rm -v'
 alias cp='cp -i'
-# alias fd='find . -type d -name'
-# alias ff='find . -type f -name'
 alias fgrep='grep -F'
 
 ## FILE OWNERSHIP
@@ -126,9 +123,9 @@ alias gremote='git remote -v'
 alias gundocm='git reset --soft HEAD~'
 alias gignored='git ls-files -o -i --exclude-standard'
 alias gignored2='git ls-files -v | grep "^[[:lower:]]"'
-alias glog='git log --graph --decorate'
-alias gloga='git log --graph --decorate --all'
-alias glogs='git log --stat'
+alias glog='git log --graph --decorate --oneline'
+alias gloga='git log --graph --decorate --all --oneline'
+alias glogs='git log --stat --graph --decorate --oneline'
 alias gfixlog='git config --global core.pager "less -R"'
 alias gbl='git branch -l'
 alias gblr='git branch -lr'

@@ -29,14 +29,21 @@ fi
 alias tmux='EDITOR= VISUAL= tmux'
 alias tm='tmux '
 alias tma='tmux new -A -s' # attach to existing tmux session or create a new one
-alias tml='tmux ls'
-alias tmf='tmux capture-pane -epS - | less -r' # dump scrollback pane into less
+alias tmvs='tmux capture-pane -epS - | less -r' # view scrollback pane in less
+alias tmes='tmux capture-pane -pS - | nvim' # edit scrollback pane in nvim
 alias tmls='tmux ls'
 alias tmlw='tmux list-windows -a'
 alias tmlp='tmux list-panes -a'
 alias tmr='tmux rename-session -t'
 alias tmrw='tmux rename-window -t'
 alias tmK='tmux kill-session -t'
+tmux-load-session() {
+  local sel_session=$(tmuxp ls --json | jq -r '.workspaces[].name' | fzf --height 6 --layout reverse --highlight-line)
+  if [[ "$sel_session" ]]; then
+    tmuxp load "$sel_session" -y
+  fi
+}
+alias tmld='tmux-load-session'
 tmux-kill-server() {
   if read -q "choice?kill tmux server [Y/n]?"; then
     tmux kill-server
@@ -48,20 +55,13 @@ alias tmKS='tmux-kill-server'
 #     colorize text using pygments - https://pygments.org
 #     shellcheck disable=SC2034,SC2139
 if command -v pygmentize &>/dev/null; then
-  alias ccat='pygmentize -g'
-  # on zsh remap extensions and '< FILE' to use pygmentize
-  if [[ -n "$ZSH_NAME" ]]; then
-    alias -s {css,gradle,html,js,json,md,patch,properties,txt,xml,yml}='pygmentize -g'
-    READNULLCMD='pygmentize'
-  fi
+  alias ccat='pygmentize -f terminal -g'
 fi
 
 ## PATHS
 alias dumppath='echo "$PATH" | tr ":" "\n"'
 # shellcheck disable=SC2154
 alias debugpath='echo "$PATH" | tr ":" "\n" | { dir=""; while IFS= read -r dir; do [ -d "$dir" ] && echo "$dir -- exists" || echo "$dir -- does not exist"; done; }'
-# only define for zsh
-[[ -n "$ZSH_NAME" ]] && alias dumpfpath='echo "$FPATH" | tr ":" "\n"'
 
 ## OUTPUT CLARIFIERS
 alias mv='mv -v'
@@ -73,8 +73,6 @@ alias ln='ln -v'
 alias p='ps -f'
 alias rm='rm -v'
 alias cp='cp -i'
-# alias fd='find . -type d -name'
-# alias ff='find . -type f -name'
 alias fgrep='grep -F'
 
 ## FILE OWNERSHIP
@@ -113,12 +111,20 @@ alias gremote='git remote -v'
 alias gundocm='git reset --soft HEAD~'
 alias gignored='git ls-files -o -i --exclude-standard'
 alias gignored2='git ls-files -v | grep "^[[:lower:]]"'
-alias glog='git log --graph --decorate'
-alias gloga='git log --graph --decorate --all'
-alias glogs='git log --stat'
+alias glog='git log --graph --decorate --oneline'
+alias gloga='git log --graph --decorate --all --oneline'
+alias glogs='git log --stat --graph --decorate --oneline'
 alias gfixlog='git config --global core.pager "less -R"'
 alias gbl='git branch -l'
 alias gblr='git branch -lr'
+git_worktree_add() {
+ git worktree add "../${PWD##*/}-wt/$1" -b "$1"
+ cd "../${PWD##*/}-wt/$1"
+}
+alias gwta='git_worktree_add'
+alias gwl='git worktree list'
+alias gwa='git worktree add'
+alias gwr='git worktree remove'
 alias gdopr='gh pr create --fill --draft'
 alias gdorel='git-do-release'  # create signed tag and release (local function)
 
