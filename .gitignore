@@ -6,6 +6,8 @@
 **/repos*
 private
 /external/
+/docs
+/docs/
 .vscode
 **/archive
 zsh/.zsh_sessions

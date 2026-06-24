@@ -8,7 +8,7 @@
 #
 
 ## LOAD ZSH FUNCTIONS
-autoload -Uz pathIf sourceIf pathIfPre
+autoload -Uz pathIf sourceIf pathIfPre project-link-docs
 
 
 ### DEFINE PERSONAL UPDATE FUNCTIONS
