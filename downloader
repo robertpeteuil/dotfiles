@@ -11,17 +11,26 @@ set -e
 #
 
 DOTFILES_REPO="robertpeteuil/dotfiles"
-DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
-DOTFILES_NVIM_REPO="robertpeteuil/dotfiles-nvim"
-DOTFILES_PI_REPO="robertpeteuil/dotfiles-pi"
 # must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
 DOTFILES_TARGET_DIR="$HOME/.dotfiles"
 
+# Optional repos
+#  TODO: move to external config file that lists external repos
+#         in format: "repo-user/repo-name", "target-dit" \n "repo2", "dir2"
+DOTFILES_PRIVATE_REPO="robertpeteuil/dotfiles-private"
 PRIVATE="private"
 PRIVATEDIR="${DOTFILES_TARGET_DIR}/${PRIVATE}"
+
+#  TODO: remove need for EXTERNALDIR variable
 EXTERNALDIR="${DOTFILES_TARGET_DIR}/external"
-NVIMDIR="${EXTERNALDIR}/nvim"
-PIDIR="${EXTERNALDIR}/pi"
+
+DOTFILES_NVIM_REPO="robertpeteuil/dotfiles-nvim"
+NVIMDIR="${DOTFILES_TARGET_DIR}/external/nvim"
+
+DOTFILES_PI_REPO="robertpeteuil/dotfiles-pi"
+PIDIR="${DOTFILES_TARGET_DIR}/pi"
+
+
 OS=$(uname -s)
 
 if [ -d "$DOTFILES_TARGET_DIR" ]; then
@@ -48,6 +57,8 @@ fi
 ## CLONE DOTFILES REPO
 git clone --quiet --recursive --depth 1 "https://github.com/${DOTFILES_REPO}".git "$DOTFILES_TARGET_DIR"
 
+# TODO: Move all optional external repo cloning to `install` script
+
 ## CLONE PRIVATE DOTFILES REPO IF EXIST
 if [[ -d "${PRIVATEDIR}/.git" ]]; then
   echo "private repo present - updating"
@@ -68,7 +79,7 @@ if [[ -d "${NVIMDIR}/.git" ]]; then
     echo "WARNING: dotfiles-nvim update failed; continuing without updating nvim config" >&2
   fi
 elif [[ ! -e "${NVIMDIR}" ]] || [[ -z "$(ls -A "${NVIMDIR}" 2>/dev/null)" ]]; then
-  mkdir -p "${EXTERNALDIR}"
+  mkdir -p "${EXTERNALDIR}"  # TODO: remove need for EXTERNALDIR variable
   if git clone --quiet --depth 1 "https://github.com/${DOTFILES_NVIM_REPO}.git" "${NVIMDIR}" 2>/dev/null; then
     echo "nvim repo cloned"
   else
@@ -86,7 +97,7 @@ if [[ -d "${PIDIR}/.git" ]]; then
     echo "WARNING: optional config update failed; continuing" >&2
   fi
 elif [[ ! -e "${PIDIR}" ]] || [[ -z "$(ls -A "${PIDIR}" 2>/dev/null)" ]]; then
-  mkdir -p "${EXTERNALDIR}"
+  mkdir -p "${EXTERNALDIR}"  # TODO: remove need for EXTERNALDIR variable
   if git clone --quiet "git@github.com:${DOTFILES_PI_REPO}.git" "${PIDIR}" 2>/dev/null; then
     echo "optional config repo cloned"
   else
