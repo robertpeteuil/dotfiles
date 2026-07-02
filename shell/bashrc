@@ -85,7 +85,7 @@ umask 0002
 major_version=${BASH_VERSION%%.*}
 if command -v oh-my-posh &>/dev/null && [ "$TERM_PROGRAM" != "Apple_Terminal" ] && [ "$major_version" -ge 5 ]; then
   ## OHMYPOSH - if OMP installed and modern Bash and terminal
-  eval "$(oh-my-posh init bash --config "$DOTFILES/themes/tokyonights-bash.omp.toml")"
+  eval "$(oh-my-posh init bash --config "$DOTFILES/themes/tokyonights.omp.toml")"
 else
   . "$DOTFILES/shell/bash-prompt"
 fi
@@ -133,15 +133,10 @@ fi
 ### set LESS options
 export LESS="-F -E -R $LESS"
 
-### setup NVM
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"                                       # This loads nvm
-# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
-
 ###### COMPLETIONS
 ## jujutsu completion
 if command -v jj >/dev/null 2>&1; then
-  source <(jj util completion bash)
+  eval "$(jj util completion bash)"
 fi
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd bash)"
