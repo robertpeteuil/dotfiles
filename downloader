@@ -10,37 +10,467 @@ set -e
 #   A component of https://github.com/robertpeteuil/dotfiles
 #
 
-DOTFILES_REPO="robertpeteuil/dotfiles"
-# must match $DOTFILES value set in zsh/.zshenv(13) and shell/bashrc(11)
-DOTFILES_TARGET_DIR="$HOME/.dotfiles"
+status_line() {
+  local subject
+  local status
+  local destination
+
+  subject=$1
+  status=$2
+  destination=${3:-stdout}
+
+  if [ "$destination" = "stderr" ]; then
+    printf '%s: %s\n' "$subject" "$status" >&2
+  else
+    printf '%s: %s\n' "$subject" "$status"
+  fi
+}
+
+usage() {
+  cat <<'EOF'
+Usage: downloader [options]
+
+Options:
+  --repo <repo>       GitHub owner/repo or repo name to clone
+  -t, --target <dir>  Target directory for the dotfiles repo
+  -d, --dev           Full-depth clone for the main dotfiles repo
+  -y, --yes           Accept defaults and skip confirmations
+  -h, --help          Show this help
+EOF
+}
+
+usage_error() {
+  status_line "downloader" "$1" stderr
+  usage >&2
+  exit 2
+}
+
+is_true() {
+  case "${1:-}" in
+    1|[Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|[Yy]|[Oo][Nn])
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+is_interactive() {
+  [ -t 0 ]
+}
+
+default_owner() {
+  if [ -n "${USER:-}" ]; then
+    printf '%s\n' "$USER"
+    return 0
+  fi
+
+  id -un 2>/dev/null
+}
+
+resolve_dotfiles_repo() {
+  local repo
+  local owner
+
+  repo=$1
+  if [ -z "$repo" ]; then
+    repo="dotfiles"
+  fi
+
+  case "$repo" in
+    *[[:space:]]*)
+      usage_error "repo must not contain whitespace"
+      ;;
+    -*|*://*|git@*|*.git|*:*)
+      usage_error "repo must be a GitHub owner/repo or repo name"
+      ;;
+    */*/*|/*|*/)
+      usage_error "repo must be a GitHub owner/repo or repo name"
+      ;;
+    */*)
+      printf '%s\n' "$repo"
+      ;;
+    *)
+      owner=$(default_owner) || owner=""
+      if [ -z "$owner" ]; then
+        status_line "downloader" "unable to determine default repo owner" stderr
+        exit 1
+      fi
+      printf '%s/%s\n' "$owner" "$repo"
+      ;;
+  esac
+}
+
+repo_needs_confirmation() {
+  local repo
+
+  repo=$1
+  if [ -z "$repo" ]; then
+    return 0
+  fi
+
+  case "$repo" in
+    */*)
+      return 1
+      ;;
+    *)
+      return 0
+      ;;
+  esac
+}
+
+require_home() {
+  if [ -z "${HOME:-}" ]; then
+    status_line "downloader" "HOME is not set" stderr
+    exit 1
+  fi
+}
+
+expand_target_dir() {
+  local target
+
+  target=$1
+  require_home
+
+  case "$target" in
+    '~')
+      printf '%s\n' "$HOME"
+      ;;
+    '~/'*)
+      printf '%s/%s\n' "$HOME" "${target#~/}"
+      ;;
+    *)
+      printf '%s\n' "$target"
+      ;;
+  esac
+}
+
+confirm_repo_if_needed() {
+  local answer
+  local resolved
+
+  resolved=$1
+
+  if [ "$REPO_CONFIRM_NEEDED" -ne 1 ] || [ "$CONFIRM_DEFAULTS" -eq 1 ] || ! is_interactive; then
+    printf '%s\n' "$resolved"
+    return 0
+  fi
+
+  printf "dotfiles: repo '%s' [Y/n or owner/repo] " "$resolved" >&2
+  read -r answer
+
+  case "$answer" in
+    ''|[Yy]|[Yy][Ee][Ss])
+      printf '%s\n' "$resolved"
+      ;;
+    [Nn]|[Nn][Oo])
+      status_line "downloader" "cancelled" stderr
+      exit 1
+      ;;
+    *)
+      resolve_dotfiles_repo "$answer"
+      ;;
+  esac
+}
+
+confirm_target_if_needed() {
+  local answer
+  local resolved
+
+  resolved=$1
+
+  if [ "$TARGET_CONFIRM_NEEDED" -ne 1 ] || [ "$CONFIRM_DEFAULTS" -eq 1 ] || ! is_interactive; then
+    printf '%s\n' "$resolved"
+    return 0
+  fi
+
+  printf "dotfiles: target '%s' [Y/n or path] " "$resolved" >&2
+  read -r answer
+
+  case "$answer" in
+    ''|[Yy]|[Yy][Ee][Ss])
+      printf '%s\n' "$resolved"
+      ;;
+    [Nn]|[Nn][Oo])
+      status_line "downloader" "cancelled" stderr
+      exit 1
+      ;;
+    *)
+      expand_target_dir "$answer"
+      ;;
+  esac
+}
+
+ensure_git() {
+  local homebrew_installer
+
+  if command -v git >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [ "$OS" = 'Darwin' ]; then
+    status_line "homebrew" "installing"
+    if ! homebrew_installer=$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh); then
+      status_line "git" "prerequisite installation failed" stderr
+      exit 1
+    fi
+    if ! /bin/bash -c "$homebrew_installer"; then
+      status_line "git" "prerequisite installation failed" stderr
+      exit 1
+    fi
+
+    status_line "git" "installing"
+    if ! brew install git; then
+      status_line "git" "prerequisite installation failed" stderr
+      exit 1
+    fi
+  elif [ "$OS" = 'Linux' ]; then
+    if ! sudo apt-get update -qq -y; then
+      status_line "git" "prerequisite installation failed" stderr
+      exit 1
+    fi
+
+    status_line "git" "installing"
+    if ! sudo apt-get install -y git; then
+      status_line "git" "prerequisite installation failed" stderr
+      exit 1
+    fi
+  else
+    status_line "git" "missing" stderr
+    exit 1
+  fi
+
+  if ! command -v git >/dev/null 2>&1; then
+    status_line "git" "missing after installation" stderr
+    exit 1
+  fi
+}
+
+is_git_repo() {
+  local target
+
+  target=$1
+  [ -d "$target" ] || return 1
+  (cd "$target" && git rev-parse --is-inside-work-tree >/dev/null 2>&1)
+}
+
+print_next_steps() {
+  printf 'next steps:\n'
+  printf '  cd %s\n' "$DOTFILES_TARGET_DIR"
+  printf '  # optional: skip repos.conf copy/edit when no additional repos are needed\n'
+  printf '  # if additional repos are needed before first update:\n'
+  printf '  cp repos.conf.example repos.conf\n'
+  printf '  # edit repos.conf\n'
+
+  if [ "$DEV_MODE" -eq 1 ]; then
+    printf '  ./update\n'
+    printf '  # for full-depth additional repo clones, run ./update --dev\n'
+  else
+    printf '  ./update\n'
+  fi
+}
+
+handle_existing_target() {
+  if [ ! -e "$DOTFILES_TARGET_DIR" ]; then
+    return 0
+  fi
+
+  if is_git_repo "$DOTFILES_TARGET_DIR"; then
+    if [ "$CONFIRM_DEFAULTS" -eq 1 ]; then
+      status_line "dotfiles" "existing repo, skipped clone"
+      print_next_steps
+      exit 0
+    fi
+
+    if is_interactive; then
+      printf "target directory '%s' exists (containing git repo); skip cloning and show next steps? [y/N] " "$DOTFILES_TARGET_DIR" >&2
+      read -r answer
+      case "$answer" in
+        [Yy]|[Yy][Ee][Ss])
+          status_line "dotfiles" "existing repo, skipped clone"
+          print_next_steps
+          exit 0
+          ;;
+        *)
+          status_line "downloader" "cancelled" stderr
+          exit 1
+          ;;
+      esac
+    fi
+
+    status_line "target directory '$DOTFILES_TARGET_DIR' exists (containing git repo)" "confirmation required" stderr
+    exit 1
+  fi
+
+  status_line "target directory '$DOTFILES_TARGET_DIR'" "exists" stderr
+  exit 1
+}
+
+create_target_parent() {
+  local parent
+
+  parent=$(dirname "$DOTFILES_TARGET_DIR")
+  if [ -d "$parent" ]; then
+    return 0
+  fi
+
+  if ! mkdir -p "$parent"; then
+    status_line "target parent '$parent'" "creation failed" stderr
+    exit 1
+  fi
+}
+
+clone_dotfiles() {
+  local clone_url
+  local push_url
+
+  clone_url="https://github.com/${DOTFILES_REPO}.git"
+  push_url="git@github.com:${DOTFILES_REPO}.git"
+
+  if [ "$CLONE_DEPTH" = "full" ]; then
+    if ! git clone --quiet --recursive "$clone_url" "$DOTFILES_TARGET_DIR"; then
+      status_line "dotfiles" "clone failed" stderr
+      exit 1
+    fi
+  else
+    if ! git clone --quiet --recursive --depth 1 "$clone_url" "$DOTFILES_TARGET_DIR"; then
+      status_line "dotfiles" "clone failed" stderr
+      exit 1
+    fi
+  fi
+
+  if ! (cd "$DOTFILES_TARGET_DIR" && git remote set-url --push origin "$push_url"); then
+    status_line "dotfiles" "cloned; push URL not set" stderr
+  else
+    status_line "dotfiles" "cloned"
+  fi
+}
+
+# Help wins before any validation so it never clones or modifies anything, even
+# when combined with other flags or invalid arguments.
+for arg in "$@"; do
+  case "$arg" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+  esac
+done
+
+CLI_DOTFILES_REPO=""
+CLI_DOTFILES_REPO_SET=0
+CLI_DOTFILES_TARGET_DIR=""
+CLI_DOTFILES_TARGET_DIR_SET=0
+CLI_DEV_SET=0
+CLI_CONFIRM_SET=0
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --repo=*)
+      CLI_DOTFILES_REPO=${1#--repo=}
+      if [ -z "$CLI_DOTFILES_REPO" ]; then
+        usage_error "--repo requires a value"
+      fi
+      CLI_DOTFILES_REPO_SET=1
+      ;;
+    --repo)
+      shift
+      if [ "$#" -eq 0 ] || [ -z "$1" ]; then
+        usage_error "--repo requires a value"
+      fi
+      case "$1" in
+        -*)
+          usage_error "--repo requires a value"
+          ;;
+      esac
+      CLI_DOTFILES_REPO=$1
+      CLI_DOTFILES_REPO_SET=1
+      ;;
+    -t|--target)
+      shift
+      if [ "$#" -eq 0 ] || [ -z "$1" ]; then
+        usage_error "--target requires a value"
+      fi
+      case "$1" in
+        -*)
+          usage_error "--target requires a value"
+          ;;
+      esac
+      CLI_DOTFILES_TARGET_DIR=$1
+      CLI_DOTFILES_TARGET_DIR_SET=1
+      ;;
+    --target=*)
+      CLI_DOTFILES_TARGET_DIR=${1#--target=}
+      if [ -z "$CLI_DOTFILES_TARGET_DIR" ]; then
+        usage_error "--target requires a value"
+      fi
+      CLI_DOTFILES_TARGET_DIR_SET=1
+      ;;
+    -d|--dev)
+      CLI_DEV_SET=1
+      ;;
+    -y|--yes)
+      CLI_CONFIRM_SET=1
+      ;;
+    --)
+      usage_error "-- is unsupported"
+      ;;
+    *)
+      usage_error "unknown argument '$1'"
+      ;;
+  esac
+  shift
+done
+
+CONFIRM_DEFAULTS=0
+if [ "$CLI_CONFIRM_SET" -eq 1 ] || is_true "${DOTFILES_CONFIRM:-}"; then
+  CONFIRM_DEFAULTS=1
+fi
+
+DEV_MODE=0
+if [ "$CLI_DEV_SET" -eq 1 ] || is_true "${DOTFILES_DEV:-}"; then
+  DEV_MODE=1
+fi
+
+if [ "$DEV_MODE" -eq 1 ]; then
+  CLONE_DEPTH="full"
+else
+  CLONE_DEPTH="shallow"
+fi
+
+REPO_INPUT=""
+REPO_CONFIRM_NEEDED=0
+if [ "$CLI_DOTFILES_REPO_SET" -eq 1 ]; then
+  REPO_INPUT=$CLI_DOTFILES_REPO
+elif [ -n "${DOTFILES_REPO:-}" ]; then
+  REPO_INPUT=$DOTFILES_REPO
+fi
+
+if repo_needs_confirmation "$REPO_INPUT"; then
+  REPO_CONFIRM_NEEDED=1
+fi
+DOTFILES_REPO=$(resolve_dotfiles_repo "$REPO_INPUT")
+DOTFILES_REPO=$(confirm_repo_if_needed "$DOTFILES_REPO")
+
+TARGET_CONFIRM_NEEDED=0
+if [ "$CLI_DOTFILES_TARGET_DIR_SET" -eq 1 ]; then
+  DOTFILES_TARGET_DIR=$(expand_target_dir "$CLI_DOTFILES_TARGET_DIR")
+elif [ -n "${DOTFILES_TARGET_DIR:-}" ]; then
+  DOTFILES_TARGET_DIR=$(expand_target_dir "$DOTFILES_TARGET_DIR")
+else
+  require_home
+  DOTFILES_TARGET_DIR="$HOME/.dotfiles"
+  TARGET_CONFIRM_NEEDED=1
+fi
+DOTFILES_TARGET_DIR=$(confirm_target_if_needed "$DOTFILES_TARGET_DIR")
 
 OS=$(uname -s)
 
-if [ -d "$DOTFILES_TARGET_DIR" ]; then
-  echo -e "ERROR: target dotfiles dir '${DOTFILES_TARGET_DIR}' exists.\n" >&2
-  exit 1
-fi
-
-## INSTALL PREREQS
-if ! [ -x "$(command -v git)" ]; then
-  if [ "$OS" = 'Darwin' ]; then
-    echo "installing: homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "installing: git"
-    brew install git
-  elif [ "$OS" = 'Linux' ]; then
-    sudo apt-get update -qq -y
-    echo "installing: git"
-    sudo apt-get install -y git
-  fi
-fi
-
-## CLONE DOTFILES REPO
-git clone --quiet --recursive --depth 1 "https://github.com/${DOTFILES_REPO}".git "$DOTFILES_TARGET_DIR"
-
-## RUN DOTBOT INSTALLER
-cd "$DOTFILES_TARGET_DIR" || exit 1
-ssh-keyscan -H github.com >>~/.ssh/known_hosts
-./install
+ensure_git
+handle_existing_target
+create_target_parent
+clone_dotfiles
+print_next_steps
 
 # vim: ft=bash

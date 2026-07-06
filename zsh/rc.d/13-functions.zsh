@@ -90,6 +90,15 @@ update-packages() {
 }
 
 update-dotfiles() {
+  if [[ ! -x "$DOTFILES/update" ]]; then
+    echo "dotfiles: update missing; use update-dotfiles-old" >&2
+    return 1
+  fi
+
+  "$DOTFILES/update"
+}
+
+update-dotfiles-old() {
   update-set-colors
   git --version &>/dev/null && GIT_INST=1 || GIT_INST=0
   # update dotfiles
