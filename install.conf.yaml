@@ -44,8 +44,9 @@
       path: shell/gitignore_global
       force: true
 - shell:
-    - description: Configure ~/.gitconfig_custom URL shortcuts
-      command: ./shell/setup-gitconfig-custom
+    - command: 'if test ! -s "$HOME/.gitconfig_custom" || test ./shell/setup-gitconfig-custom -nt "$HOME/.gitconfig_custom"; then ./shell/setup-gitconfig-custom; fi'
+      quiet: true
+      stdout: true
 
 # Config - Dotfiles Core
 - link:
