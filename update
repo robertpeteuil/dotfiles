@@ -57,7 +57,7 @@ Usage: update [options] [-- dotbot-args...]
 
 Options:
   -r, --repo  Update/clone repos only; skip Dotbot linking
-  -l, --link  Run Dotbot linking only; skip repo and repos.conf work
+  -l, --link  Run Dotbot linking only; skip repo updates/clones
   -d, --dev   Full-depth clone for missing additional repos by default
   -h, --help  Show this help
 
@@ -576,6 +576,75 @@ clone_missing_repo() {
   esac
 }
 
+add_dotbot_config_if_present() {
+  local target
+  local config_rel
+  local config_path
+
+  target=$1
+  config_rel="${target}/${CONFIG}"
+  config_path="${BASEDIR}/${config_rel}"
+
+  if [ ! -r "$config_path" ]; then
+    return 0
+  fi
+
+  case " $DOTBOT_CONFIGS " in
+    *" $config_rel "*)
+      return 0
+      ;;
+  esac
+
+  DOTBOT_CONFIGS="${DOTBOT_CONFIGS} ${config_rel}"
+}
+
+discover_additional_dotbot_configs() {
+  local index
+
+  index=0
+  while [ "$index" -lt "$VALID_REPO_COUNT" ]; do
+    if [ "${VALID_SKIP[$index]}" -eq 0 ]; then
+      add_dotbot_config_if_present "${VALID_TARGETS[$index]}"
+    fi
+    index=$((index + 1))
+  done
+}
+
+dotbot_config_name() {
+  local config_rel
+  local config_dir
+  local index
+  local fallback
+
+  config_rel=$1
+
+  if [ "$config_rel" = "$CONFIG" ]; then
+    printf 'dotfiles\n'
+    return 0
+  fi
+
+  config_dir=${config_rel%/*}
+  if [ "$config_dir" = "$config_rel" ]; then
+    config_dir="."
+  fi
+
+  index=0
+  while [ "$index" -lt "${VALID_REPO_COUNT:-0}" ]; do
+    if [ "${VALID_SKIP[$index]:-1}" -eq 0 ] && [ "${VALID_TARGETS[$index]}" = "$config_dir" ]; then
+      printf '%s\n' "${VALID_NAMES[$index]}"
+      return 0
+    fi
+    index=$((index + 1))
+  done
+
+  fallback=${config_dir##*/}
+  if [ -z "$fallback" ] || [ "$fallback" = "." ]; then
+    fallback="dotfiles"
+  fi
+
+  printf '%s\n' "$fallback"
+}
+
 process_additional_repos() {
   local index
   local name
@@ -610,6 +679,10 @@ process_additional_repos() {
       clone_missing_repo "$name" "$repo" "$full_target" "$access" "$depth"
     fi
 
+    if [ "$DO_DOTBOT" -eq 1 ]; then
+      add_dotbot_config_if_present "$target"
+    fi
+
     index=$((index + 1))
   done
 }
@@ -635,19 +708,40 @@ ensure_dotbot() {
 }
 
 run_dotbot() {
+  local config_rel
+  local config_dir
+  local config_file
   local config_path
+  local dotbot_base
+  local dotbot_name
   local dotbot_status
 
-  config_path="${BASEDIR}/${CONFIG}"
+  config_rel=$1
+  config_dir=${config_rel%/*}
+  config_file=${config_rel##*/}
+
+  if [ "$config_dir" = "$config_rel" ]; then
+    config_dir="."
+  fi
+
+  if [ "$config_dir" = "." ]; then
+    dotbot_base="$BASEDIR"
+  else
+    dotbot_base="${BASEDIR}/${config_dir}"
+  fi
+
+  config_path="${dotbot_base}/${config_file}"
+  dotbot_name=$(dotbot_config_name "$config_rel")
 
   ensure_dotbot
 
   if [ ! -r "$config_path" ]; then
-    status_line "$CONFIG" "missing" stderr
+    status_line "$config_rel" "missing" stderr
     exit 1
   fi
 
-  (cd "$BASEDIR" && "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "$BASEDIR" -c "$CONFIG" "${DOTBOT_ARGS[@]}")
+  printf '%bProcessing %s with Dotbot%b...%b\n' "$BLUE" "$dotbot_name" "$WHITE" "$RESET"
+  (cd "$dotbot_base" && "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "$dotbot_base" -c "$config_file" "${DOTBOT_ARGS[@]}")
   dotbot_status=$?
   if [ "$dotbot_status" -ne 0 ]; then
     exit "$dotbot_status"
@@ -669,6 +763,7 @@ REPO_FLAG=0
 LINK_FLAG=0
 CLI_DEV_SET=0
 DOTBOT_ARGS=()
+DOTBOT_CONFIGS="$CONFIG"
 
 # update owns its mode flags. Dotbot arguments must come after -- so unknown
 # update args can be rejected clearly instead of being accidentally forwarded.
@@ -735,8 +830,16 @@ if [ "$DO_REPO" -eq 1 ]; then
 fi
 
 if [ "$DO_DOTBOT" -eq 1 ]; then
-  section_heading "Processing dotfiles with Dotbot"
-  run_dotbot
+  if [ "$DO_REPO" -eq 0 ]; then
+    load_repos_conf
+    if [ "$CONFIG_LOADED" -eq 1 ] && [ "$CONFIG_MISSING" -eq 0 ]; then
+      discover_additional_dotbot_configs
+    fi
+  fi
+
+  for dotbot_config in $DOTBOT_CONFIGS; do
+    run_dotbot "$dotbot_config"
+  done
 fi
 
 exit 0
