@@ -58,6 +58,12 @@ if command -v tv &>/dev/null; then
   fi
 fi
 
+# herdr on-demand completion
+if command -v herdr &>/dev/null; then
+  znap function _herdr herdr 'eval "$(herdr completion zsh)"'
+  compctl -K _herdr herdr
+fi
+
 # obsidian cli path
 pathIf "/Applications/Obsidian.app/Contents/MacOS"
 
