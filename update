@@ -399,11 +399,6 @@ safe_update_repo_status() {
 
   target=$1
 
-  dirty=0
-  if [ -n "$(cd "$target" && git status --porcelain 2>/dev/null)" ]; then
-    dirty=1
-  fi
-
   branch=$(cd "$target" && git symbolic-ref --quiet --short HEAD 2>/dev/null)
   if [ -z "$branch" ]; then
     short_sha=$(cd "$target" && git rev-parse --short HEAD 2>/dev/null)
@@ -413,15 +408,20 @@ safe_update_repo_status() {
   fi
 
   upstream=$(cd "$target" && git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)
+  # No upstream means there is nothing to merge; skip worktree and network work.
+  if [ -z "$upstream" ]; then
+    printf "local branch '%s'\n" "$branch"
+    return 0
+  fi
+
+  dirty=0
+  if [ -n "$(cd "$target" && git status --porcelain 2>/dev/null)" ]; then
+    dirty=1
+  fi
 
   remote_ok=0
   if (cd "$target" && git remote update -p >/dev/null 2>&1); then
     remote_ok=1
-  fi
-
-  if [ -z "$upstream" ]; then
-    printf "local branch '%s'\n" "$branch"
-    return 0
   fi
 
   if [ "$dirty" -eq 1 ]; then
