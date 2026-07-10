@@ -13,8 +13,6 @@ font-thicken-strength = 25
 #   cv02 = t with curly tail
 #   cv03 = g alternate
 #   cv04 = j with curly descender
-#   cv06 = m with shorter leg
-#   cv07 = W w with lower middle connection
 #   cv08 = Kk
 #   cv09 = f with lower connection
 #   cv10 = r
@@ -24,7 +22,7 @@ font-thicken-strength = 25
 #   cv18 = alternate 2, 6 and 9
 #   cv20 = old constructor 5
 #   ss19 = broken equals ligatures == !=
-font-feature = "cv02,cv03,cv04,cv06,cv07,cv08,cv09,cv10,cv11,cv12,cv16,cv18,cv20,ss19,zero"
+font-feature = "cv02,cv03,cv04,cv08,cv09,cv10,cv11,cv12,cv16,cv18,cv20,ss19,zero"
 
 # Mouse
 mouse-hide-while-typing = true
@@ -38,21 +36,19 @@ custom-shader-animation = false
 # Theme & Window Settings
 # note: local theme (built-in 'TokyoNight Night' has differences)
 theme = tokyonight_night
-minimum-contrast = 4
-background-opacity = 0.8
-faint-opacity = 0.95
-background-image-opacity = 1
-background-blur = 20
 window-theme = ghostty
+window-decoration = auto
 cursor-style = "block"
 cursor-style-blink = false
 
 # Window
-window-decoration = auto
-window-theme = dark
-# window-width = 170
 window-width = 155
 window-height = 45
+minimum-contrast = 4
+background-image-opacity = 1
+background-opacity = 0.8
+faint-opacity = 0.95
+background-blur = 20
 
 # Other
 macos-option-as-alt = true
@@ -68,4 +64,4 @@ auto-update = off
 # keybind = global:ctrl+grave_accent=toggle_quick_terminal
 keybind = cmd+u=toggle_background_opacity
 
-# vim: filetype=ini ts=2 sts=2 sw=2 et
+# vim: filetype=confini ts=2 sts=2 sw=2 et

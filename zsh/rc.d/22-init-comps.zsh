@@ -48,7 +48,20 @@ fi
 
 # television completion
 if command -v tv &>/dev/null; then
-  znap eval tv "tv init zsh"
+  # source custom zsh-integration if exists
+  if [[ -f "$DOTFILES/config/television/shell/integration.zsh" ]]; then
+    source "$DOTFILES/config/television/shell/integration.zsh"
+    # switch to 'znap eval' for caching once custom script finalized
+    # znap eval tv 'cat "$DOTFILES/config/television/shell/integration.zsh"'
+  else
+    znap eval tv "tv init zsh"
+  fi
+fi
+
+# herdr on-demand completion
+if command -v herdr &>/dev/null; then
+  znap function _herdr herdr 'eval "$(herdr completion zsh)"'
+  compctl -K _herdr herdr
 fi
 
 # obsidian cli path

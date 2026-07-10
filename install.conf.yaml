@@ -11,13 +11,13 @@
     ~/.config:
       recursive: true
 
-# Zsh Settings
+# Settings - Zsh
 - link:
     ~/.zshenv:
       path: zsh/.zshenv
       force: true
 
-# Bash Settings
+# Settings - Bash
 - link:
     ~/.bash-git-prompt:
       path: shell/bash-git-prompt
@@ -32,7 +32,7 @@
       path: shell/bashrc
       force: true
 
-# GitConfig Settings
+# Config - Git
 - link:
     ~/.gitconfig:
       path: shell/gitconfig
@@ -43,23 +43,17 @@
     ~/.gitignore_global:
       path: shell/gitignore_global
       force: true
-
 - shell:
-    - description: Configure ~/.gitconfig_custom URL shortcuts
-      command: ./shell/setup-gitconfig-custom
+    - command: 'if test ! -s "$HOME/.gitconfig_custom" || test ./shell/setup-gitconfig-custom -nt "$HOME/.gitconfig_custom"; then ./shell/setup-gitconfig-custom; fi'
+      quiet: true
+      stdout: true
 
-# Config
+# Config - Dotfiles Core
 - link:
     ~/.tmux.conf:
       if: "test -e ./config/tmux/tmux.conf"
       path: config/tmux/tmux.conf
       force: true
-      backup: true
-    ~/.config/nvim:
-      if: "test -e ./external/nvim"
-      path: external/nvim
-      force: false
-      backup: true
     ~/.config/eza/theme.yml:
       path: config/eza/tokyonight.yml
       force: false
@@ -79,7 +73,7 @@
       path: config/tombi/config.toml
       force: true
 
-# macOS Only Config
+# Config - macOS Specific
 - link:
     ~/.config/ghostty/config:
       if: "[ `uname` = Darwin ]"
@@ -97,41 +91,3 @@
       if: "[ `uname` = Darwin ]"
       path: config/jqp/jqp.yaml
       force: false
-
-# Private Config
-- link:
-    ~/.gitconfig_private:
-      if: "test -e ./private/config/gitconfig_private"
-      path: private/config/gitconfig_private
-      force: true
-    ~/.ssh/config:
-      if: "test -e ./private/config/ssh/config"
-      path: private/config/ssh/config
-      force: false
-      backup: true
-    ~/.config/jj/config.toml:
-      if: "test -e ./private/config/jj-config.toml"
-      path: private/config/jj-config.toml
-      force: false
-    ~/.config/mise/config.toml:
-      if: "test -e ./private/config/mise/config.toml"
-      path: private/config/mise/config.toml
-      force: true
-      backup: true
-    ~/.config/tmuxp:
-      if: "test -e ./private/config/tmuxp"
-      path: private/config/tmuxp
-      force: true
-      backup: true
-    ~/.config/sesh/sesh.toml:
-      if: "test -e ./private/config/sesh/sesh.toml"
-      path: private/config/sesh/sesh.toml
-      force: false
-    ~/.config/yazi:
-      if: "test -e ./private/config/yazi"
-      path: private/config/yazi
-      force: false
-    ~/.config/opencode/opencode.jsonc:
-      if: "test -e ./private/config/opencode/opencode.jsonc"
-      path: private/config/opencode/opencode.jsonc
-      force: true

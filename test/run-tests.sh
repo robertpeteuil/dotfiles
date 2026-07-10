@@ -16,6 +16,7 @@ echo "=== Testing in Bash ==="
 run_test bash "$script_dir/test-sourceIf.sh"
 run_test bash "$script_dir/test-pathIf.sh"
 run_test bash "$script_dir/test-pathIfPre.sh"
+run_test "$script_dir/test-update.sh"
 
 if command -v zsh >/dev/null; then
   echo

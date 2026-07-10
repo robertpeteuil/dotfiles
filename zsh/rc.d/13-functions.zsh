@@ -8,7 +8,7 @@
 #
 
 ## LOAD ZSH FUNCTIONS
-autoload -Uz pathIf sourceIf pathIfPre
+autoload -Uz pathIf sourceIf pathIfPre project-link-docs
 
 
 ### DEFINE PERSONAL UPDATE FUNCTIONS
@@ -90,6 +90,15 @@ update-packages() {
 }
 
 update-dotfiles() {
+  if [[ ! -x "$DOTFILES/update" ]]; then
+    echo "dotfiles: update missing; use update-dotfiles-old" >&2
+    return 1
+  fi
+
+  "$DOTFILES/update"
+}
+
+update-dotfiles-old() {
   update-set-colors
   git --version &>/dev/null && GIT_INST=1 || GIT_INST=0
   # update dotfiles
@@ -110,6 +119,13 @@ update-dotfiles() {
     if [[ -e "$DOTFILES/external/nvim/.git" ]]; then
       echo -e "${BLUE}Updating nvim DOTFILES repo${WHITE}..."
       cd "$DOTFILES/external/nvim" || return
+      git up
+      cd "$prev_dir" || return
+    fi
+    # check for optional config repo and update if found
+    if [[ -e "$DOTFILES/external/pi/.git" ]]; then
+      echo -e "${BLUE}Updating optional config repo${WHITE}..."
+      cd "$DOTFILES/external/pi" || return
       git up
       cd "$prev_dir" || return
     fi

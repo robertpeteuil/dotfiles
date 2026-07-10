@@ -1,0 +1,28 @@
+# repos.conf
+# Config file for additional dotfiles repos
+#
+# Copy this file to repos.conf and uncomment/edit entries as needed.
+# Leave all entries commented if no additional repos are needed.
+#
+# Format:
+#       "owner/repo relative_target [repo_access] [clone_depth]"
+#
+# Parameters:
+#        owner/repo: GitHub repo in owner/repo format
+#                    supports normal shell expansions such as ${USER}
+#                    full Git URLs and non-GitHub hosts are not supported
+#
+#   relative_target: target directory relative to the main dotfiles repo
+#                    do not use absolute paths, ~, .., or whitespace
+#
+#       repo_access: public | private | auto (default)
+#                    public uses HTTPS, private uses SSH,
+#                    auto tries HTTPS first, then SSH
+#
+#       clone_depth: shallow (default) | full
+#                    applies only when cloning missing additional repos
+
+REPOS=(
+  # "${USER}/dotfiles-nvim external/nvim public shallow"
+  # "${USER}/dotfiles-secret secret private shallow"
+)

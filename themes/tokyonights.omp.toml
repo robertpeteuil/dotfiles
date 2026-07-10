@@ -1,4 +1,5 @@
-"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
 console_title_template = "{{.PWD}}"
 version = 4
 final_space = true
@@ -51,14 +52,13 @@ final_space = true
     foreground_templates = [
       "{{ if .Root }}p:orange{{ else }}p:magenta{{ end }}"
     ]
-    # background = "p:black"  # removed for transparency interop
 
   # PATH
   [[blocks.segments]]
     type = "path"
     template = "{{ if .Writable }}{{ else }} {{ end }} {{ .Path }} "
     style = "powerline"
-    # foreground = "p:black"  # removed for transparency interop
+    foreground = "p:black"  # removed for transparency interop
     background = "p:blue"
     powerline_symbol = ""
     leading_powerline_symbol = ""
@@ -138,7 +138,7 @@ final_space = true
     type = "go"
     template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  "
     style = "powerline"
-    foreground = "p:black2"
+    foreground = "p:black"
     background = "p:cyan"
     powerline_symbol = ""
     min_width = 100
@@ -151,7 +151,7 @@ final_space = true
     type = "python"
     template = " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} | {{ end }}{{ .Full }}{{ end }}  "
     style = "powerline"
-    foreground = "p:black2"
+    foreground = "p:black"
     background = "p:green2"
     powerline_symbol = ""
     min_width = 100

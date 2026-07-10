@@ -17,7 +17,7 @@ The following configs are installed:
 
 ## Installation
 
-Verify and run downloader script to download/install
+Verify and run the downloader script to clone this repo.
 
 ``` bash
 $ curl -LO https://raw.githubusercontent.com/robertpeteuil/dotfiles/main/downloader
@@ -30,17 +30,93 @@ $ ./downloader
 
 The downloader script performs the following tasks:
 
-- Install `git` if not installed (required to clone the `dotfiles` repo)
-- Clones `dotfiles` repo into the `~/.dotfiles` directory (configurable)
-- Clones `dotfiles-private` repo into the `~/.dotfiles/private` directory (configurable)
-- Clones public `dotfiles-nvim` into `~/.dotfiles/external/nvim` when available
-- executes included `install` script
+- Installs `git` if not installed (required to clone the `dotfiles` repo)
+- Clones the main `dotfiles` repo into `~/.dotfiles` by default
+- Prints manual next steps
 
-External split repositories live under the ignored repo-root `external/` directory. The first split repo is `external/nvim`, and future split repos can use sibling directories there.
+The downloader does not run `./update` automatically. After cloning, review whether additional repos are needed and run `update` manually:
 
-The `private/` directory remains reserved for `dotfiles-private` and private `.dotfiles` project documentation.
+``` bash
+$ cd ~/.dotfiles
 
-Install script performs actions from `install.conf.yaml`
+# Optional: only needed when you want additional split/private repos
+$ cp repos.conf.example repos.conf
+$ ${EDITOR:-vi} repos.conf
+
+$ ./update
+```
+
+If no additional repos are needed, skip the `repos.conf` copy/edit step and run `./update` directly. If `repos.conf` is missing, `update` will create it from `repos.conf.example` when possible, but copied example entries remain commented until you opt in.
+
+`./update` replaces direct `./install` usage. The old `install` script is not part of the supported workflow and will be removed; use `./update` for both repo management and Dotbot linking.
+
+## Additional repos with `repos.conf`
+
+`repos.conf` is a local, gitignored file for additional dotfiles repos only. The main dotfiles repo is inferred from the directory containing `update`.
+
+Copy `repos.conf.example` to `repos.conf` and uncomment/edit entries as needed:
+
+``` bash
+REPOS=(
+  # "${USER}/dotfiles-nvim external/nvim public shallow"
+  # "${USER}/dotfiles-secret secret private shallow"
+)
+```
+
+Each entry has this format:
+
+``` text
+"owner/repo relative_target [repo_access] [clone_depth]"
+```
+
+- `owner/repo`: GitHub repo identifier
+- `relative_target`: target directory relative to the main dotfiles repo, such as `external/nvim`
+- `repo_access`: optional `public`, `private`, or `auto`; default is `auto`
+- `clone_depth`: optional `shallow` or `full`; default is `shallow`
+
+Existing split repos from older hardcoded workflows can usually stay in place if their target paths match the new `repos.conf` entries. For example, an existing `external/nvim` clone will be updated in place once the matching `dotfiles-nvim` entry is enabled. Existing repos use their current Git remotes during updates; `repos.conf` repo URLs are used only when cloning missing repos.
+
+## Updating and linking
+
+`update` is the repo-management and Dotbot-linking entrypoint:
+
+``` bash
+$ ./update
+```
+
+Modes:
+
+- `./update`: update the main repo, manage configured additional repos, then run Dotbot configs
+- `./update --repo` or `./update -r`: update/clone repos only; skip Dotbot linking
+- `./update --link` or `./update -l`: skip repo updates/clones, read an existing `repos.conf` only to discover additional Dotbot configs, then run Dotbot
+- `./update --repo --link` or `./update -r -l`: full/default mode
+- `./update --dev` or `./update -d`: use full-depth clones for missing additional repos unless a repo entry sets its own `clone_depth`
+- `./update --help` or `./update -h`: show help without doing repo or Dotbot work
+
+Short flags are not combined; use `-r -l`, not `-rl`.
+
+Dotbot arguments must come after `--`:
+
+``` bash
+$ ./update -- --verbose
+$ ./update --link -- --verbose
+```
+
+Dotbot pass-through arguments after `--` are ignored in repo-only mode because Dotbot does not run. In modes that run Dotbot, the arguments apply to every discovered Dotbot config.
+
+`update` can be run from any current working directory; it uses the directory containing the `update` script as the main dotfiles repo and as the base for config files and additional repo targets.
+
+Existing repositories contact the network only when they are on a clean tracking branch. Dirty worktrees, detached HEADs, and local/no-upstream branches are reported without fetching. For a clean tracking branch, `update` fetches and prunes only that branch's configured upstream remote before attempting a fast-forward merge; unrelated remotes are not contacted.
+
+### Dotbot config processing
+
+`update` requires the main repo's root `install.conf.yaml` and runs it first. It then runs the readable root `install.conf.yaml` from each valid configured additional repo in `REPOS` order. Additional repos without a readable root config are skipped. Each config runs with its repo directory as Dotbot's base and working directory.
+
+Link-only mode reads an existing `repos.conf` to discover these additional configs, but it does not create `repos.conf`, update or clone repositories, or perform repository Git checks. If a Dotbot config fails, its exit code is propagated and later configs are not processed.
+
+Before each config, `update` prints `Processing <repo-name> with Dotbot...`, beginning with `Processing dotfiles with Dotbot...` for the main config.
+
+The main repo's `install.conf.yaml` links shell and config files such as:
 
 - ZSH
   - symlinks `zshenv` to $HOME

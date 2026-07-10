@@ -1,11 +1,13 @@
 # ZSH dotfiles specific ignores
-./repos*
+/repos.conf
 **/*.zwc  
 **/history
 **/.zsh_history
-**/repos*
+zsh/repos/*
 private
 /external/
+/docs
+/docs/
 .vscode
 **/archive
 zsh/.zsh_sessions
