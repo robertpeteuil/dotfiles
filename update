@@ -99,10 +99,20 @@ ensure_git() {
 
 is_git_repo() {
   local target
+  local target_root
+  local worktree_state
+  local worktree_root
 
   target=$1
   [ -d "$target" ] || return 1
-  (cd "$target" && git rev-parse --is-inside-work-tree >/dev/null 2>&1)
+
+  target_root=$(cd "$target" && pwd -P) || return 1
+  worktree_state=$(git -C "$target" rev-parse --is-inside-work-tree 2>/dev/null) || return 1
+  [ "$worktree_state" = "true" ] || return 1
+
+  worktree_root=$(git -C "$target" rev-parse --show-toplevel 2>/dev/null) || return 1
+  worktree_root=$(cd "$worktree_root" && pwd -P) || return 1
+  [ "$target_root" = "$worktree_root" ]
 }
 
 repo_name() {
@@ -225,6 +235,7 @@ parse_repos_entries() {
 
     # Initial implementation intentionally uses whitespace splitting; repo names
     # and targets with whitespace are invalid per the selected repos.conf schema.
+    # shellcheck disable=SC2086
     set -- $entry
     repo=${1:-}
     target=${2:-}
@@ -285,7 +296,7 @@ parse_repos_entries() {
     while [ "$index" -lt "$VALID_REPO_COUNT" ]; do
       if [ "${VALID_TARGETS[$index]}" = "$normalized_target" ]; then
         status_line "repos.conf" "duplicate target '$normalized_target', skipped" stderr
-        VALID_SKIP[$index]=1
+        VALID_SKIP[index]=1
         access="__duplicate__"
         break
       fi
@@ -297,12 +308,12 @@ parse_repos_entries() {
     fi
 
     previous=$VALID_REPO_COUNT
-    VALID_REPOS[$previous]=$repo
-    VALID_NAMES[$previous]=$(repo_name "$repo")
-    VALID_TARGETS[$previous]=$normalized_target
-    VALID_ACCESSES[$previous]=$access
-    VALID_DEPTHS[$previous]=$depth
-    VALID_SKIP[$previous]=0
+    VALID_REPOS[previous]=$repo
+    VALID_NAMES[previous]=$(repo_name "$repo")
+    VALID_TARGETS[previous]=$normalized_target
+    VALID_ACCESSES[previous]=$access
+    VALID_DEPTHS[previous]=$depth
+    VALID_SKIP[previous]=0
     VALID_REPO_COUNT=$((VALID_REPO_COUNT + 1))
   done
 }
@@ -331,6 +342,8 @@ load_repos_conf() {
   fi
 
   unset REPOS
+  # repos.conf is trusted local shell configuration selected at runtime.
+  # shellcheck disable=SC1090
   if ! . "$REPOS_CONF" >/dev/null 2>&1; then
     status_line "repos.conf" "source failed, ignoring" stderr
     unset REPOS
@@ -344,7 +357,7 @@ load_repos_conf() {
   fi
 
   case "$declaration" in
-    declare\ -a*|declare\ -ax*)
+    declare\ -a*)
       CONFIG_LOADED=1
       parse_repos_entries
       ;;
@@ -389,9 +402,9 @@ create_repos_conf_if_needed() {
 
 safe_update_repo_status() {
   local target
-  local dirty
   local branch
   local upstream
+  local upstream_remote
   local short_sha
   local remote_ok
   local old_rev
@@ -399,34 +412,31 @@ safe_update_repo_status() {
 
   target=$1
 
-  branch=$(cd "$target" && git symbolic-ref --quiet --short HEAD 2>/dev/null)
+  branch=$(git -C "$target" symbolic-ref --quiet --short HEAD 2>/dev/null)
   if [ -z "$branch" ]; then
-    short_sha=$(cd "$target" && git rev-parse --short HEAD 2>/dev/null)
-    (cd "$target" && git remote update -p >/dev/null 2>&1)
+    short_sha=$(git -C "$target" rev-parse --short HEAD 2>/dev/null)
     printf "detached HEAD '%s'\n" "$short_sha"
     return 0
   fi
 
-  upstream=$(cd "$target" && git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)
+  upstream=$(git -C "$target" rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)
   # No upstream means there is nothing to merge; skip worktree and network work.
   if [ -z "$upstream" ]; then
     printf "local branch '%s'\n" "$branch"
     return 0
   fi
 
-  dirty=0
-  if [ -n "$(cd "$target" && git status --porcelain 2>/dev/null)" ]; then
-    dirty=1
-  fi
-
-  remote_ok=0
-  if (cd "$target" && git remote update -p >/dev/null 2>&1); then
-    remote_ok=1
-  fi
-
-  if [ "$dirty" -eq 1 ]; then
+  if [ -n "$(git -C "$target" status --porcelain 2>/dev/null)" ]; then
     printf 'dirty worktree\n'
     return 0
+  fi
+
+  upstream_remote=$(git -C "$target" config --get "branch.${branch}.remote" 2>/dev/null)
+  remote_ok=0
+  if [ "$upstream_remote" = "." ]; then
+    remote_ok=1
+  elif [ -n "$upstream_remote" ] && git -C "$target" fetch --prune "$upstream_remote" >/dev/null 2>&1; then
+    remote_ok=1
   fi
 
   if [ "$remote_ok" -ne 1 ]; then
@@ -434,12 +444,12 @@ safe_update_repo_status() {
     return 0
   fi
 
-  old_rev=$(cd "$target" && git rev-parse HEAD 2>/dev/null)
-  if ! (cd "$target" && git merge --ff-only '@{u}' >/dev/null 2>&1); then
+  old_rev=$(git -C "$target" rev-parse HEAD 2>/dev/null)
+  if ! git -C "$target" merge --ff-only '@{u}' >/dev/null 2>&1; then
     printf 'manual merge required\n'
     return 0
   fi
-  new_rev=$(cd "$target" && git rev-parse HEAD 2>/dev/null)
+  new_rev=$(git -C "$target" rev-parse HEAD 2>/dev/null)
 
   if [ "$old_rev" = "$new_rev" ]; then
     printf "up to date branch '%s'\n" "$branch"
@@ -480,37 +490,17 @@ set_https_push_url() {
   repo=$2
   push_url="git@github.com:${repo}.git"
 
-  (cd "$target" && git remote set-url --push origin "$push_url" >/dev/null 2>&1)
+  git -C "$target" remote set-url --push origin "$push_url" >/dev/null 2>&1
 }
 
-clone_https_repo() {
-  local repo
+clone_repo() {
+  local clone_url
   local target
   local depth
-  local clone_url
 
-  repo=$1
+  clone_url=$1
   target=$2
   depth=$3
-  clone_url="https://github.com/${repo}.git"
-
-  if [ "$depth" = "shallow" ]; then
-    git clone --quiet --depth 1 "$clone_url" "$target" >/dev/null 2>&1
-  else
-    git clone --quiet "$clone_url" "$target" >/dev/null 2>&1
-  fi
-}
-
-clone_ssh_repo() {
-  local repo
-  local target
-  local depth
-  local clone_url
-
-  repo=$1
-  target=$2
-  depth=$3
-  clone_url="git@github.com:${repo}.git"
 
   if [ "$depth" = "shallow" ]; then
     git clone --quiet --depth 1 "$clone_url" "$target" >/dev/null 2>&1
@@ -527,6 +517,7 @@ clone_missing_repo() {
   local depth
   local parent
   local https_url
+  local ssh_url
 
   name=$1
   repo=$2
@@ -535,6 +526,7 @@ clone_missing_repo() {
   depth=$5
   parent=$(dirname "$target")
   https_url="https://github.com/${repo}.git"
+  ssh_url="git@github.com:${repo}.git"
 
   if [ ! -d "$parent" ] && ! mkdir -p "$parent"; then
     status_line "$name" "clone failed" stderr
@@ -543,7 +535,7 @@ clone_missing_repo() {
 
   case "$access" in
     public)
-      if clone_https_repo "$repo" "$target" "$depth"; then
+      if clone_repo "$https_url" "$target" "$depth"; then
         if set_https_push_url "$target" "$repo"; then
           status_line "$name" "cloned"
         else
@@ -554,20 +546,20 @@ clone_missing_repo() {
       fi
       ;;
     private)
-      if clone_ssh_repo "$repo" "$target" "$depth"; then
+      if clone_repo "$ssh_url" "$target" "$depth"; then
         status_line "$name" "cloned"
       else
         status_line "$name" "ssh clone failed" stderr
       fi
       ;;
     auto)
-      if git ls-remote "$https_url" HEAD >/dev/null 2>&1 && clone_https_repo "$repo" "$target" "$depth"; then
+      if git ls-remote "$https_url" HEAD >/dev/null 2>&1 && clone_repo "$https_url" "$target" "$depth"; then
         if set_https_push_url "$target" "$repo"; then
           status_line "$name" "cloned"
         else
           status_line "$name" "cloned; push URL not set" stderr
         fi
-      elif clone_ssh_repo "$repo" "$target" "$depth"; then
+      elif clone_repo "$ssh_url" "$target" "$depth"; then
         status_line "$name" "cloned"
       else
         status_line "$name" "https,ssh clones failed" stderr
@@ -578,10 +570,12 @@ clone_missing_repo() {
 
 add_dotbot_config_if_present() {
   local target
+  local name
   local config_rel
   local config_path
 
   target=$1
+  name=$2
   config_rel="${target}/${CONFIG}"
   config_path="${BASEDIR}/${config_rel}"
 
@@ -589,13 +583,8 @@ add_dotbot_config_if_present() {
     return 0
   fi
 
-  case " $DOTBOT_CONFIGS " in
-    *" $config_rel "*)
-      return 0
-      ;;
-  esac
-
-  DOTBOT_CONFIGS="${DOTBOT_CONFIGS} ${config_rel}"
+  DOTBOT_CONFIGS+=("$config_rel")
+  DOTBOT_CONFIG_NAMES+=("$name")
 }
 
 discover_additional_dotbot_configs() {
@@ -604,45 +593,10 @@ discover_additional_dotbot_configs() {
   index=0
   while [ "$index" -lt "$VALID_REPO_COUNT" ]; do
     if [ "${VALID_SKIP[$index]}" -eq 0 ]; then
-      add_dotbot_config_if_present "${VALID_TARGETS[$index]}"
+      add_dotbot_config_if_present "${VALID_TARGETS[$index]}" "${VALID_NAMES[$index]}"
     fi
     index=$((index + 1))
   done
-}
-
-dotbot_config_name() {
-  local config_rel
-  local config_dir
-  local index
-  local fallback
-
-  config_rel=$1
-
-  if [ "$config_rel" = "$CONFIG" ]; then
-    printf 'dotfiles\n'
-    return 0
-  fi
-
-  config_dir=${config_rel%/*}
-  if [ "$config_dir" = "$config_rel" ]; then
-    config_dir="."
-  fi
-
-  index=0
-  while [ "$index" -lt "${VALID_REPO_COUNT:-0}" ]; do
-    if [ "${VALID_SKIP[$index]:-1}" -eq 0 ] && [ "${VALID_TARGETS[$index]}" = "$config_dir" ]; then
-      printf '%s\n' "${VALID_NAMES[$index]}"
-      return 0
-    fi
-    index=$((index + 1))
-  done
-
-  fallback=${config_dir##*/}
-  if [ -z "$fallback" ] || [ "$fallback" = "." ]; then
-    fallback="dotfiles"
-  fi
-
-  printf '%s\n' "$fallback"
 }
 
 process_additional_repos() {
@@ -680,7 +634,7 @@ process_additional_repos() {
     fi
 
     if [ "$DO_DOTBOT" -eq 1 ]; then
-      add_dotbot_config_if_present "$target"
+      add_dotbot_config_if_present "$target" "$name"
     fi
 
     index=$((index + 1))
@@ -696,7 +650,7 @@ ensure_dotbot() {
     return 0
   fi
 
-  if ! (cd "$BASEDIR" && git submodule update --init -- "$DOTBOT_DIR" >/dev/null 2>&1); then
+  if ! git -C "$BASEDIR" submodule update --init -- "$DOTBOT_DIR" >/dev/null 2>&1; then
     status_line "dotbot" "initialization failed" stderr
     exit 1
   fi
@@ -731,7 +685,7 @@ run_dotbot() {
   fi
 
   config_path="${dotbot_base}/${config_file}"
-  dotbot_name=$(dotbot_config_name "$config_rel")
+  dotbot_name=$2
 
   ensure_dotbot
 
@@ -763,7 +717,8 @@ REPO_FLAG=0
 LINK_FLAG=0
 CLI_DEV_SET=0
 DOTBOT_ARGS=()
-DOTBOT_CONFIGS="$CONFIG"
+DOTBOT_CONFIGS=("$CONFIG")
+DOTBOT_CONFIG_NAMES=("dotfiles")
 
 # update owns its mode flags. Dotbot arguments must come after -- so unknown
 # update args can be rejected clearly instead of being accidentally forwarded.
@@ -837,8 +792,10 @@ if [ "$DO_DOTBOT" -eq 1 ]; then
     fi
   fi
 
-  for dotbot_config in $DOTBOT_CONFIGS; do
-    run_dotbot "$dotbot_config"
+  dotbot_index=0
+  while [ "$dotbot_index" -lt "${#DOTBOT_CONFIGS[@]}" ]; do
+    run_dotbot "${DOTBOT_CONFIGS[$dotbot_index]}" "${DOTBOT_CONFIG_NAMES[$dotbot_index]}"
+    dotbot_index=$((dotbot_index + 1))
   done
 fi
 

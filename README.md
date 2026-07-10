@@ -86,9 +86,9 @@ $ ./update
 
 Modes:
 
-- `./update`: update the main repo, manage configured additional repos, then run Dotbot
+- `./update`: update the main repo, manage configured additional repos, then run Dotbot configs
 - `./update --repo` or `./update -r`: update/clone repos only; skip Dotbot linking
-- `./update --link` or `./update -l`: run Dotbot only; skip repo and `repos.conf` work
+- `./update --link` or `./update -l`: skip repo updates/clones, read an existing `repos.conf` only to discover additional Dotbot configs, then run Dotbot
 - `./update --repo --link` or `./update -r -l`: full/default mode
 - `./update --dev` or `./update -d`: use full-depth clones for missing additional repos unless a repo entry sets its own `clone_depth`
 - `./update --help` or `./update -h`: show help without doing repo or Dotbot work
@@ -102,11 +102,21 @@ $ ./update -- --verbose
 $ ./update --link -- --verbose
 ```
 
-Dotbot pass-through arguments after `--` are ignored in repo-only mode because Dotbot does not run.
+Dotbot pass-through arguments after `--` are ignored in repo-only mode because Dotbot does not run. In modes that run Dotbot, the arguments apply to every discovered Dotbot config.
 
 `update` can be run from any current working directory; it uses the directory containing the `update` script as the main dotfiles repo and as the base for config files and additional repo targets.
 
-`update` runs Dotbot with `install.conf.yaml`, which links shell and config files such as:
+Existing repositories contact the network only when they are on a clean tracking branch. Dirty worktrees, detached HEADs, and local/no-upstream branches are reported without fetching. For a clean tracking branch, `update` fetches and prunes only that branch's configured upstream remote before attempting a fast-forward merge; unrelated remotes are not contacted.
+
+### Dotbot config processing
+
+`update` requires the main repo's root `install.conf.yaml` and runs it first. It then runs the readable root `install.conf.yaml` from each valid configured additional repo in `REPOS` order. Additional repos without a readable root config are skipped. Each config runs with its repo directory as Dotbot's base and working directory.
+
+Link-only mode reads an existing `repos.conf` to discover these additional configs, but it does not create `repos.conf`, update or clone repositories, or perform repository Git checks. If a Dotbot config fails, its exit code is propagated and later configs are not processed.
+
+Before each config, `update` prints `Processing <repo-name> with Dotbot...`, beginning with `Processing dotfiles with Dotbot...` for the main config.
+
+The main repo's `install.conf.yaml` links shell and config files such as:
 
 - ZSH
   - symlinks `zshenv` to $HOME
