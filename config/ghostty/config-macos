@@ -40,6 +40,8 @@ window-theme = ghostty
 window-decoration = auto
 cursor-style = "block"
 cursor-style-blink = false
+# needed so cursor follows style defined above
+shell-integration-features = "no-cursor"
 
 # Window
 window-width = 155
