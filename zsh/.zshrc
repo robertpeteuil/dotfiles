@@ -18,12 +18,13 @@ function shellExit {
 trap shellExit EXIT
 
 ### AUTOCOMPLETE ADJUSTMENTS
-# Delay autocomp display
-#   1 sec delay on ssh connecteions
+# Delay autocomp - default
+zstyle ':autocomplete:*' delay 0.15
+# Delay autocomp - 1 sec on ssh connecteions
 if [ -n "$SSH_CONNECTION" ]; then
   zstyle ':autocomplete:*' min-delay 1  # seconds
 fi
-#   2.5 sec delay if ~/.slowzshcomp exists
+# Delay autocomp - 2.5 sec if ~/.slowzshcomp exists
 if [ -f $HOME/.slowzshcomp ]; then
   zstyle ':autocomplete:*' min-delay 2.5
 fi
