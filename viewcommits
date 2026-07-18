@@ -1,0 +1,525 @@
+#!/usr/bin/env bash
+
+# Stage-one commit renderer. The normal no-argument Herdr workflow is added in
+# stage two; --render is the script's internal per-pane interface.
+
+set -o pipefail
+
+VIEWCOMMIT_TITLE_BOLD=${VIEWCOMMIT_TITLE_BOLD:-FALSE}
+
+BRIGHT_GREEN=
+BRIGHT_RED=
+MAGENTA=
+YELLOW=
+WHITE=
+BRIGHT_BLUE=
+BRIGHT_CYAN=
+TITLE_BOLD=
+DIM=
+RESET=
+
+COMMIT_RANGES=()
+COMMIT_HASHES=()
+COMMIT_DATES=()
+COMMIT_TITLES=()
+COMMIT_SCOPES=()
+COMMIT_FILES=()
+WRAPPED_LINES=()
+RENDER_GROUPS=()
+
+usage() {
+  printf 'Usage: %s --render <repository>\n' "${0##*/}" >&2
+}
+
+setup_colors() {
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    BRIGHT_GREEN=$'\033[92m'
+    BRIGHT_RED=$'\033[91m'
+    MAGENTA=$'\033[35m'
+    YELLOW=$'\033[33m'
+    WHITE=$'\033[37m'
+    BRIGHT_BLUE=$'\033[94m'
+    BRIGHT_CYAN=$'\033[96m'
+    case "$VIEWCOMMIT_TITLE_BOLD" in
+      0|[Ff][Aa][Ll][Ss][Ee]|[Nn][Oo]|[Oo][Ff][Ff]) ;;
+      *) TITLE_BOLD=$'\033[1m' ;;
+    esac
+    DIM=$'\033[2m'
+    RESET=$'\033[0m'
+  fi
+}
+
+terminal_width() {
+  local width
+  local tty_size
+
+  width=
+
+  # Read the size from the controlling PTY. Unlike tput, stty still sees the
+  # terminal when this function's output is captured by command substitution.
+  tty_size=$(stty size 2>/dev/null < /dev/tty || true)
+  case "$tty_size" in
+    *' '*) width=${tty_size##* } ;;
+  esac
+  case "$width" in
+    ''|*[!0-9]*) width= ;;
+    *) [ "$width" -gt 0 ] || width= ;;
+  esac
+
+  if [ -z "$width" ]; then
+    width=${COLUMNS:-}
+  fi
+
+  if [ -z "$width" ] && command -v tput >/dev/null 2>&1; then
+    width=$(tput cols 2>/dev/null || true)
+  fi
+
+  case "$width" in
+    ''|*[!0-9]*) width=68 ;;
+  esac
+
+  if [ "$width" -lt 40 ]; then
+    width=40
+  fi
+
+  printf '%s\n' "$width"
+}
+
+scope_from_title() {
+  local title=$1
+  local scope_pattern='^[[:alnum:]_-]+!?\(([^)]+)\)!?:[[:space:]]*'
+
+  if [[ $title =~ $scope_pattern ]]; then
+    printf '%s\n' "${BASH_REMATCH[1]}"
+  else
+    printf '%s\n' '(unscoped)'
+  fi
+}
+
+changed_files() {
+  local repo=$1
+  local hash=$2
+
+  git -C "$repo" diff-tree --root --no-commit-id --name-only -r "$hash" |
+    awk 'BEGIN { separator = "" }
+         { printf "%s%s", separator, $0; separator = ", " }
+         END { print "" }'
+}
+
+collect_range() {
+  local repo=$1
+  local range=$2
+  local range_id=$3
+  local hashes
+  local hash
+  local title
+  local date
+  local scope
+  local files
+  local index
+
+  hashes=$(git -C "$repo" log --format='%H' "$range") || return 1
+
+  for hash in $hashes; do
+    title=$(git -C "$repo" show -s --format='%s' "$hash") || return 1
+    date=$(git -C "$repo" show -s --date=short --format='%ad' "$hash") || return 1
+    scope=$(scope_from_title "$title")
+    files=$(changed_files "$repo" "$hash") || return 1
+
+    index=${#COMMIT_HASHES[@]}
+    COMMIT_RANGES[index]=$range_id
+    COMMIT_HASHES[index]=${hash:0:7}
+    COMMIT_DATES[index]=$date
+    COMMIT_TITLES[index]=$title
+    COMMIT_SCOPES[index]=$scope
+    COMMIT_FILES[index]=$files
+  done
+}
+
+range_count() {
+  local range_id=$1
+  local count=0
+  local index=0
+
+  while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
+    if [ "${COMMIT_RANGES[$index]}" = "$range_id" ]; then
+      count=$((count + 1))
+    fi
+    index=$((index + 1))
+  done
+
+  printf '%s\n' "$count"
+}
+
+scope_field_width() {
+  local max_length=0
+  local length
+  local index=0
+
+  while [ "$index" -lt "${#COMMIT_SCOPES[@]}" ]; do
+    length=${#COMMIT_SCOPES[$index]}
+    if [ "$length" -gt "$max_length" ]; then
+      max_length=$length
+    fi
+    index=$((index + 1))
+  done
+
+  # Two spaces separate the scope and SHA columns.
+  printf '%s\n' "$((max_length + 2))"
+}
+
+wrap_text() {
+  local text=$1
+  local width=$2
+  local line
+
+  WRAPPED_LINES=()
+
+  while IFS= read -r line; do
+    WRAPPED_LINES[${#WRAPPED_LINES[@]}]=$line
+  done < <(printf '%s\n' "$text" | fold -s -w "$width" | sed 's/[[:space:]]*$//')
+
+  if [ "${#WRAPPED_LINES[@]}" -eq 0 ]; then
+    WRAPPED_LINES[0]=
+  fi
+}
+
+avoid_orphaned_date() {
+  local date=$1
+  local suffix="($date)"
+  local last_index
+  local previous_index
+  local previous_line
+  local last_word
+
+  last_index=$((${#WRAPPED_LINES[@]} - 1))
+  previous_index=$((last_index - 1))
+
+  if [ "$last_index" -lt 1 ] || [ "${WRAPPED_LINES[$last_index]}" != "$suffix" ]; then
+    return
+  fi
+
+  previous_line=${WRAPPED_LINES[$previous_index]}
+  case "$previous_line" in
+    *' '*)
+      last_word=${previous_line##* }
+      WRAPPED_LINES[previous_index]=${previous_line% *}
+      WRAPPED_LINES[last_index]="$last_word $suffix"
+      ;;
+  esac
+}
+
+print_scope_label() {
+  local label=$1
+  local width=$2
+
+  if [ "$label" = '(unscoped)' ]; then
+    printf '%s(%s%s%s)%s' \
+      "$WHITE" "$BRIGHT_GREEN" 'unscoped' "$WHITE" "$RESET"
+    print_spaces "$((width - ${#label}))"
+  else
+    printf '%s%s%s' "$BRIGHT_GREEN" "$label" "$RESET"
+    print_spaces "$((width - ${#label}))"
+  fi
+}
+
+print_file_text() {
+  local text=$1
+
+  if [ -z "$BRIGHT_CYAN" ]; then
+    printf '%s' "$text"
+    return
+  fi
+
+  printf '%s' "$BRIGHT_CYAN"
+  printf '%s' "$text" |
+    sed -E "s#(^|, )([^,]*/)#\\1${BRIGHT_BLUE}\\2${BRIGHT_CYAN}#g"
+  printf '%s' "$RESET"
+}
+
+print_spaces() {
+  printf '%*s' "$1" ''
+}
+
+print_date() {
+  local date=$1
+  local year=${date%%-*}
+  local remainder=${date#*-}
+  local month=${remainder%%-*}
+  local day=${remainder#*-}
+
+  printf '%s(%s%s%s-%s%s%s-%s%s%s)%s' \
+    "$WHITE" "$YELLOW" "$year" "$WHITE" \
+    "$YELLOW" "$month" "$WHITE" "$YELLOW" "$day" \
+    "$WHITE" "$RESET"
+}
+
+print_breaking_marker() {
+  if [ -n "$1" ]; then
+    printf '%s!%s' "$BRIGHT_RED" "$RESET"
+  fi
+}
+
+print_title_line() {
+  local line=$1
+  local date=$2
+  local format_prefix=${3:-0}
+  local date_suffix="($date)"
+  local prefix_pattern='^([[:alnum:]_-]+)(!)?(\(([^)]+)\))?(!)?:'
+  local content=$line
+  local prefix
+  local type_part
+  local scope_part
+  local breaking_before
+  local breaking_after
+  local type_color
+  local has_date=0
+
+  case "$line" in
+    *"$date_suffix")
+      content=${line%"$date_suffix"}
+      has_date=1
+      ;;
+  esac
+
+  if [ "$format_prefix" -eq 1 ] && [[ $content =~ $prefix_pattern ]]; then
+    prefix=${BASH_REMATCH[0]}
+    type_part=${BASH_REMATCH[1]}
+    breaking_before=${BASH_REMATCH[2]}
+    scope_part=${BASH_REMATCH[4]}
+    breaking_after=${BASH_REMATCH[5]}
+
+    type_color=$MAGENTA
+    if [ -n "$breaking_before" ] || [ -n "$breaking_after" ]; then
+      type_color=$BRIGHT_RED
+    fi
+
+    printf '%s%s%s' "$type_color" "$type_part" "$RESET"
+    print_breaking_marker "$breaking_before"
+
+    if [ -n "${BASH_REMATCH[3]}" ]; then
+      printf '(%s)' "$scope_part"
+    fi
+
+    print_breaking_marker "$breaking_after"
+    printf ':'
+    printf '%s%s%s%s' "$TITLE_BOLD" "$WHITE" "${content#"$prefix"}" "$RESET"
+  else
+    printf '%s%s%s%s' "$TITLE_BOLD" "$WHITE" "$content" "$RESET"
+  fi
+
+  if [ "$has_date" -eq 1 ]; then
+    print_date "$date"
+  fi
+}
+
+print_commit() {
+  local index=$1
+  local scope_label=$2
+  local scope_width=$3
+  local pane_width=$4
+  local title_indent=$((scope_width + 9))
+  local content_width=$((pane_width - title_indent))
+  local file_width
+  local full_title
+  local line_index
+
+  if [ "$content_width" -lt 20 ]; then
+    content_width=20
+  fi
+
+  full_title="${COMMIT_TITLES[$index]} (${COMMIT_DATES[$index]})"
+  wrap_text "$full_title" "$content_width"
+  avoid_orphaned_date "${COMMIT_DATES[$index]}"
+
+  print_scope_label "$scope_label" "$scope_width"
+  printf '%s%s%s  ' "$YELLOW" "${COMMIT_HASHES[$index]}" "$RESET"
+  print_title_line "${WRAPPED_LINES[0]}" "${COMMIT_DATES[$index]}" 1
+  printf '\n'
+
+  line_index=1
+  while [ "$line_index" -lt "${#WRAPPED_LINES[@]}" ]; do
+    print_spaces "$title_indent"
+    print_title_line "${WRAPPED_LINES[$line_index]}" "${COMMIT_DATES[$index]}"
+    printf '\n'
+    line_index=$((line_index + 1))
+  done
+
+  if [ -n "${COMMIT_FILES[$index]}" ]; then
+    file_width=$((content_width - 2))
+    if [ "$file_width" -lt 18 ]; then
+      file_width=18
+    fi
+    wrap_text "${COMMIT_FILES[$index]}" "$file_width"
+
+    print_spaces "$title_indent"
+    printf '%s↳%s ' "$DIM" "$RESET"
+    print_file_text "${WRAPPED_LINES[0]}"
+    printf '\n'
+
+    line_index=1
+    while [ "$line_index" -lt "${#WRAPPED_LINES[@]}" ]; do
+      print_spaces "$((title_indent + 2))"
+      print_file_text "${WRAPPED_LINES[$line_index]}"
+      printf '\n'
+      line_index=$((line_index + 1))
+    done
+  fi
+}
+
+build_groups() {
+  local range_id=$1
+  local index=0
+  local scope
+  local existing
+  local found
+  local has_unscoped=0
+
+  RENDER_GROUPS=()
+
+  while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
+    if [ "${COMMIT_RANGES[$index]}" != "$range_id" ]; then
+      index=$((index + 1))
+      continue
+    fi
+
+    scope=${COMMIT_SCOPES[$index]}
+    if [ "$scope" = '(unscoped)' ]; then
+      has_unscoped=1
+      index=$((index + 1))
+      continue
+    fi
+
+    found=0
+    for existing in "${RENDER_GROUPS[@]}"; do
+      if [ "$existing" = "$scope" ]; then
+        found=1
+        break
+      fi
+    done
+
+    if [ "$found" -eq 0 ]; then
+      RENDER_GROUPS[${#RENDER_GROUPS[@]}]=$scope
+    fi
+
+    index=$((index + 1))
+  done
+
+  if [ "$has_unscoped" -eq 1 ]; then
+    RENDER_GROUPS[${#RENDER_GROUPS[@]}]='(unscoped)'
+  fi
+}
+
+render_range() {
+  local range_id=$1
+  local heading=$2
+  local count=$3
+  local scope_width=$4
+  local pane_width=$5
+  local noun=commits
+  local scope
+  local first_scope=1
+  local first_commit
+  local index
+
+  if [ "$count" -eq 1 ]; then
+    noun=commit
+  fi
+
+  printf '%s (%s %s)\n\n' "$heading" "$count" "$noun"
+
+  if [ "$count" -eq 0 ]; then
+    printf '(none)\n'
+    return
+  fi
+
+  build_groups "$range_id"
+
+  for scope in "${RENDER_GROUPS[@]}"; do
+    if [ "$first_scope" -eq 0 ]; then
+      printf '\n'
+    fi
+    first_scope=0
+    first_commit=1
+    index=0
+
+    while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
+      if [ "${COMMIT_RANGES[$index]}" = "$range_id" ] &&
+         [ "${COMMIT_SCOPES[$index]}" = "$scope" ]; then
+        if [ "$first_commit" -eq 1 ]; then
+          print_commit "$index" "$scope" "$scope_width" "$pane_width"
+          first_commit=0
+        else
+          print_commit "$index" '' "$scope_width" "$pane_width"
+        fi
+      fi
+      index=$((index + 1))
+    done
+  done
+}
+
+render_repository() {
+  local repo=$1
+  local branch
+  local work_count=0
+  local develop_count
+  local scope_width
+  local pane_width
+
+  if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+    printf 'viewcommits: not a Git repository: %s\n' "$repo" >&2
+    return 1
+  fi
+
+  branch=$(git -C "$repo" symbolic-ref --quiet --short HEAD) || {
+    printf 'viewcommits: detached HEAD is not supported: %s\n' "$repo" >&2
+    return 1
+  }
+
+  if [ "$branch" != develop ]; then
+    collect_range "$repo" 'develop..HEAD' work || return 1
+    work_count=$(range_count work)
+  fi
+
+  collect_range "$repo" 'origin/develop..develop' develop || return 1
+  develop_count=$(range_count develop)
+
+  if [ "$work_count" -eq 0 ] && [ "$develop_count" -eq 0 ]; then
+    printf 'No unreleased commits\n'
+    return
+  fi
+
+  pane_width=$(terminal_width)
+  scope_width=$(scope_field_width)
+
+  if [ "$branch" != develop ]; then
+    render_range work "$branch → develop" "$work_count" "$scope_width" "$pane_width"
+  fi
+
+  if [ "$develop_count" -gt 0 ]; then
+    if [ "$branch" != develop ]; then
+      printf '\n\n'
+    fi
+    render_range develop 'develop → origin/develop' "$develop_count" "$scope_width" "$pane_width"
+  fi
+}
+
+main() {
+  setup_colors
+
+  case "${1:-}" in
+    --render)
+      if [ "$#" -ne 2 ]; then
+        usage
+        return 2
+      fi
+      render_repository "$2"
+      ;;
+    *)
+      usage
+      return 2
+      ;;
+  esac
+}
+
+main "$@"
