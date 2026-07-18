@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 
-# Stage-one commit renderer. The normal no-argument Herdr workflow is added in
-# stage two; --render is the script's internal per-pane interface.
+# Display recent commits grouped by Conventional Commit scope.
 
 set -o pipefail
 
-VIEWCOMMIT_TITLE_BOLD=${VIEWCOMMIT_TITLE_BOLD:-FALSE}
-
 BRIGHT_GREEN=
 BRIGHT_RED=
+BRIGHT_MAGENTA=
 MAGENTA=
 YELLOW=
 WHITE=
 BRIGHT_BLUE=
 BRIGHT_CYAN=
-TITLE_BOLD=
+BLACK=
+DEFAULT_FG=
+DEFAULT_BG=
+BRIGHT_CYAN_BG=
 DIM=
 RESET=
 
-COMMIT_RANGES=()
 COMMIT_HASHES=()
 COMMIT_DATES=()
 COMMIT_TITLES=()
@@ -27,23 +27,40 @@ COMMIT_FILES=()
 WRAPPED_LINES=()
 RENDER_GROUPS=()
 
+FILE_CROSS_SCOPE=0
+FILE_RANK=0
+FILE_TOTAL=0
+
 usage() {
-  printf 'Usage: %s --render <repository>\n' "${0##*/}" >&2
+  printf '%s\n' \
+    "Usage: ${0##*/} [options] [REVISION]" \
+    '' \
+    'Options:' \
+    '  -C PATH     Read commits from the repository at PATH' \
+    '  -d PATH     Same as -C' \
+    '  -n COUNT    Limit commits (default: 15; REVISION is unlimited unless -n is set)' \
+    '  -c          Compact output; omit blank lines between scope groups' \
+    '  -r          Reverse/rebase order; display oldest commits and scopes first' \
+    '  -h, --help  Show this help' \
+    '' \
+    'Arguments:' \
+    '  REVISION    Git revision or range; bypasses current-branch-only selection'
 }
 
 setup_colors() {
-  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+  if [ -t 1 ] && [ -z "${NO_COLOR+x}" ]; then
     BRIGHT_GREEN=$'\033[92m'
     BRIGHT_RED=$'\033[91m'
+    BRIGHT_MAGENTA=$'\033[95m'
     MAGENTA=$'\033[35m'
     YELLOW=$'\033[33m'
     WHITE=$'\033[37m'
     BRIGHT_BLUE=$'\033[94m'
     BRIGHT_CYAN=$'\033[96m'
-    case "$VIEWCOMMIT_TITLE_BOLD" in
-      0|[Ff][Aa][Ll][Ss][Ee]|[Nn][Oo]|[Oo][Ff][Ff]) ;;
-      *) TITLE_BOLD=$'\033[1m' ;;
-    esac
+    BLACK=$'\033[30m'
+    DEFAULT_FG=$'\033[39m'
+    DEFAULT_BG=$'\033[49m'
+    BRIGHT_CYAN_BG=$'\033[106m'
     DIM=$'\033[2m'
     RESET=$'\033[0m'
   fi
@@ -100,16 +117,21 @@ changed_files() {
   local repo=$1
   local hash=$2
 
-  git -C "$repo" diff-tree --root --no-commit-id --name-only -r "$hash" |
+  git -C "$repo" diff-tree \
+    --root --diff-merges=first-parent --no-commit-id --name-only -r "$hash" |
     awk 'BEGIN { separator = "" }
          { printf "%s%s", separator, $0; separator = ", " }
          END { print "" }'
 }
 
-collect_range() {
+collect_commits() {
   local repo=$1
-  local range=$2
-  local range_id=$3
+  local revision=$2
+  local count=$3
+  local excluded_branch=${4:-}
+  local reverse=$5
+  local log_options
+  local revision_args
   local hashes
   local hash
   local title
@@ -118,7 +140,36 @@ collect_range() {
   local files
   local index
 
-  hashes=$(git -C "$repo" log --format='%H' "$range") || return 1
+  COMMIT_HASHES=()
+  COMMIT_DATES=()
+  COMMIT_TITLES=()
+  COMMIT_SCOPES=()
+  COMMIT_FILES=()
+
+  log_options=()
+  if [ -n "$count" ]; then
+    log_options+=(-n "$count")
+  fi
+  if [ "$reverse" -eq 1 ]; then
+    log_options+=(--reverse)
+  fi
+
+  revision_args=("$revision")
+  if [ -n "$excluded_branch" ]; then
+    revision_args+=(--not "--exclude=$excluded_branch" --branches)
+  fi
+
+  if ! hashes=$(git -C "$repo" log --format='%H' \
+    "${log_options[@]}" "${revision_args[@]}" 2>/dev/null); then
+    if [ -z "$(git -C "$repo" rev-list --all --max-count=1)" ]; then
+      return 2
+    fi
+
+    # Repeat only the failed query so Git's native revision error remains visible.
+    git -C "$repo" log --format='%H' \
+      "${log_options[@]}" "${revision_args[@]}" >/dev/null
+    return 1
+  fi
 
   for hash in $hashes; do
     title=$(git -C "$repo" show -s --format='%s' "$hash") || return 1
@@ -127,28 +178,12 @@ collect_range() {
     files=$(changed_files "$repo" "$hash") || return 1
 
     index=${#COMMIT_HASHES[@]}
-    COMMIT_RANGES[index]=$range_id
     COMMIT_HASHES[index]=${hash:0:7}
     COMMIT_DATES[index]=$date
     COMMIT_TITLES[index]=$title
     COMMIT_SCOPES[index]=$scope
     COMMIT_FILES[index]=$files
   done
-}
-
-range_count() {
-  local range_id=$1
-  local count=0
-  local index=0
-
-  while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
-    if [ "${COMMIT_RANGES[$index]}" = "$range_id" ]; then
-      count=$((count + 1))
-    fi
-    index=$((index + 1))
-  done
-
-  printf '%s\n' "$count"
 }
 
 scope_field_width() {
@@ -223,18 +258,112 @@ print_scope_label() {
   fi
 }
 
-print_file_text() {
-  local text=$1
+analyze_file() {
+  local target_path=$1
+  local target_commit=$2
+  local reverse=$3
+  local commit_count=${#COMMIT_HASHES[@]}
+  local index
+  local step
+  local paths
+  local path
+  local first_scope=
+  local scope
 
-  if [ -z "$BRIGHT_CYAN" ]; then
-    printf '%s' "$text"
-    return
+  FILE_CROSS_SCOPE=0
+  FILE_RANK=0
+  FILE_TOTAL=0
+
+  if [ "$reverse" -eq 1 ]; then
+    index=0
+    step=1
+  else
+    index=$((commit_count - 1))
+    step=-1
   fi
 
-  printf '%s' "$BRIGHT_CYAN"
-  printf '%s' "$text" |
-    sed -E "s#(^|, )([^,]*/)#\\1${BRIGHT_BLUE}\\2${BRIGHT_CYAN}#g"
+  while [ "$index" -ge 0 ] && [ "$index" -lt "$commit_count" ]; do
+    IFS=',' read -r -a paths <<< "${COMMIT_FILES[$index]}"
+    for path in "${paths[@]}"; do
+      path=${path# }
+      [ "$path" = "$target_path" ] || continue
+
+      FILE_TOTAL=$((FILE_TOTAL + 1))
+      if [ "$index" -eq "$target_commit" ]; then
+        FILE_RANK=$FILE_TOTAL
+      fi
+
+      scope=${COMMIT_SCOPES[$index]}
+      if [ -z "$first_scope" ]; then
+        first_scope=$scope
+      elif [ "$scope" != "$first_scope" ]; then
+        FILE_CROSS_SCOPE=1
+      fi
+      break
+    done
+
+    index=$((index + step))
+  done
+}
+
+print_file_path() {
+  local path=$1
+  local commit_index=$2
+  local reverse=$3
+  local directory=
+  local basename=$path
+  local basename_color=$BRIGHT_CYAN
+
+  case "$path" in
+    */*)
+      directory=${path%/*}/
+      basename=${path##*/}
+      ;;
+  esac
+
+  analyze_file "$path" "$commit_index" "$reverse"
+  if [ "$FILE_CROSS_SCOPE" -eq 1 ]; then
+    basename_color=$BRIGHT_MAGENTA
+  fi
+
+  printf '%s%s%s%s' "$BRIGHT_BLUE" "$directory" "$basename_color" "$basename"
+  if [ "$FILE_CROSS_SCOPE" -eq 1 ]; then
+    printf '%s %s%s %s/%s %s%s ' \
+      "$DEFAULT_BG" "$BRIGHT_CYAN_BG" "$BLACK" "$FILE_RANK" \
+      "$FILE_TOTAL" "$DEFAULT_FG" "$DEFAULT_BG"
+  fi
   printf '%s' "$RESET"
+}
+
+print_file_text() {
+  local text=$1
+  local commit_index=$2
+  local reverse=$3
+  local paths
+  local path
+  local path_index=0
+  local trailing_comma=0
+
+  case "$text" in
+    *,)
+      trailing_comma=1
+      text=${text%,}
+      ;;
+  esac
+
+  IFS=',' read -r -a paths <<< "$text"
+  for path in "${paths[@]}"; do
+    path=${path# }
+    if [ "$path_index" -gt 0 ]; then
+      printf ', '
+    fi
+    print_file_path "$path" "$commit_index" "$reverse"
+    path_index=$((path_index + 1))
+  done
+
+  if [ "$trailing_comma" -eq 1 ]; then
+    printf ','
+  fi
 }
 
 print_spaces() {
@@ -303,9 +432,9 @@ print_title_line() {
 
     print_breaking_marker "$breaking_after"
     printf ':'
-    printf '%s%s%s%s' "$TITLE_BOLD" "$WHITE" "${content#"$prefix"}" "$RESET"
+    printf '%s%s%s' "$WHITE" "${content#"$prefix"}" "$RESET"
   else
-    printf '%s%s%s%s' "$TITLE_BOLD" "$WHITE" "$content" "$RESET"
+    printf '%s%s%s' "$WHITE" "$content" "$RESET"
   fi
 
   if [ "$has_date" -eq 1 ]; then
@@ -317,9 +446,10 @@ print_commit() {
   local index=$1
   local scope_label=$2
   local scope_width=$3
-  local pane_width=$4
+  local terminal_columns=$4
+  local reverse=$5
   local title_indent=$((scope_width + 9))
-  local content_width=$((pane_width - title_indent))
+  local content_width=$((terminal_columns - title_indent))
   local file_width
   local full_title
   local line_index
@@ -354,13 +484,13 @@ print_commit() {
 
     print_spaces "$title_indent"
     printf '%s↳%s ' "$DIM" "$RESET"
-    print_file_text "${WRAPPED_LINES[0]}"
+    print_file_text "${WRAPPED_LINES[0]}" "$index" "$reverse"
     printf '\n'
 
     line_index=1
     while [ "$line_index" -lt "${#WRAPPED_LINES[@]}" ]; do
       print_spaces "$((title_indent + 2))"
-      print_file_text "${WRAPPED_LINES[$line_index]}"
+      print_file_text "${WRAPPED_LINES[$line_index]}" "$index" "$reverse"
       printf '\n'
       line_index=$((line_index + 1))
     done
@@ -368,7 +498,7 @@ print_commit() {
 }
 
 build_groups() {
-  local range_id=$1
+  local reverse=$1
   local index=0
   local scope
   local existing
@@ -378,13 +508,8 @@ build_groups() {
   RENDER_GROUPS=()
 
   while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
-    if [ "${COMMIT_RANGES[$index]}" != "$range_id" ]; then
-      index=$((index + 1))
-      continue
-    fi
-
     scope=${COMMIT_SCOPES[$index]}
-    if [ "$scope" = '(unscoped)' ]; then
+    if [ "$scope" = '(unscoped)' ] && [ "$reverse" -eq 0 ]; then
       has_unscoped=1
       index=$((index + 1))
       continue
@@ -410,33 +535,20 @@ build_groups() {
   fi
 }
 
-render_range() {
-  local range_id=$1
-  local heading=$2
-  local count=$3
-  local scope_width=$4
-  local pane_width=$5
-  local noun=commits
+render_commits() {
+  local scope_width=$1
+  local terminal_columns=$2
+  local reverse=$3
+  local compact=$4
   local scope
   local first_scope=1
   local first_commit
   local index
 
-  if [ "$count" -eq 1 ]; then
-    noun=commit
-  fi
-
-  printf '%s (%s %s)\n\n' "$heading" "$count" "$noun"
-
-  if [ "$count" -eq 0 ]; then
-    printf '(none)\n'
-    return
-  fi
-
-  build_groups "$range_id"
+  build_groups "$reverse"
 
   for scope in "${RENDER_GROUPS[@]}"; do
-    if [ "$first_scope" -eq 0 ]; then
+    if [ "$first_scope" -eq 0 ] && [ "$compact" -eq 0 ]; then
       printf '\n'
     fi
     first_scope=0
@@ -444,13 +556,12 @@ render_range() {
     index=0
 
     while [ "$index" -lt "${#COMMIT_HASHES[@]}" ]; do
-      if [ "${COMMIT_RANGES[$index]}" = "$range_id" ] &&
-         [ "${COMMIT_SCOPES[$index]}" = "$scope" ]; then
+      if [ "${COMMIT_SCOPES[$index]}" = "$scope" ]; then
         if [ "$first_commit" -eq 1 ]; then
-          print_commit "$index" "$scope" "$scope_width" "$pane_width"
+          print_commit "$index" "$scope" "$scope_width" "$terminal_columns" "$reverse"
           first_commit=0
         else
-          print_commit "$index" '' "$scope_width" "$pane_width"
+          print_commit "$index" '' "$scope_width" "$terminal_columns" "$reverse"
         fi
       fi
       index=$((index + 1))
@@ -460,66 +571,116 @@ render_range() {
 
 render_repository() {
   local repo=$1
-  local branch
-  local work_count=0
-  local develop_count
+  local count=$2
+  local revision=$3
+  local revision_is_explicit=$4
+  local reverse=$5
+  local compact=$6
+  local collect_status
+  local excluded_branch=
   local scope_width
-  local pane_width
+  local terminal_columns
 
   if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
-    printf 'viewcommits: not a Git repository: %s\n' "$repo" >&2
-    return 1
+    printf 'Not a Git repository: %s\n' "$repo"
+    return 0
   fi
 
-  branch=$(git -C "$repo" symbolic-ref --quiet --short HEAD) || {
-    printf 'viewcommits: detached HEAD is not supported: %s\n' "$repo" >&2
-    return 1
-  }
-
-  if [ "$branch" != develop ]; then
-    collect_range "$repo" 'develop..HEAD' work || return 1
-    work_count=$(range_count work)
+  if [ "$revision_is_explicit" -eq 0 ]; then
+    excluded_branch=$(git -C "$repo" symbolic-ref --quiet --short HEAD 2>/dev/null || true)
   fi
 
-  collect_range "$repo" 'origin/develop..develop' develop || return 1
-  develop_count=$(range_count develop)
+  collect_commits "$repo" "$revision" "$count" "$excluded_branch" "$reverse"
+  collect_status=$?
+  case "$collect_status" in
+    0) ;;
+    2)
+      printf 'No commits\n'
+      return 0
+      ;;
+    *) return 1 ;;
+  esac
 
-  if [ "$work_count" -eq 0 ] && [ "$develop_count" -eq 0 ]; then
-    printf 'No unreleased commits\n'
-    return
+  if [ "${#COMMIT_HASHES[@]}" -eq 0 ]; then
+    printf 'No commits\n'
+    return 0
   fi
 
-  pane_width=$(terminal_width)
+  setup_colors
+  terminal_columns=$(terminal_width)
   scope_width=$(scope_field_width)
+  render_commits "$scope_width" "$terminal_columns" "$reverse" "$compact"
+}
 
-  if [ "$branch" != develop ]; then
-    render_range work "$branch → develop" "$work_count" "$scope_width" "$pane_width"
-  fi
-
-  if [ "$develop_count" -gt 0 ]; then
-    if [ "$branch" != develop ]; then
-      printf '\n\n'
-    fi
-    render_range develop 'develop → origin/develop' "$develop_count" "$scope_width" "$pane_width"
-  fi
+is_positive_integer() {
+  case "$1" in
+    ''|*[!0-9]*) return 1 ;;
+    *[1-9]*) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
 main() {
-  setup_colors
+  local repo=.
+  local count=15
+  local revision=HEAD
+  local revision_set=0
+  local count_set=0
+  local reverse=0
+  local compact=0
 
-  case "${1:-}" in
-    --render)
-      if [ "$#" -ne 2 ]; then
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      -h|--help)
         usage
+        return 0
+        ;;
+      -C|-d)
+        if [ "$#" -lt 2 ]; then
+          usage >&2
+          return 2
+        fi
+        repo=$2
+        shift 2
+        ;;
+      -n)
+        if [ "$#" -lt 2 ] || ! is_positive_integer "$2"; then
+          usage >&2
+          return 2
+        fi
+        count=$2
+        count_set=1
+        shift 2
+        ;;
+      -c)
+        compact=1
+        shift
+        ;;
+      -r)
+        reverse=1
+        shift
+        ;;
+      -*)
+        usage >&2
         return 2
-      fi
-      render_repository "$2"
-      ;;
-    *)
-      usage
-      return 2
-      ;;
-  esac
+        ;;
+      *)
+        if [ "$revision_set" -eq 1 ]; then
+          usage >&2
+          return 2
+        fi
+        revision=$1
+        revision_set=1
+        shift
+        ;;
+    esac
+  done
+
+  if [ "$revision_set" -eq 1 ] && [ "$count_set" -eq 0 ]; then
+    count=
+  fi
+
+  render_repository "$repo" "$count" "$revision" "$revision_set" "$reverse" "$compact"
 }
 
 main "$@"

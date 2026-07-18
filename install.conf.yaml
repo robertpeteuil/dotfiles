@@ -32,6 +32,11 @@
       path: shell/bashrc
       force: true
 
+# Scripts
+- link:
+    ~/.local/bin/viewcommits:
+      path: scripts/viewcommits
+
 # Config - Git
 - link:
     ~/.gitconfig:
