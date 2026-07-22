@@ -35,6 +35,7 @@ showcolorsfunc() {
   done
 }
 alias showcolors='showcolorsfunc'
+alias fix-cursor="printf '\e[2 q'"
 
 ## ZMV
 #   batch rename/copy/link files with pattern matching.
