@@ -21,6 +21,8 @@ local -a plugins=(
 #  marlonrichert/zsh-hist                    # Edit history from the command line.
 #  zsh-users/zsh-syntax-highlighting         # Command-line syntax highlighting
 
+# block repo updates
+zstyle ':znap:pull:*' exclude 'marlonrichert/zcolors'
 
 # Clone new plugins in parallel
 znap clone $plugins
