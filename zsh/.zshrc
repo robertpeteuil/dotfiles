@@ -33,6 +33,10 @@ if [ -n "$ZSH_AUTOCOMPLETE_DISABLED" ] || [ -f $HOME/.hushzshcomp ]; then
   zstyle ':autocomplete:*' async no
 fi
 
+### ZLE KEYMAP
+# Override Zsh's EDITOR-based vi-mode default
+bindkey -e
+
 ### LOAD FILES IN RC.D DIR
 # load files that start with integers and end in `.zsh`
 #   (n) sorts the results in numerical order
